@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Android School</string>
     <string name="hello_eltex">Hello Eltex!</string>
+    <string name="monogram" translatable="false">monogram</string>
+    <string name="more_button" translatable="false">more_button</string>
+    <string name="like_button" translatable="false">like_button</string>
+    <string name="share_button" translatable="false">share_button</string>
 </resources>

@@ -1,2 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="color_post_container">#FEF7FF</color>
+    <color name="color_post_title_text">#1D1B20</color>
+    <color name="color_post_content_text">#49454F</color>
+    <color name="color_more_button">#79747E</color>
+</resources>
