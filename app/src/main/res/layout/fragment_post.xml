@@ -24,10 +24,13 @@
             android:layout_marginVertical="12dp"
             android:layout_marginStart="16dp"
             android:background="@drawable/monogram_shape"
+            android:clipToOutline="true"
             android:contentDescription="@string/monogram"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="@id/date_published"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/username" />
+            app:layout_constraintTop_toTopOf="@id/username"
+            tools:src="@drawable/avatar" />
 
         <TextView
             android:id="@+id/monogram_text"
@@ -84,11 +87,13 @@
             app:layout_constraintTop_toTopOf="@id/username"
             app:tint="@color/color_more_button" />
 
+
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier_head"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="bottom"
+            app:barrierMargin="12dp"
             app:constraint_referenced_ids="monogram, username, more_button" />
 
         <ImageView
@@ -97,12 +102,25 @@
             android:layout_height="0dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/vertical_image"
-            android:visibility="visible"
             app:layout_constraintDimensionRatio="H,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/barrier_head" />
+            app:layout_constraintTop_toBottomOf="@+id/barrier_head"
+            tools:src="@drawable/vertical_image"
+            tools:visibility="visible" />
+
+        <VideoView
+            android:id="@+id/content_video"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="H,16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barrier_head"
+            tools:src="@drawable/vertical_image"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/content_text"
@@ -123,17 +141,21 @@
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             app:icon="@drawable/favorite"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/content_text"
             tools:text="2" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/share_button"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:layout_marginStart="8dp"
             app:icon="@drawable/share"
             app:layout_constraintStart_toEndOf="@id/like_button"
             app:layout_constraintTop_toTopOf="@id/like_button" />
