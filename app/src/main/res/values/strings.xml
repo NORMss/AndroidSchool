@@ -5,4 +5,6 @@
     <string name="more_button" translatable="false">more_button</string>
     <string name="like_button" translatable="false">like_button</string>
     <string name="share_button" translatable="false">share_button</string>
+    <string name="content_image" translatable="false">content_image</string>
+    <string name="play" translatable="false">play</string>
 </resources>
