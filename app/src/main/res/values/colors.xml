@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="transparent">#00FFFFFF</color>
-    <color name="color_post_container">#FEF7FF</color>
-    <color name="color_post_title_text">#1D1B20</color>
-    <color name="color_post_content_text">#49454F</color>
-    <color name="color_more_button">#79747E</color>
+    <color name="post_container">#FEF7FF</color>
+    <color name="post_title_text">#1D1B20</color>
+    <color name="post_content_text">#49454F</color>
+    <color name="more_button">#79747E</color>
+    <color name="play_button">#000000</color>
 </resources>

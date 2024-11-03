@@ -7,39 +7,25 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/like"
+        android:id="@+id/likeButton"
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:fontFamily="@font/roboto_medium"
         android:textSize="14sp"
-        app:icon="@drawable/favorite"
+        app:icon="@drawable/like_button_selector"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="2" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/share"
+        android:id="@+id/shareButton"
         style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
         app:icon="@drawable/share"
-        app:layout_constraintStart_toEndOf="@id/like"
-        app:layout_constraintTop_toTopOf="@id/like" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/people"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:fontFamily="@font/roboto_medium"
-        android:textSize="14sp"
-        android:visibility="visible"
-        app:icon="@drawable/people"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/like"
-        tools:text="12" />
-
+        app:layout_constraintStart_toEndOf="@id/likeButton"
+        app:layout_constraintTop_toTopOf="@id/likeButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
