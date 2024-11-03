@@ -1,33 +1,29 @@
 # Project AndroidSchool 
-**Part 13-resources**
+**Part 14-constraint-layout**
 ## Demo Program
 <details>
-  <summary>Launching the application</summary>
-  
-  ![image](https://github.com/user-attachments/assets/4593c3a9-accf-4e5e-ad9c-f5125e111c7b)
+  <summary>event option 1</summary>
+
+  ![1_light](https://github.com/user-attachments/assets/0231c978-ac4a-4997-8fd8-97cf760e0904)
+
+  ![1_dark](https://github.com/user-attachments/assets/fa6f002a-b3a8-4671-9237-e9553fbd9c7d)
 
 </details>
 
 <details>
-  <summary>Icon in the list of applications</summary>
-  
-  ![photo_2024-10-27_17-49-09](https://github.com/user-attachments/assets/297e217a-8a8f-4927-ba4b-99b2b0a997b9)
+  <summary>event option 2</summary>
+
+  ![2_light](https://github.com/user-attachments/assets/9ba8c748-f4fd-433b-8b24-03cccd8b6036)
+
+  ![2_dark](https://github.com/user-attachments/assets/548d5a2f-995e-426c-89da-f49c26c572b1)
 
 </details>
 
 <details>
-  <summary>Monochrome Home Screen Icon</summary>
-  
-  ![photo_2024-10-27_18-14-43](https://github.com/user-attachments/assets/bffb85b3-5597-40f3-8443-560a1dfbe1b5)
+  <summary>event option 3</summary>
 
-</details>
+  ![3_light](https://github.com/user-attachments/assets/e227cc6b-aec6-4c9a-90fe-6698838480a9)
 
-<details>
-  <summary>"Hello Eltex" in RU and other localizations</summary>
-  
-  <p align="center">
-    <img src="https://github.com/user-attachments/assets/ede51b87-4a9c-4eb6-807e-d443871452c4" />
-    <img src="https://github.com/user-attachments/assets/5fa4f5e3-373c-4893-ab26-15f693310768" />
-  </p>
+  ![3_dark](https://github.com/user-attachments/assets/9940d224-0907-4b5d-831f-c6f5ad5525ec)
 
 </details>
