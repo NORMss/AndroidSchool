@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import coil.load
+import com.eltex.androidschool.databinding.ActivityMainBinding
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.model.Attachment
 import com.eltex.androidschool.model.AttachmentType
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val binding = PostBinding.inflate(layoutInflater)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         var post = Post(
@@ -40,23 +41,23 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        binding.action.likeButton.setOnClickListener {
+        binding.post.action.likeButton.setOnClickListener {
             post = post.copy(likedByMe = !post.likedByMe)
-            bindPost(binding, post)
+            bindPost(binding.post, post)
         }
 
-        binding.action.shareButton.setOnClickListener {
+        binding.post.action.shareButton.setOnClickListener {
             this.toast(R.string.not_implemented, true)
         }
 
-        binding.header.moreButton.setOnClickListener {
+        binding.post.header.moreButton.setOnClickListener {
             this.toast(R.string.not_implemented, true)
         }
 
 
-        bindPost(binding, post)
+        bindPost(binding.post, post)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.card)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars =
                 insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun bindPost(binding: PostBinding, post: Post) {
         binding.header.monogramText.visibility = View.VISIBLE
+        binding.contentImage.visibility = View.VISIBLE
 
         binding.header.username.text = post.author
 
