@@ -6,7 +6,6 @@
     android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
     app:cardBackgroundColor="@color/post_container"
     app:cardCornerRadius="12dp"
     app:strokeColor="?colorOutlineVariant"
@@ -33,12 +32,13 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/content_image"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             app:layout_constraintDimensionRatio="H,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header"
             tools:src="@drawable/vertical_image"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <VideoView
             android:id="@+id/contentVideo"
@@ -46,6 +46,7 @@
             android:layout_height="0dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             app:layout_constraintDimensionRatio="H,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

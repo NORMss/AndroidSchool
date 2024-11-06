@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Android Школа</string>
     <string name="hello_eltex">Привет, Eltex!</string>
+    <string name="not_implemented">Не реализовано</string>
 </resources>
