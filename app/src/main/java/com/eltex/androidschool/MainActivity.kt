@@ -10,10 +10,10 @@ import androidx.core.view.WindowInsetsCompat
 import coil.load
 import com.eltex.androidschool.databinding.ActivityMainBinding
 import com.eltex.androidschool.databinding.PostBinding
-import com.eltex.androidschool.model.Attachment
-import com.eltex.androidschool.model.AttachmentType
-import com.eltex.androidschool.model.Coordinates
-import com.eltex.androidschool.model.Post
+import com.eltex.androidschool.domain.model.Attachment
+import com.eltex.androidschool.domain.model.AttachmentType
+import com.eltex.androidschool.domain.model.Coordinates
+import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.toast
 
 class MainActivity : AppCompatActivity() {
