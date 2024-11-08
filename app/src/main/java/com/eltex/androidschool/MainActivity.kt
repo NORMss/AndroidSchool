@@ -4,58 +4,72 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
+import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.ActivityMainBinding
 import com.eltex.androidschool.databinding.PostBinding
-import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
-import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.toast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val viewModel by viewModels<PostViewModel> {
+            viewModelFactory {
+                addInitializer(PostViewModel::class) {
+                    PostViewModel(InMemoryPostRepository())
+                }
+            }
+        }
+
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var post = Post(
-            id = 1L,
-            authorId = 1001L,
-            author = "Sergey Bezborodov",
-            authorJob = "Android Developer",
-            authorAvatar = "https://avatars.githubusercontent.com/u/47896309?v=4",
-            content = "Сегодня поделюсь своим опытом работы с Jetpack Compose!",
-            published = "2024-11-05T14:30:00",
-            coordinates = Coordinates(lat = 55.7558, long = 37.6176),
-            link = "https://example.com/article",
-            mentionedMe = true,
-            likedByMe = false,
-            attachment = Attachment(
-                url = "https://static1.xdaimages.com/wordpress/wp-content/uploads/2021/02/Jetpack-Compose-Beta.jpg?q=50&fit=crop&w=1100&h=618&dpr=1.5",
-                type = AttachmentType.IMAGE,
-            )
-        )
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                withContext(Dispatchers.Main.immediate) {
+
+                }
+            }
+        }
+
+        viewModel.state
+            .onEach {
+                if (it.post != null) {
+                    bindPost(binding.post, it.post)
+                } else {
+                    binding.post.root.visibility = View.GONE
+                }
+            }
+            .launchIn(lifecycleScope)
 
         binding.post.action.likeButton.setOnClickListener {
-            post = post.copy(likedByMe = !post.likedByMe)
-            bindPost(binding.post, post)
+            viewModel.like()
         }
 
         binding.post.action.shareButton.setOnClickListener {
-            this.toast(R.string.not_implemented, true)
+            viewModel.share()
         }
 
         binding.post.header.moreButton.setOnClickListener {
             this.toast(R.string.not_implemented, true)
         }
-
-
-        bindPost(binding.post, post)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars =
