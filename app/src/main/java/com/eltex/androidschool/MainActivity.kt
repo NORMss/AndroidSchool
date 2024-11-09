@@ -20,6 +20,7 @@ import com.eltex.androidschool.databinding.EventBinding
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Event
+import com.eltex.androidschool.domain.model.EventType
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.toast
 import kotlinx.coroutines.Dispatchers
@@ -109,6 +110,10 @@ class MainActivity : AppCompatActivity() {
             eventViewModel.participate()
         }
 
+        binding.event.header.moreButton.setOnClickListener {
+            this.toast(R.string.not_implemented, true)
+        }
+
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -121,7 +126,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun bindEvent(binding: EventBinding, event: Event) {
         binding.header.monogramText.visibility = View.VISIBLE
-        binding.contentImage.visibility = View.VISIBLE
 
         binding.header.username.text = event.author
 
@@ -137,19 +141,18 @@ class MainActivity : AppCompatActivity() {
 
         when (event.attachment?.type) {
             AttachmentType.IMAGE -> {
-                binding.contentImage.apply {
-                    load(event.attachment.url) {
-                        listener(
-                            onSuccess = { _, _ ->
-                                binding.contentImage.visibility = View.VISIBLE
-                            },
-                            onError = { _, _ ->
-                                Log.d("BindPost", "Image failed to load, visibility set to GONE")
-                                binding.contentImage.visibility = View.GONE
-                            }
-                        )
-                    }
-                }
+//                binding.contentImage.apply {
+//                    load(event.attachment.url) {
+//                        listener(
+//                            onSuccess = { _, _ ->
+//                                binding.contentImage.visibility = View.VISIBLE
+//                            },
+//                            onError = { _, _ ->
+//                                binding.contentImage.visibility = View.GONE
+//                            }
+//                        )
+//                    }
+//                }
             }
 
             AttachmentType.VIDEO -> {
@@ -171,10 +174,37 @@ class MainActivity : AppCompatActivity() {
         binding.header.monogramText.text = event.author.take(1)
         binding.header.datePublished.text = event.published
         binding.contentText.text = event.content
+        binding.onlineStatus.text = getString(
+            when (event.type) {
+                EventType.ONLINE -> {
+                    R.string.online
+                }
+
+                EventType.OFFLINE -> {
+                    R.string.offline
+                }
+            }
+        )
+
+        binding.datetime.text = event.datetime
+
+        binding.link.apply {
+            if (event.link != null) {
+                text = event.link
+                visibility = View.VISIBLE
+            } else {
+                visibility = View.GONE
+            }
+        }
 
         event.likedByMe.let {
             binding.action.likeButton.isSelected = it
             binding.action.likeButton.text = if (it) "1" else "0"
+        }
+
+        event.participatedByMe.let {
+            binding.participate.isSelected = it
+            binding.participate.text = if (it) "1" else "0"
         }
     }
 

@@ -8,4 +8,6 @@
     <string name="content_image" translatable="false">content_image</string>
     <string name="play" translatable="false">play</string>
     <string name="not_implemented">Not implemented</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
 </resources>

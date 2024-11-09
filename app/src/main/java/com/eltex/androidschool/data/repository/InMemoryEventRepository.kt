@@ -19,7 +19,7 @@ class InMemoryEventRepository : EventRepository {
             authorId = 1001L,
             author = "Sergey Bezborodov",
             authorJob = "Android Developer",
-            authorAvatar = "https://avatars.githubusercontent.com/u/47896309?v=4",
+            authorAvatar = null,
             content = "Сегодня поделюсь своим опытом работы с Jetpack Compose!",
             datetime = "2024-11-05T14:30:00",
             published = "2024-11-05T14:30:00",
