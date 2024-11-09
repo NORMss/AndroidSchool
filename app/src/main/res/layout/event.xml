@@ -121,7 +121,7 @@
             app:layout_constraintTop_toBottomOf="@id/link" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/people"
+            android:id="@+id/participate"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="0dp"
             android:layout_height="40dp"
