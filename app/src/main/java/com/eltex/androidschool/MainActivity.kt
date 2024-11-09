@@ -13,10 +13,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
+import com.eltex.androidschool.data.repository.InMemoryEventRepository
 import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.ActivityMainBinding
+import com.eltex.androidschool.databinding.EventBinding
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
+import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.toast
 import kotlinx.coroutines.Dispatchers
@@ -30,10 +33,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val viewModel by viewModels<PostViewModel> {
+        val postViewModel by viewModels<PostViewModel> {
             viewModelFactory {
                 addInitializer(PostViewModel::class) {
                     PostViewModel(InMemoryPostRepository())
+                }
+            }
+        }
+
+        val eventViewModel by viewModels<EventViewModel> {
+            viewModelFactory {
+                addInitializer(EventViewModel::class) {
+                    EventViewModel(InMemoryEventRepository())
                 }
             }
         }
@@ -49,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.state
+        postViewModel.state
             .onEach {
                 if (it.post != null) {
                     bindPost(binding.post, it.post)
@@ -59,23 +70,111 @@ class MainActivity : AppCompatActivity() {
             }
             .launchIn(lifecycleScope)
 
+        eventViewModel.state
+            .onEach {
+                if (it.event != null) {
+                    bindEvent(binding.event, it.event)
+                } else {
+                    binding.post.root.visibility = View.GONE
+                }
+            }
+            .launchIn(lifecycleScope)
+
+
         binding.post.action.likeButton.setOnClickListener {
-            viewModel.like()
+            postViewModel.like()
         }
 
         binding.post.action.shareButton.setOnClickListener {
-            viewModel.share()
+            postViewModel.share()
         }
 
         binding.post.header.moreButton.setOnClickListener {
             this.toast(R.string.not_implemented, true)
         }
 
+        binding.event.playButton.setOnClickListener {
+            this.toast(R.string.not_implemented, true)
+        }
+
+        binding.event.action.likeButton.setOnClickListener {
+            eventViewModel.like()
+        }
+
+        binding.event.action.shareButton.setOnClickListener {
+            this.toast(R.string.not_implemented, true)
+        }
+
+        binding.event.participate.setOnClickListener {
+            eventViewModel.participate()
+        }
+
+
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars =
                 insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+    }
+
+    private fun bindEvent(binding: EventBinding, event: Event) {
+        binding.header.monogramText.visibility = View.VISIBLE
+        binding.contentImage.visibility = View.VISIBLE
+
+        binding.header.username.text = event.author
+
+        binding.header.monogram.apply {
+            load(event.authorAvatar) {
+                listener(
+                    onSuccess = { _, _ ->
+                        binding.header.monogramText.visibility = View.GONE
+                    },
+                )
+            }
+        }
+
+        when (event.attachment?.type) {
+            AttachmentType.IMAGE -> {
+                binding.contentImage.apply {
+                    load(event.attachment.url) {
+                        listener(
+                            onSuccess = { _, _ ->
+                                binding.contentImage.visibility = View.VISIBLE
+                            },
+                            onError = { _, _ ->
+                                Log.d("BindPost", "Image failed to load, visibility set to GONE")
+                                binding.contentImage.visibility = View.GONE
+                            }
+                        )
+                    }
+                }
+            }
+
+            AttachmentType.VIDEO -> {
+                this.toast(R.string.not_implemented, true)
+            }
+
+            AttachmentType.AUDIO -> {
+                binding.playButton.apply {
+                    binding.playButton.visibility = View.GONE
+                }
+            }
+
+            null -> {
+                binding.contentImage.visibility = View.GONE
+                binding.playButton.visibility = View.GONE
+            }
+        }
+
+        binding.header.monogramText.text = event.author.take(1)
+        binding.header.datePublished.text = event.published
+        binding.contentText.text = event.content
+
+        event.likedByMe.let {
+            binding.action.likeButton.isSelected = it
+            binding.action.likeButton.text = if (it) "1" else "0"
         }
     }
 
