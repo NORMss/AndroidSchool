@@ -31,8 +31,8 @@ class InMemoryEventRepository : EventRepository {
             participantsIds = emptySet(),
             participatedByMe = false,
             attachment = Attachment(
-                url = "https://static1.xdaimages.com/wordpress/wp-content/uploads/2021/02/Jetpack-Compose-Beta.jpg?q=50&fit=crop&w=1100&h=618&dpr=1.5",
-                type = AttachmentType.IMAGE
+                url = "https://samplelib.com/lib/preview/mp3/sample-6s.mp3",
+                type = AttachmentType.AUDIO
             ),
             link = "https://example.com/article",
             users = listOf(

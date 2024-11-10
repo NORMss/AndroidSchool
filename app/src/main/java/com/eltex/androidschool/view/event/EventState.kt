@@ -1,4 +1,4 @@
-package com.eltex.androidschool
+package com.eltex.androidschool.view.event
 
 import com.eltex.androidschool.domain.model.Event
 
