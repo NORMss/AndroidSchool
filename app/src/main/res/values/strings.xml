@@ -8,4 +8,10 @@
     <string name="content_image" translatable="false">content_image</string>
     <string name="play" translatable="false">play</string>
     <string name="not_implemented">Not implemented</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="open_post">Open Post</string>
+    <string name="open_event">Open Event</string>
+    <string name="screen_examples">Screen examples</string>
 </resources>

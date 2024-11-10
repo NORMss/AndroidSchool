@@ -3,4 +3,9 @@
     <string name="app_name">Android Школа</string>
     <string name="hello_eltex">Привет, Eltex!</string>
     <string name="not_implemented">Не реализовано</string>
+    <string name="online">Онлайн</string>
+    <string name="offline">Офлайн</string>
+    <string name="open_post">Открыть Публикацию</string>
+    <string name="open_event">Открыть Мероприятие</string>
+    <string name="screen_examples">Примеры экранов</string>
 </resources>

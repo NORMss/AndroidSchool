@@ -32,6 +32,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/content_image"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             app:layout_constraintDimensionRatio="H,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,13 +55,14 @@
             tools:text="Offline" />
 
         <TextView
-            android:id="@+id/datePublished"
+            android:id="@+id/datetime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/post_content_text"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@id/playButton"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/onlineStatus"
             app:layout_constraintTop_toBottomOf="@id/onlineStatus"
             tools:text="20.06.22 14:00" />
@@ -73,8 +75,8 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/play"
             android:src="@drawable/play"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@id/datePublished"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/datetime"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/onlineStatus"
             app:tint="@color/play_button" />
@@ -90,7 +92,7 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/datePublished"
+            app:layout_constraintTop_toBottomOf="@id/datetime"
             tools:text="Приглашаю провести уютный вечер за увлекательными играми! У нас есть несколько вариантов настолок, подходящих для любой компании." />
 
         <TextView
@@ -99,6 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="32dp"
             android:autoLink="web"
+            android:visibility="gone"
             android:fontFamily="@font/roboto_regular"
             android:textColor="?colorOnPrimary"
             android:textSize="14sp"
