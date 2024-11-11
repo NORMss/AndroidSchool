@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.R
 import com.eltex.androidschool.domain.repository.EventRepository
+import com.eltex.androidschool.view.post.PostState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,10 +40,6 @@ class EventViewModel(
     }
 
     private fun sendToast(@StringRes res: Int, short: Boolean = true) {
-        _state.update {
-            it.copy(
-                toast = Pair(res, short)
-            )
-        }
+
     }
 }

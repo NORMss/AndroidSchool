@@ -1,12 +1,13 @@
 package com.eltex.androidschool.view.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.FragmentMainBinding
 
@@ -19,19 +20,23 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_main, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val navController = Navigation.findNavController(requireActivity(), R.id.nav_graph)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val navController = findNavController()
 
         binding.openPost.setOnClickListener {
+            Log.d("MyLog", "openPost")
             navController.navigate(R.id.postFragment)
         }
 
         binding.openEvent.setOnClickListener {
             navController.navigate(R.id.eventFragment)
         }
-
-        return view
     }
 
     override fun onDestroyView() {

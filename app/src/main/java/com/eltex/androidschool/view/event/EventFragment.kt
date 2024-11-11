@@ -5,22 +5,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.InMemoryEventRepository
-import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.EventBinding
 import com.eltex.androidschool.databinding.FragmentEventBinding
-import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
-import com.eltex.androidschool.utils.toast
-import com.eltex.androidschool.view.post.PostViewModel
+import com.eltex.androidschool.utils.toastObserve
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -28,18 +24,28 @@ class EventFragment : Fragment() {
     private var _binding: FragmentEventBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel by viewModels<EventViewModel> {
+        viewModelFactory {
+            addInitializer(EventViewModel::class) {
+                EventViewModel(InMemoryEventRepository())
+            }
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentEventBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val eventViewModel by viewModels<EventViewModel> {
-            viewModelFactory {
-                addInitializer(EventViewModel::class) {
-                    EventViewModel(InMemoryEventRepository())
-                }
-            }
-        }
-
-        eventViewModel.state
+        viewModel.state
             .onEach {
                 if (it.event != null) {
                     bindEvent(binding.event, it.event)
@@ -54,21 +60,20 @@ class EventFragment : Fragment() {
         }
 
         binding.event.action.likeButton.setOnClickListener {
-            eventViewModel.like()
+            viewModel.like()
         }
 
         binding.event.action.shareButton.setOnClickListener {
-//            this.toast(R.string.not_implemented, true)
+            viewModel.share()
         }
 
         binding.event.participate.setOnClickListener {
-            eventViewModel.participate()
+            viewModel.participate()
         }
 
         binding.event.header.moreButton.setOnClickListener {
 //            this.toast(R.string.not_implemented, true)
         }
-
     }
 
 

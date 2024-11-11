@@ -31,6 +31,13 @@ class PostViewModel(
 
     fun share() {
         sendToast(R.string.not_implemented, true)
+        resetToast()
+    }
+
+    private fun resetToast() {
+        _state.update {
+            it.copy(toast = null)
+        }
     }
 
     private fun sendToast(@StringRes res: Int, short: Boolean = true) {
