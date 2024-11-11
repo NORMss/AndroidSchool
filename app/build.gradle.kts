@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.eltex.androidschool"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.eltex.androidschool"
@@ -39,8 +39,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.coil)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

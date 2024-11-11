@@ -1,18 +1,22 @@
 package com.eltex.androidschool.view.post
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
+import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Post
+import com.eltex.androidschool.utils.toast
+import com.eltex.androidschool.utils.toastObserve
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -20,37 +24,55 @@ class PostFragment : Fragment() {
     private var _binding: FragmentPostBinding? = null
     private val binding get() = _binding!!
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentPostBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
+
+    private val viewModel by viewModels<PostViewModel> {
+        viewModelFactory {
+            addInitializer(PostViewModel::class) {
+                PostViewModel(InMemoryPostRepository())
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val postViewModel by viewModels<PostViewModel> {
-            viewModelFactory {
-                addInitializer(PostViewModel::class) {
-                    PostViewModel(InMemoryPostRepository())
-                }
-            }
-        }
-
-        postViewModel.state
+        viewModel.state
             .onEach {
                 if (it.post != null) {
                     bindPost(binding.post, it.post)
                 } else {
                     binding.post.root.visibility = View.GONE
                 }
+                it.toast?.let {
+                    viewModel.state.value.toast?.let { data ->
+                        toastObserve(
+                            toast = data,
+                            activity = activity
+                        )
+                    }
+                }
             }
             .launchIn(lifecycleScope)
 
         binding.post.action.likeButton.setOnClickListener {
-            postViewModel.like()
+            viewModel.like()
         }
 
         binding.post.action.shareButton.setOnClickListener {
-            postViewModel.share()
+            viewModel.share()
         }
 
         binding.post.header.moreButton.setOnClickListener {
-//            this.toast(R.string.not_implemented, true)
+            activity?.toast(R.string.not_implemented, true)
         }
     }
 
@@ -84,7 +106,6 @@ class PostFragment : Fragment() {
                                 binding.contentImage.visibility = View.VISIBLE
                             },
                             onError = { _, _ ->
-                                Log.d("BindPost", "Image failed to load, visibility set to GONE")
                                 binding.contentImage.visibility = View.GONE
                             }
                         )
@@ -93,11 +114,9 @@ class PostFragment : Fragment() {
             }
 
             AttachmentType.VIDEO -> {
-//                this.toast(R.string.not_implemented, true)
             }
 
             AttachmentType.AUDIO -> {
-//                this.toast(R.string.not_implemented, true)
             }
 
             null -> {
