@@ -1,4 +1,4 @@
-package com.eltex.androidschool.utils
+package com.eltex.androidschool.utils.toast
 
 import android.content.Context
 import android.widget.Toast

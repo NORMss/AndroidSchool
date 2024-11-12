@@ -15,8 +15,8 @@ import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.toast
-import com.eltex.androidschool.utils.toastObserve
+import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.utils.toast.toastObserve
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -28,7 +28,7 @@ class PostFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentPostBinding.inflate(inflater, container, false)
         val view = binding.root
         return view

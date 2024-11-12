@@ -5,9 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.R
 import com.eltex.androidschool.domain.repository.EventRepository
-import com.eltex.androidschool.view.post.PostState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -31,15 +29,27 @@ class EventViewModel(
         eventRepository.like()
     }
 
-    fun share() {
-        sendToast(R.string.not_implemented, true)
-    }
-
     fun participate() {
         eventRepository.participate()
     }
 
-    private fun sendToast(@StringRes res: Int, short: Boolean = true) {
+    fun share() {
+        sendToast(R.string.not_implemented, true)
+    }
 
+    fun play() {
+        sendToast(R.string.not_implemented, true)
+    }
+
+    fun more() {
+        sendToast(R.string.not_implemented, true)
+    }
+
+    private fun sendToast(@StringRes res: Int, short: Boolean = true) {
+        _state.update {
+            it.copy(
+                toast = Pair(res, short)
+            )
+        }
     }
 }
