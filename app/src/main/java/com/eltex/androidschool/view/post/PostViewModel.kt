@@ -29,6 +29,11 @@ class PostViewModel(
         postRepository.like()
     }
 
+    fun more() {
+        sendToast(R.string.not_implemented, true)
+        resetToast()
+    }
+
     fun share() {
         sendToast(R.string.not_implemented, true)
         resetToast()

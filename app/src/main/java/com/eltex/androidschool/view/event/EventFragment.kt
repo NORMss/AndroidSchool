@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
@@ -16,6 +17,7 @@ import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
+import com.eltex.androidschool.view.common.ObserveAsEvents
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -44,119 +46,82 @@ class EventFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.state
-            .onEach {
-                if (it.event != null) {
-                    bindEvent(binding.event, it.event)
-                } else {
-                    binding.root.visibility = View.GONE
-                }
-            }
-            .launchIn(lifecycleScope)
-
-        binding.event.playButton.setOnClickListener {
-            viewModel.play()
-        }
-
-        binding.event.action.likeButton.setOnClickListener {
-            viewModel.like()
-        }
-
-        binding.event.action.shareButton.setOnClickListener {
-            viewModel.share()
-        }
-
-        binding.event.participate.setOnClickListener {
-            viewModel.participate()
-        }
-
-        binding.event.header.moreButton.setOnClickListener {
-            viewModel.more()
-        }
+        observeViewModelState()
+        setupClickListeners()
     }
 
-
     private fun bindEvent(binding: EventBinding, event: Event) {
-        binding.header.monogramText.visibility = View.VISIBLE
+        val header = binding.header
+        val action = binding.action
 
-        binding.header.username.text = event.author
+        header.monogramText.visibility = View.VISIBLE
+        header.username.text = event.author
 
-        binding.header.monogram.apply {
-            load(event.authorAvatar) {
-                listener(
-                    onSuccess = { _, _ ->
-                        binding.header.monogramText.visibility = View.GONE
-                    },
-                )
-            }
+        header.monogram.load(event.authorAvatar) {
+            listener(onSuccess = { _, _ -> header.monogramText.visibility = View.GONE })
         }
 
         when (event.attachment?.type) {
-            AttachmentType.IMAGE -> {
-                binding.contentImage.apply {
-                    load(event.attachment.url) {
-                        listener(
-                            onSuccess = { _, _ ->
-                                binding.contentImage.visibility = View.VISIBLE
-                            },
-                            onError = { _, _ ->
-                                binding.contentImage.visibility = View.GONE
-                            }
-                        )
-                    }
-                }
-            }
-
-            AttachmentType.VIDEO -> {
-//                this.toast(R.string.not_implemented, true)
+            AttachmentType.IMAGE -> binding.contentImage.load(event.attachment.url) {
+                listener(
+                    onSuccess = { _, _ -> binding.contentImage.visibility = View.VISIBLE },
+                    onError = { _, _ -> binding.contentImage.visibility = View.GONE }
+                )
             }
 
             AttachmentType.AUDIO -> {
-                binding.playButton.apply {
-                    binding.playButton.visibility = View.GONE
-                }
+                binding.playButton.visibility = View.VISIBLE
             }
 
+            AttachmentType.VIDEO -> {}
             null -> {
                 binding.contentImage.visibility = View.GONE
                 binding.playButton.visibility = View.GONE
             }
         }
 
-        binding.header.monogramText.text = event.author.take(1)
-        binding.header.datePublished.text = event.published
+        header.monogramText.text = event.author.first().toString()
+        header.datePublished.text = event.published
         binding.contentText.text = event.content
-        binding.onlineStatus.text = getString(
-            when (event.type) {
-                EventType.ONLINE -> {
-                    R.string.online
-                }
-
-                EventType.OFFLINE -> {
-                    R.string.offline
-                }
-            }
-        )
-
+        binding.onlineStatus.text =
+            getString(if (event.type == EventType.ONLINE) R.string.online else R.string.offline)
         binding.datetime.text = event.datetime
 
         binding.link.apply {
-            if (event.link != null) {
-                text = event.link
-                visibility = View.VISIBLE
-            } else {
-                visibility = View.GONE
+            text = event.link
+            visibility = if (event.link != null) View.VISIBLE else View.GONE
+        }
+
+        action.likeButton.isSelected = event.likedByMe
+        action.likeButton.text = if (event.likedByMe) "1" else "0"
+
+        binding.participate.isSelected = event.participatedByMe
+        binding.participate.text = if (event.participatedByMe) "1" else "0"
+    }
+
+    private fun observeViewModelState() {
+        viewModel.state
+            .flowWithLifecycle(lifecycle)
+            .onEach { state ->
+                state.event?.let {
+                    bindEvent(binding.event, it)
+                    binding.root.visibility = View.VISIBLE
+                } ?: run {
+                    binding.root.visibility = View.GONE
+                }
+
+                state.toast?.let { toastData ->
+                    ObserveAsEvents(toast = toastData, activity = activity)
+                }
             }
-        }
+            .launchIn(lifecycleScope)
+    }
 
-        event.likedByMe.let {
-            binding.action.likeButton.isSelected = it
-            binding.action.likeButton.text = if (it) "1" else "0"
-        }
-
-        event.participatedByMe.let {
-            binding.participate.isSelected = it
-            binding.participate.text = if (it) "1" else "0"
-        }
+    private fun setupClickListeners() {
+        binding.event.playButton.setOnClickListener { viewModel.play() }
+        binding.event.action.likeButton.setOnClickListener { viewModel.like() }
+        binding.event.action.shareButton.setOnClickListener { viewModel.share() }
+        binding.event.participate.setOnClickListener { viewModel.participate() }
+        binding.event.header.moreButton.setOnClickListener { viewModel.more() }
     }
 }

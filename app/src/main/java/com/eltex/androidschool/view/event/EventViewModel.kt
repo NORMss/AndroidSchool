@@ -35,14 +35,23 @@ class EventViewModel(
 
     fun share() {
         sendToast(R.string.not_implemented, true)
+        resetToast()
     }
 
     fun play() {
         sendToast(R.string.not_implemented, true)
+        resetToast()
     }
 
     fun more() {
         sendToast(R.string.not_implemented, true)
+        resetToast()
+    }
+
+    private fun resetToast() {
+        _state.update {
+            it.copy(toast = null)
+        }
     }
 
     private fun sendToast(@StringRes res: Int, short: Boolean = true) {
