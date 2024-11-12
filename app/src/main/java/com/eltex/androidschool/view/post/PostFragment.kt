@@ -6,17 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
-import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.toast.toast
-import com.eltex.androidschool.utils.toast.toastObserve
+import com.eltex.androidschool.view.common.ObserveAsEvents
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -44,36 +43,8 @@ class PostFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.state
-            .onEach {
-                if (it.post != null) {
-                    bindPost(binding.post, it.post)
-                } else {
-                    binding.post.root.visibility = View.GONE
-                }
-                it.toast?.let {
-                    viewModel.state.value.toast?.let { data ->
-                        toastObserve(
-                            toast = data,
-                            activity = activity
-                        )
-                    }
-                }
-            }
-            .launchIn(lifecycleScope)
-
-        binding.post.action.likeButton.setOnClickListener {
-            viewModel.like()
-        }
-
-        binding.post.action.shareButton.setOnClickListener {
-            viewModel.share()
-        }
-
-        binding.post.header.moreButton.setOnClickListener {
-            activity?.toast(R.string.not_implemented, true)
-        }
+        observeViewModelState()
+        setupClickListeners()
     }
 
     override fun onDestroyView() {
@@ -81,57 +52,63 @@ class PostFragment : Fragment() {
         _binding = null
     }
 
-    private fun bindPost(binding: PostBinding, post: Post) {
-        binding.header.monogramText.visibility = View.VISIBLE
-        binding.contentImage.visibility = View.VISIBLE
+    private fun observeViewModelState() {
+        viewModel.state
+            .flowWithLifecycle(lifecycle)
+            .onEach { state ->
+                state.post?.let {
+                    bindPost(binding.post, it)
+                    binding.root.visibility = View.VISIBLE
+                } ?: run {
+                    binding.root.visibility = View.GONE
+                }
 
-        binding.header.username.text = post.author
-
-        binding.header.monogram.apply {
-            load(post.authorAvatar) {
-                listener(
-                    onSuccess = { _, _ ->
-                        binding.header.monogramText.visibility = View.GONE
-                    },
-                )
+                state.toast?.let { toastData ->
+                    ObserveAsEvents(toast = toastData, activity = activity)
+                }
             }
+            .launchIn(lifecycleScope)
+    }
+
+
+    private fun setupClickListeners() {
+        binding.post.action.likeButton.setOnClickListener { viewModel.like() }
+        binding.post.action.shareButton.setOnClickListener { viewModel.share() }
+        binding.post.header.moreButton.setOnClickListener { viewModel.more() }
+    }
+
+    private fun bindPost(binding: PostBinding, post: Post) {
+        val header = binding.header
+        val action = binding.action
+
+        binding.contentImage.visibility = View.VISIBLE
+        header.monogramText.visibility = View.VISIBLE
+        header.username.text = post.author
+
+        header.monogram.load(post.authorAvatar) {
+            listener(onSuccess = { _, _ -> header.monogramText.visibility = View.GONE })
         }
 
         when (post.attachment?.type) {
-            AttachmentType.IMAGE -> {
-                binding.contentImage.apply {
-                    load(post.attachment.url) {
-                        listener(
-                            onSuccess = { _, _ ->
-                                binding.contentImage.visibility = View.VISIBLE
-                            },
-                            onError = { _, _ ->
-                                binding.contentImage.visibility = View.GONE
-                            }
-                        )
-                    }
-                }
+            AttachmentType.IMAGE -> binding.contentImage.load(post.attachment.url) {
+                listener(
+                    onSuccess = { _, _ -> binding.contentImage.visibility = View.VISIBLE },
+                    onError = { _, _ -> binding.contentImage.visibility = View.GONE }
+                )
             }
 
-            AttachmentType.VIDEO -> {
-            }
-
-            AttachmentType.AUDIO -> {
-            }
-
-            null -> {
+            AttachmentType.VIDEO -> binding.contentVideo.visibility = View.VISIBLE
+            AttachmentType.AUDIO, null -> {
                 binding.contentImage.visibility = View.GONE
                 binding.contentVideo.visibility = View.GONE
             }
         }
 
-        binding.header.monogramText.text = post.author.take(1)
-        binding.header.datePublished.text = post.published
+        header.monogramText.text = post.author.firstOrNull()?.toString() ?: ""
+        header.datePublished.text = post.published
         binding.contentText.text = post.content
 
-        post.likedByMe.let {
-            binding.action.likeButton.isSelected = it
-            binding.action.likeButton.text = if (it) "1" else "0"
-        }
+        action.likeButton.isSelected = post.likedByMe
+        action.likeButton.text = if (post.likedByMe) "1" else "0"
     }
 }
