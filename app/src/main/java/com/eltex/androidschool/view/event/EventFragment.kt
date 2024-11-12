@@ -16,7 +16,6 @@ import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
-import com.eltex.androidschool.utils.toastObserve
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -56,7 +55,7 @@ class EventFragment : Fragment() {
             .launchIn(lifecycleScope)
 
         binding.event.playButton.setOnClickListener {
-//            this.toast(R.string.not_implemented, true)
+            viewModel.play()
         }
 
         binding.event.action.likeButton.setOnClickListener {
@@ -72,7 +71,7 @@ class EventFragment : Fragment() {
         }
 
         binding.event.header.moreButton.setOnClickListener {
-//            this.toast(R.string.not_implemented, true)
+            viewModel.more()
         }
     }
 
