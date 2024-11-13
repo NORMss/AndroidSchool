@@ -25,8 +25,8 @@ class PostViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun like() {
-        postRepository.like()
+    fun likeById(id: Long) {
+        postRepository.likeById(id)
     }
 
     fun more() {

@@ -4,6 +4,6 @@ import com.eltex.androidschool.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
-    fun getPost(): Flow<Post>
-    fun like()
+    fun getPost(): Flow<List<Post>>
+    fun likeById(id: Long)
 }
