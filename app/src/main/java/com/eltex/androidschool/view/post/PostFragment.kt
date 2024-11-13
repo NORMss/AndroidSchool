@@ -9,12 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
-import coil.load
 import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
-import com.eltex.androidschool.databinding.PostBinding
-import com.eltex.androidschool.domain.model.AttachmentType
-import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.view.common.ObserveAsEvents
 import com.eltex.androidschool.view.post.adapter.PostAdapter
 import kotlinx.coroutines.flow.launchIn
@@ -43,6 +39,9 @@ class PostFragment : Fragment() {
     ): View {
         _binding = FragmentPostBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        _binding?.posts?.adapter = adapter
+
         return view
     }
 
@@ -68,11 +67,7 @@ class PostFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
-                state.post?.let {
-                    binding.root.visibility = View.VISIBLE
-                } ?: run {
-                    binding.root.visibility = View.GONE
-                }
+                adapter.posts = state.posts
 
                 state.toast?.let { toastData ->
                     ObserveAsEvents(toast = toastData, activity = activity)

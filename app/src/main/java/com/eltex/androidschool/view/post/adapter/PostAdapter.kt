@@ -11,7 +11,11 @@ class PostAdapter(
     private val clickShareListener: (post: Post) -> Unit,
     private val clickMoreListener: (post: Post) -> Unit,
 ) : RecyclerView.Adapter<PostViewHolder>() {
-    val posts: List<Post> = emptyList()
+    var posts: List<Post> = emptyList()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

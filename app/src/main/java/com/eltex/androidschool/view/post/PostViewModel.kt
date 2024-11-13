@@ -20,7 +20,7 @@ class PostViewModel(
     init {
         postRepository.getPost().onEach { post ->
             _state.update { state ->
-                state.copy(post = post)
+                state.copy(posts = post)
             }
         }.launchIn(viewModelScope)
     }
