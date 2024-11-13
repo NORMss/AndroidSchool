@@ -16,12 +16,25 @@ import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.view.common.ObserveAsEvents
+import com.eltex.androidschool.view.post.adapter.PostAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class PostFragment : Fragment() {
     private var _binding: FragmentPostBinding? = null
     private val binding get() = _binding!!
+
+    val adapter = PostAdapter(
+        clickLikeListener = {
+            viewModel.likeById(it.id)
+        },
+        clickMoreListener = {
+            viewModel.more()
+        },
+        clickShareListener = {
+            viewModel.share()
+        }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,7 +57,6 @@ class PostFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeViewModelState()
-        setupClickListeners()
     }
 
     override fun onDestroyView() {
@@ -57,7 +69,6 @@ class PostFragment : Fragment() {
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
                 state.post?.let {
-                    bindPost(binding.post, it)
                     binding.root.visibility = View.VISIBLE
                 } ?: run {
                     binding.root.visibility = View.GONE
@@ -68,47 +79,5 @@ class PostFragment : Fragment() {
                 }
             }
             .launchIn(lifecycleScope)
-    }
-
-
-    private fun setupClickListeners() {
-        binding.post.action.likeButton.setOnClickListener { viewModel.like() }
-        binding.post.action.shareButton.setOnClickListener { viewModel.share() }
-        binding.post.header.moreButton.setOnClickListener { viewModel.more() }
-    }
-
-    private fun bindPost(binding: PostBinding, post: Post) {
-        val header = binding.header
-        val action = binding.action
-
-        binding.contentImage.visibility = View.VISIBLE
-        header.monogramText.visibility = View.VISIBLE
-        header.username.text = post.author
-
-        header.monogram.load(post.authorAvatar) {
-            listener(onSuccess = { _, _ -> header.monogramText.visibility = View.GONE })
-        }
-
-        when (post.attachment?.type) {
-            AttachmentType.IMAGE -> binding.contentImage.load(post.attachment.url) {
-                listener(
-                    onSuccess = { _, _ -> binding.contentImage.visibility = View.VISIBLE },
-                    onError = { _, _ -> binding.contentImage.visibility = View.GONE }
-                )
-            }
-
-            AttachmentType.VIDEO -> binding.contentVideo.visibility = View.VISIBLE
-            AttachmentType.AUDIO, null -> {
-                binding.contentImage.visibility = View.GONE
-                binding.contentVideo.visibility = View.GONE
-            }
-        }
-
-        header.monogramText.text = post.author.firstOrNull()?.toString() ?: ""
-        header.datePublished.text = post.published
-        binding.contentText.text = post.content
-
-        action.likeButton.isSelected = post.likedByMe
-        action.likeButton.text = if (post.likedByMe) "1" else "0"
     }
 }
