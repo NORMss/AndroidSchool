@@ -20,7 +20,7 @@ class PostFragment : Fragment() {
     private var _binding: FragmentPostBinding? = null
     private val binding get() = _binding!!
 
-    val adapter = PostAdapter(
+    private val adapter = PostAdapter(
         clickLikeListener = {
             viewModel.likeById(it.id)
         },
@@ -67,7 +67,7 @@ class PostFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
-                adapter.posts = state.posts
+                adapter.submitList(state.posts)
 
                 state.toast?.let { toastData ->
                     ObserveAsEvents(toast = toastData, activity = activity)

@@ -43,7 +43,7 @@ class InMemoryEventRepository : EventRepository {
                     )
                 )
             )
-        }
+        }.reversed()
     )
 
     override fun getEvents(): Flow<List<Event>> {

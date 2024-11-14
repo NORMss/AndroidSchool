@@ -30,7 +30,7 @@ class InMemoryPostRepository : PostRepository {
                     type = AttachmentType.IMAGE,
                 )
             )
-        }
+        }.reversed()
     )
 
     override fun getPost(): Flow<List<Post>> =

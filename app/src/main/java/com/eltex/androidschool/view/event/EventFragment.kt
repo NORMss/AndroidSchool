@@ -12,7 +12,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.data.repository.InMemoryEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.view.common.ObserveAsEvents
-import com.eltex.androidschool.view.post.adapter.EventAdapter
+import com.eltex.androidschool.view.event.adapter.EventAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -20,7 +20,7 @@ class EventFragment : Fragment() {
     private var _binding: FragmentEventBinding? = null
     private val binding get() = _binding!!
 
-    var adapter = EventAdapter(
+    private var adapter = EventAdapter(
         clickMoreListener = {
             viewModel.more()
         },
@@ -71,7 +71,7 @@ class EventFragment : Fragment() {
             .onEach { state ->
                 state.events.isNotEmpty().let {
                     if (it) {
-                        adapter.events = state.events
+                        adapter.submitList(state.events)
                         binding.root.visibility = View.VISIBLE
                     } else {
                         binding.root.visibility = View.GONE
