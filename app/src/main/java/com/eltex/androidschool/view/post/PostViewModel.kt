@@ -18,9 +18,9 @@ class PostViewModel(
     val state = _state.asStateFlow()
 
     init {
-        postRepository.getPost().onEach { post ->
+        postRepository.getPost().onEach { posts ->
             _state.update { state ->
-                state.copy(post = post)
+                state.copy(posts = posts)
             }
         }.launchIn(viewModelScope)
     }

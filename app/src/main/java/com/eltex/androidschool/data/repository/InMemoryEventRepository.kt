@@ -43,16 +43,16 @@ class InMemoryEventRepository : EventRepository {
                     )
                 )
             )
-        }
+        }.reversed()
     )
 
-    override fun getEvent(): Flow<List<Event>> {
+    override fun getEvents(): Flow<List<Event>> {
         return _state.asStateFlow()
     }
 
     override fun likeById(id: Long) {
-        _state.update { posts ->
-            posts.map {
+        _state.update { event ->
+            event.map {
                 if (it.id == id) {
                     it.copy(
                         likedByMe = !it.likedByMe

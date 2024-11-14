@@ -34,5 +34,12 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
                 binding.contentVideo.visibility = View.GONE
             }
         }
+
+        header.monogramText.text = post.author.firstOrNull()?.toString() ?: ""
+        header.datePublished.text = post.published
+        binding.contentText.text = post.content
+
+        action.likeButton.isSelected = post.likedByMe
+        action.likeButton.text = if (post.likedByMe) "1" else "0"
     }
 }
