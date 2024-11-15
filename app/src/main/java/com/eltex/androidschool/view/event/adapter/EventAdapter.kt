@@ -22,13 +22,29 @@ class EventAdapter(
 
         setupClickListeners(binding, viewHolder)
 
-        return EventViewHolder(binding)
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
+    override fun onBindViewHolder(
+        holder: EventViewHolder,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position)
+        } else {
+            payloads.forEach {
+                if (it is EventPayload) {
+                    holder.bind(it)
+                }
+            }
+        }
+
+    }
 
     private fun setupClickListeners(binding: EventBinding, viewHolder: EventViewHolder) {
         binding.action.likeButton.setOnClickListener { clickLikeListener(getItem(viewHolder.adapterPosition)) }

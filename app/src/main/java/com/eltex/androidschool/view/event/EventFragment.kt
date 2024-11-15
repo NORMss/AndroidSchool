@@ -9,9 +9,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.InMemoryEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.view.common.ObserveAsEvents
+import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.event.adapter.EventAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -55,6 +57,8 @@ class EventFragment : Fragment() {
         val view = binding.root
 
         _binding?.events?.adapter = adapter
+
+        _binding?.events?.addItemDecoration(OffsetDecoration(resources.getDimensionPixelSize(R.dimen.list_offset)))
 
         return view
     }
