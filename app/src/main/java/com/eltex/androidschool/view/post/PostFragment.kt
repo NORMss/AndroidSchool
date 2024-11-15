@@ -9,9 +9,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.view.common.ObserveAsEvents
+import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.post.adapter.PostAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -41,6 +43,8 @@ class PostFragment : Fragment() {
         val view = binding.root
 
         _binding?.posts?.adapter = adapter
+
+        _binding?.posts?.addItemDecoration(OffsetDecoration(resources.getDimensionPixelSize(R.dimen.list_offset)))
 
         return view
     }

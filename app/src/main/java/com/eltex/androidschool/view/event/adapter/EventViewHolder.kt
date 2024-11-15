@@ -12,7 +12,6 @@ import com.eltex.androidschool.domain.model.EventType
 class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.root) {
     fun bind(event: Event) {
         val header = binding.header
-        val action = binding.action
 
         header.monogramText.visibility = View.VISIBLE
         header.username.text = event.author
@@ -52,10 +51,31 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
             visibility = if (event.link != null) View.VISIBLE else View.GONE
         }
 
-        action.likeButton.isSelected = event.likedByMe
-        action.likeButton.text = if (event.likedByMe) "1" else "0"
+        updateLikedByMe(event.likedByMe)
 
-        binding.participate.isSelected = event.participatedByMe
-        binding.participate.text = if (event.participatedByMe) "1" else "0"
+        updateParticipateByMe(event.participatedByMe)
+    }
+
+    fun bind(eventPayload: EventPayload) {
+        eventPayload.likedByMe?.let {
+            updateLikedByMe(it)
+        }
+        eventPayload.participatedByMe?.let {
+            updateParticipateByMe(it)
+        }
+    }
+
+    private fun updateLikedByMe(
+        likedBeMe: Boolean,
+    ) {
+        binding.action.likeButton.isSelected = likedBeMe
+        binding.action.likeButton.text = if (likedBeMe) "1" else "0"
+    }
+
+    private fun updateParticipateByMe(
+        participateByMe: Boolean,
+    ) {
+        binding.participate.isSelected = participateByMe
+        binding.participate.text = if (participateByMe) "1" else "0"
     }
 }

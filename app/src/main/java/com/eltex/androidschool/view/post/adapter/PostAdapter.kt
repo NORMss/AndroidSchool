@@ -20,7 +20,23 @@ class PostAdapter(
 
         setupClickListeners(binding, viewHolder)
 
-        return PostViewHolder(binding)
+        return viewHolder
+    }
+
+    override fun onBindViewHolder(
+        holder: PostViewHolder,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position)
+        } else {
+            payloads.forEach {
+                if (it is PostPayload) {
+                    holder.bind(it)
+                }
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {

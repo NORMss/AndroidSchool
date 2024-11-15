@@ -10,7 +10,6 @@ import com.eltex.androidschool.domain.model.Post
 class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root) {
     fun bind(post: Post) {
         val header = binding.header
-        val action = binding.action
 
         binding.contentImage.visibility = View.VISIBLE
         header.monogramText.visibility = View.VISIBLE
@@ -39,7 +38,17 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
         header.datePublished.text = post.published
         binding.contentText.text = post.content
 
-        action.likeButton.isSelected = post.likedByMe
-        action.likeButton.text = if (post.likedByMe) "1" else "0"
+        updateLikedByMe(post.likedByMe)
+    }
+
+    fun bind(payload: PostPayload) {
+        payload.likedByMe?.let { likedByMe ->
+            updateLikedByMe(likedByMe)
+        }
+    }
+
+    private fun updateLikedByMe(likedByMe: Boolean) {
+        binding.action.likeButton.isSelected = likedByMe
+        binding.action.likeButton.text = if (likedByMe) "1" else "0"
     }
 }
