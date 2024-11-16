@@ -1,5 +1,7 @@
 package com.eltex.androidschool.domain.model
 
+import com.eltex.androidschool.utils.datatime.DateSeparators
+
 data class Event(
     val id: Long,
     val authorId: Long,
@@ -8,7 +10,7 @@ data class Event(
     val authorAvatar: String?,
     val content: String,
     val datetime: String,
-    val published: String,
+    override val published: String,
     val coords: Coordinates?,
     val type: EventType,
     val likeOwnerIds: Set<Long>,
@@ -19,4 +21,4 @@ data class Event(
     val attachment: Attachment?,
     val link: String?,
     val users: List<UserPreview>
-)
+) : DateSeparators.Publishable

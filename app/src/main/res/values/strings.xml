@@ -14,4 +14,6 @@
     <string name="open_post">Open Post</string>
     <string name="open_event">Open Event</string>
     <string name="screen_examples">Screen examples</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
 </resources>

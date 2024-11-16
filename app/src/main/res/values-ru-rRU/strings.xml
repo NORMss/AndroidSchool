@@ -8,4 +8,6 @@
     <string name="open_post">Открыть Публикацию</string>
     <string name="open_event">Открыть Мероприятие</string>
     <string name="screen_examples">Примеры экранов</string>
+    <string name="today">Сегодня</string>
+    <string name="yesterday">Вчера</string>
 </resources>
