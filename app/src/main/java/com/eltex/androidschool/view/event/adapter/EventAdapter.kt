@@ -35,7 +35,7 @@ class EventAdapter(
         payloads: List<Any>
     ) {
         if (payloads.isEmpty()) {
-            onBindViewHolder(holder, position)
+            super.onBindViewHolder(holder, position, payloads)
         } else {
             payloads.forEach {
                 if (it is EventPayload) {
@@ -43,7 +43,6 @@ class EventAdapter(
                 }
             }
         }
-
     }
 
     private fun setupClickListeners(binding: EventBinding, viewHolder: EventViewHolder) {

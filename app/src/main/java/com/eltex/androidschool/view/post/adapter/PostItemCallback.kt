@@ -1,9 +1,9 @@
 package com.eltex.androidschool.view.post.adapter
 
-import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import com.eltex.androidschool.domain.model.Post
 
-class PostItemCallback : DiffUtil.ItemCallback<Post>() {
+class PostItemCallback : ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean = oldItem.id == newItem.id
 
     override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean = oldItem == newItem

@@ -15,6 +15,7 @@ import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.view.common.ObserveAsEvents
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.post.adapter.PostAdapter
+import com.eltex.androidschool.view.post.adapter.PostByDateAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -22,7 +23,7 @@ class PostFragment : Fragment() {
     private var _binding: FragmentPostBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter = PostAdapter(
+    private val adapter = PostByDateAdapter(
         clickLikeListener = {
             viewModel.likeById(it.id)
         },
@@ -71,7 +72,7 @@ class PostFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
-                adapter.submitList(state.posts)
+                adapter.submitList(state.postsByDate)
 
                 state.toast?.let { toastData ->
                     ObserveAsEvents(toast = toastData, activity = activity)

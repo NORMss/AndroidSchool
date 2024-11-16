@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 
 class InMemoryPostRepository : PostRepository {
     private val _state = MutableStateFlow(
-        List(10) {
+        List(4) {
             Post(
                 id = 1L + it,
                 authorId = 1001L + it,
@@ -20,7 +20,7 @@ class InMemoryPostRepository : PostRepository {
                 authorJob = "Android Developer",
                 authorAvatar = "https://avatars.githubusercontent.com/u/47896309?v=4",
                 content = "$it Сегодня поделюсь своим опытом работы с Jetpack Compose!",
-                published = "2024-11-05T14:30:00",
+                published = "2024-11-${16 - it}T10:00:00Z",
                 coordinates = Coordinates(lat = 55.7558, long = 37.6176),
                 link = "https://example.com/article",
                 mentionedMe = true,
