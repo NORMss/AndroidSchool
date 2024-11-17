@@ -1,8 +1,7 @@
 # Project AndroidSchool 
-**Part 15-listeners**
+**Part 17-recyclerview**
 ## Demo Program
 
-![15-listeners_demo](https://github.com/user-attachments/assets/2041f9d9-9944-4068-9fc5-18c006ae20b2)
-
+![prew_recycler](https://github.com/user-attachments/assets/9808cd5d-be5f-42cf-955f-6c06fd799360)
 
 </details>
