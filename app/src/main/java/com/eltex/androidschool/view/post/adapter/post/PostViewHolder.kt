@@ -1,4 +1,4 @@
-package com.eltex.androidschool.view.post.adapter
+package com.eltex.androidschool.view.post.adapter.post
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView.ViewHolder

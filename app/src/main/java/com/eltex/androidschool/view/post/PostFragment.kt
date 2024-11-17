@@ -12,10 +12,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
+import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.view.common.ObserveAsEvents
 import com.eltex.androidschool.view.common.OffsetDecoration
-import com.eltex.androidschool.view.post.adapter.PostAdapter
-import com.eltex.androidschool.view.post.adapter.PostByDateAdapter
+import com.eltex.androidschool.view.post.adapter.postbydate.PostByDateAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -45,7 +45,12 @@ class PostFragment : Fragment() {
 
         _binding?.posts?.adapter = adapter
 
-        _binding?.posts?.addItemDecoration(OffsetDecoration(resources.getDimensionPixelSize(R.dimen.list_offset)))
+        _binding?.posts?.addItemDecoration(
+            OffsetDecoration(
+                horizontalOffset = resources.getDimensionPixelSize(R.dimen.list_offset),
+                verticalOffset = resources.getDimensionPixelSize(R.dimen.list_offset),
+            )
+        )
 
         return view
     }
@@ -53,7 +58,10 @@ class PostFragment : Fragment() {
     private val viewModel by viewModels<PostViewModel> {
         viewModelFactory {
             addInitializer(PostViewModel::class) {
-                PostViewModel(InMemoryPostRepository())
+                PostViewModel(
+                    postRepository = InMemoryPostRepository(),
+                    resourceManager = AndroidResourceManager(binding.root.context),
+                )
             }
         }
     }
@@ -72,7 +80,14 @@ class PostFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
-                adapter.submitList(state.postsByDate)
+                state.posts.isNotEmpty().let {
+                    if (it) {
+                        adapter.submitList(state.postsByDate)
+                        binding.root.visibility = View.VISIBLE
+                    } else {
+                        binding.root.visibility = View.GONE
+                    }
+                }
 
                 state.toast?.let { toastData ->
                     ObserveAsEvents(toast = toastData, activity = activity)

@@ -1,4 +1,4 @@
-package com.eltex.androidschool.view.post.adapter
+package com.eltex.androidschool.view.post.adapter.post
 
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import com.eltex.androidschool.domain.model.Post

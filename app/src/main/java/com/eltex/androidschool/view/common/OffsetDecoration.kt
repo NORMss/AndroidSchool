@@ -7,17 +7,19 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 
 class OffsetDecoration(
-    @Px
-    private val offset: Int,
+    @Px private val horizontalOffset: Int,
+    @Px private val verticalOffset: Int
 ) : ItemDecoration() {
+
     override fun getItemOffsets(
         outRect: Rect,
         view: View,
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        outRect.top += offset
-        outRect.left += offset
-        outRect.right += offset
+        outRect.top += verticalOffset
+        outRect.bottom += verticalOffset
+        outRect.left += horizontalOffset
+        outRect.right += horizontalOffset
     }
 }

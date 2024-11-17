@@ -1,6 +1,5 @@
-package com.eltex.androidschool.view.post.adapter
+package com.eltex.androidschool.view.post.adapter.postbydate
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -21,8 +20,14 @@ class PostByDateAdapter(
     ): PostByDateViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = FragmentPostBinding.inflate(layoutInflater, parent, false)
+        val viewHolder = PostByDateViewHolder(
+            clickLikeListener = clickLikeListener,
+            clickShareListener = clickShareListener,
+            clickMoreListener = clickMoreListener,
+            binding = binding,
+        )
 
-        return PostByDateViewHolder(binding)
+        return viewHolder
     }
 
     override fun onBindViewHolder(

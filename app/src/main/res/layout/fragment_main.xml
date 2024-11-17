@@ -17,7 +17,6 @@
         app:layout_constraintEnd_toEndOf="@id/openPost"
         app:layout_constraintStart_toStartOf="@id/openPost" />
 
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/openPost"
         android:layout_width="wrap_content"
