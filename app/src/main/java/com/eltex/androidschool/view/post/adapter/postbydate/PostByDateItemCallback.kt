@@ -1,4 +1,4 @@
-package com.eltex.androidschool.view.post.adapter
+package com.eltex.androidschool.view.post.adapter.postbydate
 
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import com.eltex.androidschool.domain.model.Post
@@ -21,6 +21,7 @@ class PostByDateItemCallback : ItemCallback<DateSeparators.GroupByDate<Post>>() 
     ): Any? {
         return PostByDatePayload(
             date = newItem.date.takeIf { it != oldItem.date },
+            items = newItem.items.takeIf { it != oldItem.items }
         )
             .takeIf {
                 it.isNotEmpty()

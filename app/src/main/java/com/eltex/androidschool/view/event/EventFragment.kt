@@ -12,9 +12,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.InMemoryEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
+import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.view.common.ObserveAsEvents
 import com.eltex.androidschool.view.common.OffsetDecoration
-import com.eltex.androidschool.view.event.adapter.EventAdapter
+import com.eltex.androidschool.view.event.adapter.eventbydate.EventByDateAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -22,7 +23,7 @@ class EventFragment : Fragment() {
     private var _binding: FragmentEventBinding? = null
     private val binding get() = _binding!!
 
-    private var adapter = EventAdapter(
+    private var adapter = EventByDateAdapter(
         clickMoreListener = {
             viewModel.more()
         },
@@ -43,7 +44,10 @@ class EventFragment : Fragment() {
     private val viewModel by viewModels<EventViewModel> {
         viewModelFactory {
             addInitializer(EventViewModel::class) {
-                EventViewModel(InMemoryEventRepository())
+                EventViewModel(
+                    eventRepository = InMemoryEventRepository(),
+                    resourceManager = AndroidResourceManager(binding.root.context),
+                )
             }
         }
     }
@@ -58,7 +62,12 @@ class EventFragment : Fragment() {
 
         _binding?.events?.adapter = adapter
 
-        _binding?.events?.addItemDecoration(OffsetDecoration(resources.getDimensionPixelSize(R.dimen.list_offset)))
+        _binding?.events?.addItemDecoration(
+            OffsetDecoration(
+                horizontalOffset = binding.root.resources.getDimensionPixelSize(R.dimen.list_offset),
+                verticalOffset = binding.root.resources.getDimensionPixelSize(R.dimen.list_offset),
+            )
+        )
 
         return view
     }
@@ -75,7 +84,7 @@ class EventFragment : Fragment() {
             .onEach { state ->
                 state.events.isNotEmpty().let {
                     if (it) {
-                        adapter.submitList(state.events)
+                        adapter.submitList(state.eventsByDate)
                         binding.root.visibility = View.VISIBLE
                     } else {
                         binding.root.visibility = View.GONE

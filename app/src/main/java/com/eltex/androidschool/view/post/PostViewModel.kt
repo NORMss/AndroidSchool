@@ -1,12 +1,12 @@
 package com.eltex.androidschool.view.post
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.R
 import com.eltex.androidschool.domain.repository.PostRepository
 import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.utils.resourcemanager.ResourceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 
 class PostViewModel(
     private val postRepository: PostRepository,
+    private val resourceManager: ResourceManager,
 ) : ViewModel() {
     private val _state = MutableStateFlow(PostState())
     val state = _state.asStateFlow()
@@ -24,7 +25,7 @@ class PostViewModel(
             _state.update { state ->
                 state.copy(posts = posts)
             }
-            createMapPostByDate()
+            createPostsByDate()
         }.launchIn(viewModelScope)
     }
 
@@ -56,14 +57,16 @@ class PostViewModel(
         }
     }
 
-    private fun createMapPostByDate() {
+    private fun createPostsByDate() {
         if (_state.value.posts.isNotEmpty()) {
             _state.update {
                 it.copy(
-                    postsByDate = DateSeparators.groupByDate(_state.value.posts)
+                    postsByDate = DateSeparators.groupByDate(
+                        items = _state.value.posts,
+                        resourceManager = resourceManager,
+                    )
                 )
             }
-            Log.d("MyLog", _state.value.postsByDate.toString())
         }
     }
 }

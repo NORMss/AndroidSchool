@@ -10,10 +10,22 @@
     <string name="not_implemented">Not implemented</string>
     <string name="online">Online</string>
     <string name="offline">Offline</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="open_post">Open Post</string>
     <string name="open_event">Open Event</string>
     <string name="screen_examples">Screen examples</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+    <string name="blank" />
 </resources>

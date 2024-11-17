@@ -1,4 +1,4 @@
-package com.eltex.androidschool.view.event.adapter
+package com.eltex.androidschool.view.event.adapter.event
 
 data class EventPayload(
     val likedByMe: Boolean? = null,

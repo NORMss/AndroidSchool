@@ -12,6 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:fontFamily="@font/roboto_medium"
+        android:stateListAnimator="@drawable/scale"
         android:textSize="14sp"
         app:icon="@drawable/like_button_selector"
         app:layout_constraintStart_toStartOf="parent"

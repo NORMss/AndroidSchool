@@ -3,4 +3,5 @@
     <dimen name="play_size">48dp</dimen>
     <dimen name="monogram_size">40dp</dimen>
     <dimen name="list_offset">8dp</dimen>
+    <dimen name="zero">0dp</dimen>
 </resources>

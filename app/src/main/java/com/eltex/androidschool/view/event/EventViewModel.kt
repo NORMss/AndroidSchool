@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.R
 import com.eltex.androidschool.domain.repository.EventRepository
+import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.utils.resourcemanager.ResourceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.update
 
 class EventViewModel(
     private val eventRepository: EventRepository,
+    private val resourceManager: ResourceManager,
 ) : ViewModel() {
     private val _state = MutableStateFlow(EventState())
     val state = _state.asStateFlow()
@@ -22,6 +25,7 @@ class EventViewModel(
             _state.update { state ->
                 state.copy(events = events)
             }
+            createPostsByDate()
         }.launchIn(viewModelScope)
     }
 
@@ -59,6 +63,19 @@ class EventViewModel(
             it.copy(
                 toast = Pair(res, short)
             )
+        }
+    }
+
+    private fun createPostsByDate() {
+        if (_state.value.events.isNotEmpty()) {
+            _state.update {
+                it.copy(
+                    eventsByDate = DateSeparators.groupByDate(
+                        items = _state.value.events,
+                        resourceManager = resourceManager,
+                    )
+                )
+            }
         }
     }
 }

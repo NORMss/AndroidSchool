@@ -1,4 +1,4 @@
-package com.eltex.androidschool.view.event.adapter
+package com.eltex.androidschool.view.event.adapter.event
 
 import androidx.recyclerview.widget.DiffUtil
 import com.eltex.androidschool.domain.model.Event
