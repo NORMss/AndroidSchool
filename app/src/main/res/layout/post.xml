@@ -68,17 +68,43 @@
             app:layout_constraintTop_toBottomOf="@+id/contentImage"
             tools:text="Слушайте, а как вы относитесь к тому, чтобы собраться большой компанией и поиграть в настолки? У меня есть несколько клевых игр, можем устроить вечер настолок! Пишите в лс или звоните" />
 
-        <include
-            android:id="@+id/action"
-            layout="@layout/action"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/likeButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="16dp"
+            android:fontFamily="@font/roboto_medium"
+            android:stateListAnimator="@drawable/scale"
+            android:textSize="14sp"
+            app:icon="@drawable/like_button_selector"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/contentText" />
+            app:layout_constraintTop_toBottomOf="@+id/contentText"
+            tools:text="2" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/shareButton"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            app:icon="@drawable/share"
+            app:layout_constraintStart_toEndOf="@id/likeButton"
+            app:layout_constraintTop_toTopOf="@id/likeButton" />
+
+        <!--        <include-->
+        <!--            android:id="@+id/action"-->
+        <!--            layout="@layout/action"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginHorizontal="16dp"-->
+        <!--            android:layout_marginVertical="16dp"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/contentText" />-->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

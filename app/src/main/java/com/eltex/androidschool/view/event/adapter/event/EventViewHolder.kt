@@ -72,8 +72,8 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
     private fun updateLikedByMe(
         likedBeMe: Boolean,
     ) {
-        binding.action.likeButton.isSelected = likedBeMe
-        binding.action.likeButton.text = if (likedBeMe) "1" else "0"
+        binding.likeButton.isSelected = likedBeMe
+        binding.likeButton.text = if (likedBeMe) "1" else "0"
     }
 
     private fun updateParticipateByMe(

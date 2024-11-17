@@ -53,7 +53,7 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
     }
 
     private fun updateLikedByMe(likedByMe: Boolean) {
-        binding.action.likeButton.isSelected = likedByMe
-        binding.action.likeButton.text = if (likedByMe) "1" else "0"
+        binding.likeButton.isSelected = likedByMe
+        binding.likeButton.text = if (likedByMe) "1" else "0"
     }
 }
