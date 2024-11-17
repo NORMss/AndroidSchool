@@ -8,6 +8,7 @@ import com.eltex.androidschool.databinding.EventBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
+import com.eltex.androidschool.utils.datatime.DateTimeStringFormater
 
 class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.root) {
     fun bind(event: Event) {
@@ -40,7 +41,7 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
         }
 
         header.monogramText.text = event.author.first().toString()
-        header.datePublished.text = event.published
+        header.datePublished.text = DateTimeStringFormater.dateTimeStringToString(event.published)
         binding.contentText.text = event.content
         binding.onlineStatus.text =
             itemView.context.getString(if (event.type == EventType.ONLINE) R.string.online else R.string.offline)
