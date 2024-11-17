@@ -46,8 +46,8 @@ class EventAdapter(
     }
 
     private fun setupClickListeners(binding: EventBinding, viewHolder: EventViewHolder) {
-        binding.action.likeButton.setOnClickListener { clickLikeListener(getItem(viewHolder.adapterPosition)) }
-        binding.action.shareButton.setOnClickListener { clickShareListener(getItem(viewHolder.adapterPosition)) }
+        binding.likeButton.setOnClickListener { clickLikeListener(getItem(viewHolder.adapterPosition)) }
+        binding.shareButton.setOnClickListener { clickShareListener(getItem(viewHolder.adapterPosition)) }
         binding.header.moreButton.setOnClickListener { clickMoreListener(getItem(viewHolder.adapterPosition)) }
         binding.play.setOnClickListener { clickPlayListener(getItem(viewHolder.adapterPosition)) }
         binding.participate.setOnClickListener { clickParticipateListener(getItem(viewHolder.adapterPosition)) }

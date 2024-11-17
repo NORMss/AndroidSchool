@@ -110,18 +110,44 @@
             app:layout_constraintTop_toBottomOf="@id/contentText"
             tools:text="https://m2.material.io/components/cards" />
 
-        <include
-            android:id="@+id/action"
-            layout="@layout/action"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <!--        <include-->
+        <!--            android:id="@+id/action"-->
+        <!--            layout="@layout/action"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginHorizontal="16dp"-->
+        <!--            android:layout_marginTop="32dp"-->
+        <!--            android:layout_marginBottom="16dp"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/link" />-->
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/likeButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginVertical="16dp"
+            android:fontFamily="@font/roboto_medium"
+            android:stateListAnimator="@drawable/scale"
+            android:textSize="14sp"
+            app:icon="@drawable/like_button_selector"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/link" />
+            app:layout_constraintTop_toBottomOf="@+id/link"
+            tools:text="2" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/shareButton"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            app:icon="@drawable/share"
+            app:layout_constraintStart_toEndOf="@id/likeButton"
+            app:layout_constraintTop_toTopOf="@id/likeButton" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/participate"
@@ -135,7 +161,7 @@
             android:visibility="visible"
             app:icon="@drawable/people_selector"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/action"
+            app:layout_constraintTop_toTopOf="@+id/likeButton"
             tools:text="12" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

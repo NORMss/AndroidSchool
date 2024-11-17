@@ -14,6 +14,7 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
     fun bind(event: Event) {
         val header = binding.header
 
+        binding.contentImage.visibility = View.VISIBLE
         header.monogramText.visibility = View.VISIBLE
         header.username.text = event.author
 
@@ -31,10 +32,12 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
 
             AttachmentType.AUDIO -> {
                 binding.play.visibility = View.VISIBLE
+                binding.contentImage.visibility = View.GONE
             }
 
             AttachmentType.VIDEO -> {}
             null -> {
+                binding.play.visibility = View.GONE
                 binding.contentImage.visibility = View.GONE
                 binding.play.visibility = View.GONE
             }
@@ -69,8 +72,8 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
     private fun updateLikedByMe(
         likedBeMe: Boolean,
     ) {
-        binding.action.likeButton.isSelected = likedBeMe
-        binding.action.likeButton.text = if (likedBeMe) "1" else "0"
+        binding.likeButton.isSelected = likedBeMe
+        binding.likeButton.text = if (likedBeMe) "1" else "0"
     }
 
     private fun updateParticipateByMe(
