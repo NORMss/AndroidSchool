@@ -14,6 +14,7 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
     fun bind(event: Event) {
         val header = binding.header
 
+        binding.contentImage.visibility = View.VISIBLE
         header.monogramText.visibility = View.VISIBLE
         header.username.text = event.author
 
@@ -31,10 +32,12 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
 
             AttachmentType.AUDIO -> {
                 binding.play.visibility = View.VISIBLE
+                binding.contentImage.visibility = View.GONE
             }
 
             AttachmentType.VIDEO -> {}
             null -> {
+                binding.play.visibility = View.GONE
                 binding.contentImage.visibility = View.GONE
                 binding.play.visibility = View.GONE
             }

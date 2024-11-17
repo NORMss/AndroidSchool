@@ -29,7 +29,11 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
             }
 
             AttachmentType.VIDEO -> binding.contentVideo.visibility = View.VISIBLE
-            AttachmentType.AUDIO, null -> {
+            AttachmentType.AUDIO -> {
+                binding.contentImage.visibility = View.GONE
+                binding.contentVideo.visibility = View.GONE
+            }
+            null -> {
                 binding.contentImage.visibility = View.GONE
                 binding.contentVideo.visibility = View.GONE
             }
