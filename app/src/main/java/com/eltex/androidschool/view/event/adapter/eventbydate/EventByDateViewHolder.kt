@@ -7,7 +7,7 @@ import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.utils.datatime.DateSeparators
-import com.eltex.androidschool.view.common.OffsetDecoration
+import com.eltex.androidschool.ui.OffsetDecoration
 import com.eltex.androidschool.view.event.adapter.event.EventAdapter
 
 class EventByDateViewHolder(

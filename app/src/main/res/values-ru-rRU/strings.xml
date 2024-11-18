@@ -23,4 +23,9 @@
     <string name="november">Ноября</string>
     <string name="december">Декабря</string>
     <string name="blank" />
+    <string name="app_not_found">Приложение не найдено</string>
+    <string name="new_post_title">Новый пост</string>
+    <string name="save_post">Сохранить пост</string>
+    <string name="text_is_empty">Отсуствует текст</string>
+    <string name="new_post">новый пост</string>
 </resources>

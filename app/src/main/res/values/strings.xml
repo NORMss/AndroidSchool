@@ -28,4 +28,9 @@
     <string name="november">November</string>
     <string name="december">December</string>
     <string name="blank" />
+    <string name="app_not_found">App not found</string>
+    <string name="new_post_title">New post</string>
+    <string name="save_post">Save post</string>
+    <string name="text_is_empty">Text is empty</string>
+    <string name="new_post">new post</string>
 </resources>
