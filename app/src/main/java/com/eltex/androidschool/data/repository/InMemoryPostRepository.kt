@@ -136,4 +136,21 @@ class InMemoryPostRepository : PostRepository {
             }
         }
     }
+
+    override fun deleteById(id: Long) {
+        _state.update { posts ->
+            posts.filter {
+                it.id != id
+            }
+        }
+    }
+
+    override fun addPost(post: Post) {
+        _state.update { posts ->
+            buildList(capacity = posts.size + 1) {
+                add(post)
+                addAll(posts)
+            }
+        }
+    }
 }

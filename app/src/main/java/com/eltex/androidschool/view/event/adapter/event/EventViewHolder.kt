@@ -48,7 +48,7 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
         binding.contentText.text = event.content
         binding.onlineStatus.text =
             itemView.context.getString(if (event.type == EventType.ONLINE) R.string.online else R.string.offline)
-        binding.datetime.text = event.datetime
+        binding.datetime.text = DateTimeStringFormater.dateTimeStringToString(event.datetime)
 
         binding.link.apply {
             text = event.link

@@ -7,7 +7,7 @@ import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.datatime.DateSeparators
-import com.eltex.androidschool.view.common.OffsetDecoration
+import com.eltex.androidschool.ui.OffsetDecoration
 import com.eltex.androidschool.view.post.adapter.post.PostAdapter
 
 class PostByDateViewHolder(

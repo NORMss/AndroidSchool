@@ -1,5 +1,6 @@
 package com.eltex.androidschool.view.post
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +13,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
+import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
-import com.eltex.androidschool.view.common.ObserveAsEvents
-import com.eltex.androidschool.view.common.OffsetDecoration
+import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.ui.ObserveAsEvents
+import com.eltex.androidschool.ui.OffsetDecoration
 import com.eltex.androidschool.view.post.adapter.postbydate.PostByDateAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -31,7 +34,7 @@ class PostFragment : Fragment() {
             viewModel.more()
         },
         clickShareListener = {
-            viewModel.share()
+            share(it)
         }
     )
 
@@ -94,5 +97,19 @@ class PostFragment : Fragment() {
                 }
             }
             .launchIn(lifecycleScope)
+    }
+
+    private fun share(it: Post) {
+        val intent = Intent.createChooser(
+            Intent(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_TEXT, it.content)
+                .setType("text/plain"),
+            null,
+        )
+
+        runCatching { startActivity(intent) }
+            .onFailure {
+                activity?.toast(R.string.app_not_found, false)
+            }
     }
 }

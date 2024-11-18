@@ -13,8 +13,8 @@ import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.InMemoryEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
-import com.eltex.androidschool.view.common.ObserveAsEvents
-import com.eltex.androidschool.view.common.OffsetDecoration
+import com.eltex.androidschool.ui.ObserveAsEvents
+import com.eltex.androidschool.ui.OffsetDecoration
 import com.eltex.androidschool.view.event.adapter.eventbydate.EventByDateAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
