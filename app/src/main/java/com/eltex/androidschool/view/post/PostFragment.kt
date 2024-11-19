@@ -106,8 +106,8 @@ class PostFragment : Fragment() {
     private val newPostLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                val content = result.data?.getStringExtra(Intent.EXTRA_TEXT)
-                content?.let { viewModel.addPost(it) }
+                val content = result.data?.getStringArrayListExtra(Intent.EXTRA_TEXT)
+                content?.let { viewModel.addPost(it[0], it[1]) }
             }
         }
 

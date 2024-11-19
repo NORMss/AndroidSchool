@@ -70,8 +70,8 @@ class PostViewModel(
         }
     }
 
-    fun addPost(textContent: String) {
-        postRepository.addPost(textContent)
+    fun addPost(textContent: String, contentImage: String?) {
+        postRepository.addPost(textContent, contentImage)
     }
 
     fun deletePost(id: Long) {

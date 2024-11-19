@@ -26,6 +26,8 @@ class EditPostActivity : AppCompatActivity() {
 
         val data = intent.getStringExtra(IntentPutExtra.KEY_POST)
 
+        setSupportActionBar(binding.toolbar)
+
         if (data != null) {
             val post = Json.decodeFromString<Post>(data)
 
@@ -48,6 +50,10 @@ class EditPostActivity : AppCompatActivity() {
                 }
 
                 true
+            }
+            binding.toolbar.setNavigationOnClickListener {
+                setResult(RESULT_CANCELED)
+                finish()
             }
         } else {
             setResult(RESULT_CANCELED)
