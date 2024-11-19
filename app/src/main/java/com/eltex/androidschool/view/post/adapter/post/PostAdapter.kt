@@ -1,18 +1,23 @@
 package com.eltex.androidschool.view.post.adapter.post
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.Post
 
 class PostAdapter(
-    private val clickLikeListener: (post: Post) -> Unit,
-    private val clickShareListener: (post: Post) -> Unit,
-    private val clickMoreListener: (post: Post) -> Unit,
+    private val postListener: PostListener,
 ) : ListAdapter<Post, PostViewHolder>(
     PostItemCallback()
 ) {
+    interface PostListener {
+        fun onLikeClicked(post: Post)
+        fun onShareClicked(post: Post)
+        fun onMoreClicked(post: Post, view: View)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = PostBinding.inflate(layoutInflater, parent, false)
@@ -44,8 +49,14 @@ class PostAdapter(
     }
 
     private fun setupClickListeners(binding: PostBinding, viewHolder: PostViewHolder) {
-        binding.likeButton.setOnClickListener { clickLikeListener(getItem(viewHolder.adapterPosition)) }
-        binding.shareButton.setOnClickListener { clickShareListener(getItem(viewHolder.adapterPosition)) }
-        binding.header.moreButton.setOnClickListener { clickMoreListener(getItem(viewHolder.adapterPosition)) }
+        binding.likeButton.setOnClickListener { postListener.onLikeClicked(getItem(viewHolder.adapterPosition)) }
+        binding.shareButton.setOnClickListener { postListener.onShareClicked(getItem(viewHolder.adapterPosition)) }
+        binding.header.moreButton.setOnClickListener {
+            postListener.onMoreClicked(
+                getItem(
+                    viewHolder.adapterPosition
+                ), it
+            )
+        }
     }
 }

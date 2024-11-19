@@ -3,14 +3,13 @@ package com.eltex.androidschool.view.post.adapter.postbydate
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.eltex.androidschool.databinding.FragmentPostBinding
+import com.eltex.androidschool.databinding.PostsByDateBinding
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.view.post.adapter.post.PostAdapter
 
 class PostByDateAdapter(
-    private val clickLikeListener: (post: Post) -> Unit,
-    private val clickShareListener: (post: Post) -> Unit,
-    private val clickMoreListener: (post: Post) -> Unit,
+    private val postListener: PostAdapter.PostListener,
 ) : ListAdapter<DateSeparators.GroupByDate<Post>, PostByDateViewHolder>(
     PostByDateItemCallback()
 ) {
@@ -19,11 +18,9 @@ class PostByDateAdapter(
         viewType: Int
     ): PostByDateViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = FragmentPostBinding.inflate(layoutInflater, parent, false)
+        val binding = PostsByDateBinding.inflate(layoutInflater, parent, false)
         val viewHolder = PostByDateViewHolder(
-            clickLikeListener = clickLikeListener,
-            clickShareListener = clickShareListener,
-            clickMoreListener = clickMoreListener,
+            postListener = postListener,
             binding = binding,
         )
 

@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface PostRepository {
     fun getPost(): Flow<List<Post>>
     fun likeById(id: Long)
-    fun deleteById(id: Long)
-    fun addPost(post: Post)
+    fun deletePostById(id: Long)
+    fun editPostById(id: Long, textContent: String)
+    fun addPost(textContent: String)
 }

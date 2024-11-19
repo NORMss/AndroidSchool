@@ -20,6 +20,8 @@ class NewPostActivity : AppCompatActivity() {
 
         EdgeToEdgeHelper.enableEdgeToEdge(findViewById(android.R.id.content))
 
+        handleIncomingIntent(binding)
+
         binding.toolbar.menu.findItem(R.id.save).setOnMenuItemClickListener {
             val contentText = binding.editText.text?.toString().orEmpty()
 
@@ -31,6 +33,17 @@ class NewPostActivity : AppCompatActivity() {
             }
 
             true
+        }
+    }
+
+    private fun handleIncomingIntent(binding: ActivityNewPostBinding) {
+        intent.apply {
+            if (action == Intent.ACTION_SEND && type == "text/plain") {
+                val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+                if (sharedText != null) {
+                    binding.editText.setText(sharedText)
+                }
+            }
         }
     }
 }

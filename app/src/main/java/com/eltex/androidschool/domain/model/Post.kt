@@ -1,7 +1,9 @@
 package com.eltex.androidschool.domain.model
 
 import com.eltex.androidschool.utils.datatime.DateSeparators
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Post(
     val id: Long,
     val authorId: Long,

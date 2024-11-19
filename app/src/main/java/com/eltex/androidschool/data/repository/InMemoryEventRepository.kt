@@ -11,13 +11,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
 
 class InMemoryEventRepository : EventRepository {
+    private var nextId = 0L
+    private var authorId = 1000L
     private val _state = MutableStateFlow(
         listOf(
             Event(
-                id = 1L,
-                authorId = 1001L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Анна Смирнова",
                 authorJob = "Android Developer",
                 authorAvatar = "https://randomuser.me/api/portraits/women/44.jpg",
@@ -41,8 +44,8 @@ class InMemoryEventRepository : EventRepository {
                 )
             ),
             Event(
-                id = 2L,
-                authorId = 1002L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Иван Петров",
                 authorJob = "Senior Android Developer",
                 authorAvatar = null,
@@ -66,8 +69,8 @@ class InMemoryEventRepository : EventRepository {
                 )
             ),
             Event(
-                id = 3L,
-                authorId = 1003L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Мария Кузнецова",
                 authorJob = "Middle Android Developer",
                 authorAvatar = "https://randomuser.me/api/portraits/women/33.jpg",
@@ -94,8 +97,8 @@ class InMemoryEventRepository : EventRepository {
                 )
             ),
             Event(
-                id = 4L,
-                authorId = 1004L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Дмитрий Иванов",
                 authorJob = "Junior Android Developer",
                 authorAvatar = null,
@@ -117,8 +120,8 @@ class InMemoryEventRepository : EventRepository {
                 users = listOf()
             ),
             Event(
-                id = 5L,
-                authorId = 1005L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Алексей Сидоров",
                 authorJob = "Android Lead",
                 authorAvatar = "https://randomuser.me/api/portraits/men/22.jpg",
@@ -171,6 +174,77 @@ class InMemoryEventRepository : EventRepository {
                     )
                 } else {
                     it
+                }
+            }
+        }
+    }
+
+    override fun addPost(textContent: String) {
+        _state.update { events ->
+            buildList(capacity = events.size + 1) {
+                add(
+                    Event(
+                        id = nextId++,
+                        authorId = authorId++,
+                        author = "Sergey Bezborodov",
+                        authorJob = "Junior Android Developer",
+                        authorAvatar = "https://avatars.githubusercontent.com/u/47896309?v=4",
+                        content = textContent,
+                        datetime = Clock.System.now().toString(),
+                        published = Clock.System.now().toString(),
+                        coords = Coordinates(
+                            lat = 54.9833,
+                            long = 82.8964,
+                        ),
+                        type = EventType.ONLINE,
+                        likeOwnerIds = emptySet(),
+                        likedByMe = false,
+                        speakerIds = emptySet(),
+                        participantsIds = emptySet(),
+                        participatedByMe = false,
+                        attachment = null,
+                        link = "https://github.com/NORMss",
+                        users = emptyList(),
+                    )
+                )
+            }
+        }
+    }
+
+    override fun deleteById(id: Long) {
+        _state.update { events ->
+            events.filter {
+                it.id != id
+            }
+        }
+    }
+
+    override fun editById(id: Long, textContent: String) {
+        _state.update { events ->
+            events.map { event ->
+                if (event.id == id) {
+                    Event(
+                        id = id,
+                        authorId = event.authorId,
+                        author = event.author,
+                        authorJob = event.authorJob,
+                        authorAvatar = event.authorAvatar,
+                        content = textContent,
+                        datetime = event.datetime,
+                        published = event.published,
+                        coords = event.coords,
+                        type = event.type,
+                        likeOwnerIds = event.likeOwnerIds,
+                        likedByMe = event.likedByMe,
+                        speakerIds = event.speakerIds,
+                        participantsIds = event.participantsIds,
+                        participatedByMe = event.participatedByMe,
+                        attachment = event.attachment,
+                        link = event.link,
+                        users = event.users,
+                    )
+                } else {
+                    event
                 }
             }
         }

@@ -18,7 +18,7 @@
         app:menu="@menu/new_post_menu"
         app:navigationIcon="?homeAsUpIndicator"
         app:navigationIconTint="?colorOnPrimary"
-        app:title="@string/new_post_title"
+        app:title="@string/edit_post_title"
         app:titleTextColor="?colorOnPrimary" />
 
     <EditText

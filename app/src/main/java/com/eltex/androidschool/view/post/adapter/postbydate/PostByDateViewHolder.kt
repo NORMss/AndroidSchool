@@ -4,23 +4,32 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.eltex.androidschool.R
-import com.eltex.androidschool.databinding.FragmentPostBinding
+import com.eltex.androidschool.databinding.PostsByDateBinding
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.datatime.DateSeparators
 import com.eltex.androidschool.ui.OffsetDecoration
 import com.eltex.androidschool.view.post.adapter.post.PostAdapter
 
 class PostByDateViewHolder(
-    clickLikeListener: (post: Post) -> Unit,
-    clickShareListener: (post: Post) -> Unit,
-    clickMoreListener: (post: Post) -> Unit,
-    private val binding: FragmentPostBinding,
+    private val postListener: PostAdapter.PostListener,
+    private val binding: PostsByDateBinding,
 ) : ViewHolder(binding.root) {
     private val viewPool = RecycledViewPool()
+
     private val postAdapter = PostAdapter(
-        clickLikeListener = clickLikeListener,
-        clickShareListener = clickShareListener,
-        clickMoreListener = clickMoreListener,
+        object : PostAdapter.PostListener {
+            override fun onLikeClicked(post: Post) {
+                postListener.onLikeClicked(post)
+            }
+
+            override fun onShareClicked(post: Post) {
+                postListener.onShareClicked(post)
+            }
+
+            override fun onMoreClicked(post: Post, view: View) {
+                postListener.onMoreClicked(post, view)
+            }
+        }
     )
 
     init {
