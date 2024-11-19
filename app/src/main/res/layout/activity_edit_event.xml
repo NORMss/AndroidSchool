@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.post.NewPostActivity">
+    tools:context=".activity.event.EditEventActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -18,7 +18,7 @@
         app:menu="@menu/new_post_menu"
         app:navigationIcon="?homeAsUpIndicator"
         app:navigationIconTint="?colorOnPrimary"
-        app:title="@string/edit_post_title"
+        app:title="@string/edit_event_title"
         app:titleTextColor="?colorOnPrimary" />
 
     <EditText

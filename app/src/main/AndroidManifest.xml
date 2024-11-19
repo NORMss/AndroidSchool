@@ -15,11 +15,27 @@
         android:theme="@style/Theme.AndroidSchool"
         tools:targetApi="31">
         <activity
-            android:name=".activity.EditPostActivity"
+            android:name=".activity.event.EditEventActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.NewPostActivity"
-            android:exported="true">
+            android:name=".activity.event.NewEventActivity"
+            android:exported="true"
+            android:label="@string/new_event_title">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <data android:mimeType="text/plain" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.post.EditPostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.post.NewPostActivity"
+            android:exported="true"
+            android:label="@string/new_post_title">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 

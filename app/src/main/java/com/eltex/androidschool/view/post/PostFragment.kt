@@ -14,8 +14,8 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
-import com.eltex.androidschool.activity.EditPostActivity
-import com.eltex.androidschool.activity.NewPostActivity
+import com.eltex.androidschool.activity.post.EditPostActivity
+import com.eltex.androidschool.activity.post.NewPostActivity
 import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post

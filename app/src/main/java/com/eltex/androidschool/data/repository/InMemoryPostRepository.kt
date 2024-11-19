@@ -149,7 +149,7 @@ class InMemoryPostRepository : PostRepository {
         }
     }
 
-    override fun addPost(textContent: String, contentImage: String?) {
+    override fun addPost(textContent: String, imageContent: String?) {
         _state.update { posts ->
             buildList(capacity = posts.size + 1) {
                 add(
@@ -168,7 +168,7 @@ class InMemoryPostRepository : PostRepository {
                         link = "https://github.com/NORMss/",
                         mentionedMe = false,
                         likedByMe = false,
-                        attachment = contentImage?.let { Attachment(it, AttachmentType.IMAGE) }
+                        attachment = imageContent?.let { Attachment(it, AttachmentType.IMAGE) }
                     ),
                 )
                 addAll(posts)

@@ -78,4 +78,16 @@ class EventViewModel(
             }
         }
     }
+
+    fun deleteEvent(id: Long) {
+        eventRepository.deleteById(id)
+    }
+
+    fun editEvent(id: Long, textContent: String) {
+        eventRepository.editById(id, textContent)
+    }
+
+    fun addEvent(textContent: String, imageContent: String?) {
+        eventRepository.addEvent(textContent, imageContent)
+    }
 }

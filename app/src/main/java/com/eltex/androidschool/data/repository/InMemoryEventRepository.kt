@@ -179,7 +179,7 @@ class InMemoryEventRepository : EventRepository {
         }
     }
 
-    override fun addPost(textContent: String) {
+    override fun addEvent(textContent: String, imageContent: String?) {
         _state.update { events ->
             buildList(capacity = events.size + 1) {
                 add(
@@ -202,11 +202,14 @@ class InMemoryEventRepository : EventRepository {
                         speakerIds = emptySet(),
                         participantsIds = emptySet(),
                         participatedByMe = false,
-                        attachment = null,
+                        attachment = imageContent?.let {
+                            Attachment(it, AttachmentType.IMAGE)
+                        },
                         link = "https://github.com/NORMss",
                         users = emptyList(),
                     )
                 )
+                addAll(events)
             }
         }
     }

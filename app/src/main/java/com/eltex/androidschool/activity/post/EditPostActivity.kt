@@ -1,4 +1,4 @@
-package com.eltex.androidschool.activity
+package com.eltex.androidschool.activity.post
 
 import android.content.Intent
 import android.os.Bundle
@@ -25,8 +25,6 @@ class EditPostActivity : AppCompatActivity() {
         EdgeToEdgeHelper.enableEdgeToEdge(findViewById(android.R.id.content))
 
         val data = intent.getStringExtra(IntentPutExtra.KEY_POST)
-
-        setSupportActionBar(binding.toolbar)
 
         if (data != null) {
             val post = Json.decodeFromString<Post>(data)

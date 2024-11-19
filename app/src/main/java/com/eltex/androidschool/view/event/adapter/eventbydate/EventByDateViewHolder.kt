@@ -11,20 +11,12 @@ import com.eltex.androidschool.ui.OffsetDecoration
 import com.eltex.androidschool.view.event.adapter.event.EventAdapter
 
 class EventByDateViewHolder(
-    clickLikeListener: (event: Event) -> Unit,
-    clickShareListener: (event: Event) -> Unit,
-    clickMoreListener: (event: Event) -> Unit,
-    clickPlayListener: (event: Event) -> Unit,
-    clickParticipateListener: (event: Event) -> Unit,
+    eventListener: EventAdapter.EventListener,
     private val binding: EventsByDateBinding,
 ) : ViewHolder(binding.root) {
     private val viewPool = RecycledViewPool()
     private val postAdapter = EventAdapter(
-        clickLikeListener = clickLikeListener,
-        clickShareListener = clickShareListener,
-        clickMoreListener = clickMoreListener,
-        clickPlayListener = clickPlayListener,
-        clickParticipateListener = clickParticipateListener,
+        eventListener = eventListener,
     )
 
     init {

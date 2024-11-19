@@ -1,4 +1,4 @@
-package com.eltex.androidschool.activity
+package com.eltex.androidschool.activity.post
 
 import android.content.Intent
 import android.os.Bundle
@@ -66,6 +66,11 @@ class NewPostActivity : AppCompatActivity() {
             }
 
             true
+        }
+
+        binding.toolbar.setNavigationOnClickListener {
+            setResult(RESULT_CANCELED)
+            finish()
         }
 
         binding.attachButton.setOnClickListener {
