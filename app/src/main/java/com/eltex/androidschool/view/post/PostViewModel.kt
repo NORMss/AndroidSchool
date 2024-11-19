@@ -69,4 +69,16 @@ class PostViewModel(
             }
         }
     }
+
+    fun addPost(textContent: String, imageContent: String?) {
+        postRepository.addPost(textContent, imageContent)
+    }
+
+    fun deletePost(id: Long) {
+        postRepository.deletePostById(id)
+    }
+
+    fun editPost(id: Long, textContent: String) {
+        postRepository.editPostById(id, textContent)
+    }
 }

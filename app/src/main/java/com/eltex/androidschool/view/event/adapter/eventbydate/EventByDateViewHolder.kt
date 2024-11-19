@@ -4,27 +4,19 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.eltex.androidschool.R
-import com.eltex.androidschool.databinding.FragmentEventBinding
+import com.eltex.androidschool.databinding.EventsByDateBinding
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.utils.datatime.DateSeparators
 import com.eltex.androidschool.ui.OffsetDecoration
 import com.eltex.androidschool.view.event.adapter.event.EventAdapter
 
 class EventByDateViewHolder(
-    clickLikeListener: (event: Event) -> Unit,
-    clickShareListener: (event: Event) -> Unit,
-    clickMoreListener: (event: Event) -> Unit,
-    clickPlayListener: (event: Event) -> Unit,
-    clickParticipateListener: (event: Event) -> Unit,
-    private val binding: FragmentEventBinding,
+    eventListener: EventAdapter.EventListener,
+    private val binding: EventsByDateBinding,
 ) : ViewHolder(binding.root) {
     private val viewPool = RecycledViewPool()
     private val postAdapter = EventAdapter(
-        clickLikeListener = clickLikeListener,
-        clickShareListener = clickShareListener,
-        clickMoreListener = clickMoreListener,
-        clickPlayListener = clickPlayListener,
-        clickParticipateListener = clickParticipateListener,
+        eventListener = eventListener,
     )
 
     init {

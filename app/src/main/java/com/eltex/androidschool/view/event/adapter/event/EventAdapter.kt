@@ -1,20 +1,25 @@
 package com.eltex.androidschool.view.event.adapter.event
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.eltex.androidschool.databinding.EventBinding
 import com.eltex.androidschool.domain.model.Event
 
 class EventAdapter(
-    private val clickLikeListener: (event: Event) -> Unit,
-    private val clickShareListener: (event: Event) -> Unit,
-    private val clickMoreListener: (event: Event) -> Unit,
-    private val clickPlayListener: (event: Event) -> Unit,
-    private val clickParticipateListener: (event: Event) -> Unit,
+    private val eventListener: EventListener,
 ) : ListAdapter<Event, EventViewHolder>(
     EventItemCallback()
 ) {
+    interface EventListener {
+        fun onLikeClicked(event: Event)
+        fun onShareClicked(event: Event)
+        fun onMoreClicked(event: Event, view: View)
+        fun onPlayClicked(event: Event)
+        fun onParticipateClicked(event: Event)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = EventBinding.inflate(layoutInflater, parent, false)
@@ -46,10 +51,23 @@ class EventAdapter(
     }
 
     private fun setupClickListeners(binding: EventBinding, viewHolder: EventViewHolder) {
-        binding.likeButton.setOnClickListener { clickLikeListener(getItem(viewHolder.adapterPosition)) }
-        binding.shareButton.setOnClickListener { clickShareListener(getItem(viewHolder.adapterPosition)) }
-        binding.header.moreButton.setOnClickListener { clickMoreListener(getItem(viewHolder.adapterPosition)) }
-        binding.play.setOnClickListener { clickPlayListener(getItem(viewHolder.adapterPosition)) }
-        binding.participate.setOnClickListener { clickParticipateListener(getItem(viewHolder.adapterPosition)) }
+        binding.likeButton.setOnClickListener { eventListener.onLikeClicked(getItem(viewHolder.adapterPosition)) }
+        binding.shareButton.setOnClickListener { eventListener.onShareClicked(getItem(viewHolder.adapterPosition)) }
+        binding.header.moreButton.setOnClickListener {
+            eventListener.onMoreClicked(
+                getItem(
+                    viewHolder.adapterPosition
+                ),
+                it,
+            )
+        }
+        binding.play.setOnClickListener { eventListener.onPlayClicked(getItem(viewHolder.adapterPosition)) }
+        binding.participate.setOnClickListener {
+            eventListener.onParticipateClicked(
+                getItem(
+                    viewHolder.adapterPosition
+                )
+            )
+        }
     }
 }

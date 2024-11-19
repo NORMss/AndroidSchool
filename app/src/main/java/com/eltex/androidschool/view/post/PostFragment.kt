@@ -1,40 +1,53 @@
 package com.eltex.androidschool.view.post
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
+import com.eltex.androidschool.activity.post.EditPostActivity
+import com.eltex.androidschool.activity.post.NewPostActivity
 import com.eltex.androidschool.data.repository.InMemoryPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
-import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.ui.ObserveAsEvents
 import com.eltex.androidschool.ui.OffsetDecoration
+import com.eltex.androidschool.utils.constants.IntentPutExtra
+import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
+import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.post.adapter.postbydate.PostByDateAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class PostFragment : Fragment() {
     private var _binding: FragmentPostBinding? = null
     private val binding get() = _binding!!
 
     private val adapter = PostByDateAdapter(
-        clickLikeListener = {
-            viewModel.likeById(it.id)
-        },
-        clickMoreListener = {
-            viewModel.more()
-        },
-        clickShareListener = {
-            share(it)
+        object : PostAdapter.PostListener {
+            override fun onLikeClicked(post: Post) {
+                viewModel.likeById(post.id)
+            }
+
+            override fun onShareClicked(post: Post) {
+                share(post)
+            }
+
+            override fun onMoreClicked(post: Post, view: View) {
+                popupMenuLogic(post, view)
+            }
         }
     )
 
@@ -44,29 +57,22 @@ class PostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPostBinding.inflate(inflater, container, false)
-        val view = binding.root
 
-        _binding?.posts?.adapter = adapter
+        binding.postsByDate.posts.adapter = adapter
 
-        _binding?.posts?.addItemDecoration(
+        binding.newPost.setOnClickListener {
+            val intent = Intent(requireContext(), NewPostActivity::class.java)
+            newPostLauncher.launch(intent)
+        }
+
+        binding.postsByDate.posts.addItemDecoration(
             OffsetDecoration(
                 horizontalOffset = resources.getDimensionPixelSize(R.dimen.list_offset),
                 verticalOffset = resources.getDimensionPixelSize(R.dimen.list_offset),
             )
         )
 
-        return view
-    }
-
-    private val viewModel by viewModels<PostViewModel> {
-        viewModelFactory {
-            addInitializer(PostViewModel::class) {
-                PostViewModel(
-                    postRepository = InMemoryPostRepository(),
-                    resourceManager = AndroidResourceManager(binding.root.context),
-                )
-            }
-        }
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -83,13 +89,11 @@ class PostFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
-                state.posts.isNotEmpty().let {
-                    if (it) {
-                        adapter.submitList(state.postsByDate)
-                        binding.root.visibility = View.VISIBLE
-                    } else {
-                        binding.root.visibility = View.GONE
-                    }
+                if (state.posts.isNotEmpty()) {
+                    adapter.submitList(state.postsByDate)
+                    binding.root.visibility = View.VISIBLE
+                } else {
+                    binding.root.visibility = View.GONE
                 }
 
                 state.toast?.let { toastData ->
@@ -99,10 +103,66 @@ class PostFragment : Fragment() {
             .launchIn(lifecycleScope)
     }
 
-    private fun share(it: Post) {
+    private val newPostLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val content = result.data?.getStringArrayListExtra(Intent.EXTRA_TEXT)
+                content?.let { viewModel.addPost(it[0], it[1]) }
+            }
+        }
+
+    private val editPostLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data?.getStringExtra(Intent.EXTRA_TEXT)
+                data?.let {
+                    val post = Json.decodeFromString<Post>(data)
+                    println(post)
+                    viewModel.editPost(post.id, post.content)
+                }
+            }
+        }
+
+    private fun popupMenuLogic(post: Post, view: View) {
+        PopupMenu(view.context, view).apply {
+            inflate(R.menu.post_menu)
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.delete -> {
+                        viewModel.deletePost(post.id)
+                        true
+                    }
+
+                    R.id.edit -> {
+                        val intent = Intent(requireContext(), EditPostActivity::class.java).apply {
+                            putExtra(IntentPutExtra.KEY_POST, Json.encodeToString(post))
+                        }
+                        editPostLauncher.launch(intent)
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+            show()
+        }
+    }
+
+    private val viewModel by viewModels<PostViewModel> {
+        viewModelFactory {
+            addInitializer(PostViewModel::class) {
+                PostViewModel(
+                    postRepository = InMemoryPostRepository(),
+                    resourceManager = AndroidResourceManager(binding.root.context),
+                )
+            }
+        }
+    }
+
+    private fun share(post: Post) {
         val intent = Intent.createChooser(
             Intent(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_TEXT, it.content)
+                .putExtra(Intent.EXTRA_TEXT, post.content)
                 .setType("text/plain"),
             null,
         )

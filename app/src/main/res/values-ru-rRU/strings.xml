@@ -28,4 +28,11 @@
     <string name="save_post">Сохранить пост</string>
     <string name="text_is_empty">Отсуствует текст</string>
     <string name="new_post">новый пост</string>
+    <string name="delete">Удалить</string>
+    <string name="edit">Редактировать</string>
+    <string name="edit_post_title">Редактирование поста</string>
+    <string name="no_media_selected">Медиа не выбрано</string>
+    <string name="new_event_title">Новый ивент</string>
+    <string name="edit_event_title">Редактирование ивента</string>
+
 </resources>

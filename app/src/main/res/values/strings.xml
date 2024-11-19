@@ -33,4 +33,10 @@
     <string name="save_post">Save post</string>
     <string name="text_is_empty">Text is empty</string>
     <string name="new_post">new post</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="edit_post_title">Edit post</string>
+    <string name="no_media_selected">No media selected</string>
+    <string name="new_event_title">New event</string>
+    <string name="edit_event_title">Edit event</string>
 </resources>

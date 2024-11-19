@@ -9,13 +9,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
 
 class InMemoryPostRepository : PostRepository {
+    private var nextId = 0L
+    private var authorId = 1000L
+
     private val _state = MutableStateFlow(
         listOf(
             Post(
-                id = 1L,
-                authorId = 1001L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Анна Смирнова",
                 authorJob = "Android Developer",
                 authorAvatar = "https://randomuser.me/api/portraits/women/44.jpg",
@@ -28,8 +32,8 @@ class InMemoryPostRepository : PostRepository {
                 attachment = null
             ),
             Post(
-                id = 2L,
-                authorId = 1002L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Иван Петров",
                 authorJob = "Senior Android Developer",
                 authorAvatar = null,
@@ -45,8 +49,8 @@ class InMemoryPostRepository : PostRepository {
                 )
             ),
             Post(
-                id = 3L,
-                authorId = 1003L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Мария Кузнецова",
                 authorJob = "Middle Android Developer",
                 authorAvatar = "https://randomuser.me/api/portraits/women/33.jpg",
@@ -59,8 +63,8 @@ class InMemoryPostRepository : PostRepository {
                 attachment = null
             ),
             Post(
-                id = 4L,
-                authorId = 1004L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Дмитрий Иванов",
                 authorJob = "Junior Android Developer",
                 authorAvatar = null,
@@ -76,8 +80,8 @@ class InMemoryPostRepository : PostRepository {
                 )
             ),
             Post(
-                id = 5L,
-                authorId = 1005L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Алексей Сидоров",
                 authorJob = "Android Lead",
                 authorAvatar = "https://randomuser.me/api/portraits/men/22.jpg",
@@ -90,8 +94,8 @@ class InMemoryPostRepository : PostRepository {
                 attachment = null
             ),
             Post(
-                id = 6L,
-                authorId = 1006L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Ольга Морозова",
                 authorJob = "Android Developer",
                 authorAvatar = null,
@@ -104,8 +108,8 @@ class InMemoryPostRepository : PostRepository {
                 attachment = null
             ),
             Post(
-                id = 7L,
-                authorId = 1007L,
+                id = nextId++,
+                authorId = authorId++,
                 author = "Николай Чернов",
                 authorJob = "Senior Android Developer",
                 authorAvatar = "https://randomuser.me/api/portraits/men/35.jpg",
@@ -137,7 +141,7 @@ class InMemoryPostRepository : PostRepository {
         }
     }
 
-    override fun deleteById(id: Long) {
+    override fun deletePostById(id: Long) {
         _state.update { posts ->
             posts.filter {
                 it.id != id
@@ -145,11 +149,54 @@ class InMemoryPostRepository : PostRepository {
         }
     }
 
-    override fun addPost(post: Post) {
+    override fun addPost(textContent: String, imageContent: String?) {
         _state.update { posts ->
             buildList(capacity = posts.size + 1) {
-                add(post)
+                add(
+                    Post(
+                        id = nextId++,
+                        authorId = authorId++,
+                        author = "Sergey Bezborodov",
+                        authorJob = "Junior Android Developer",
+                        authorAvatar = "https://avatars.githubusercontent.com/u/47896309?v=4",
+                        content = textContent,
+                        published = Clock.System.now().toString(),
+                        coordinates = Coordinates(
+                            lat = 54.9833,
+                            long = 82.8964,
+                        ),
+                        link = "https://github.com/NORMss/",
+                        mentionedMe = false,
+                        likedByMe = false,
+                        attachment = imageContent?.let { Attachment(it, AttachmentType.IMAGE) }
+                    ),
+                )
                 addAll(posts)
+            }
+        }
+    }
+
+    override fun editPostById(id: Long, textContent: String) {
+        _state.update { posts ->
+            posts.map { post ->
+                if (post.id == id) {
+                    Post(
+                        id = id,
+                        authorId = post.authorId,
+                        author = post.author,
+                        authorJob = post.authorJob,
+                        authorAvatar = post.authorAvatar,
+                        content = textContent,
+                        published = post.published,
+                        coordinates = post.coordinates,
+                        link = post.link,
+                        mentionedMe = post.mentionedMe,
+                        likedByMe = post.likedByMe,
+                        attachment = post.attachment
+                    )
+                } else {
+                    post
+                }
             }
         }
     }

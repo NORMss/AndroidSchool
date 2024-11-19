@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -39,6 +40,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)

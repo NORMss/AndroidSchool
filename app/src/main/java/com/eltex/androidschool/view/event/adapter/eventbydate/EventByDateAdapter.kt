@@ -3,16 +3,13 @@ package com.eltex.androidschool.view.event.adapter.eventbydate
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.eltex.androidschool.databinding.FragmentEventBinding
+import com.eltex.androidschool.databinding.EventsByDateBinding
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.view.event.adapter.event.EventAdapter
 
 class EventByDateAdapter(
-    private val clickLikeListener: (event: Event) -> Unit,
-    private val clickShareListener: (event: Event) -> Unit,
-    private val clickMoreListener: (event: Event) -> Unit,
-    private val clickPlayListener: (event: Event) -> Unit,
-    private val clickParticipateListener: (event: Event) -> Unit,
+    private val eventListener: EventAdapter.EventListener,
 ) : ListAdapter<DateSeparators.GroupByDate<Event>, EventByDateViewHolder>(
     EventByDateItemCallback()
 ) {
@@ -21,13 +18,9 @@ class EventByDateAdapter(
         viewType: Int
     ): EventByDateViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = FragmentEventBinding.inflate(layoutInflater, parent, false)
+        val binding = EventsByDateBinding.inflate(layoutInflater, parent, false)
         val viewHolder = EventByDateViewHolder(
-            clickLikeListener = clickLikeListener,
-            clickShareListener = clickShareListener,
-            clickMoreListener = clickMoreListener,
-            clickPlayListener = clickPlayListener,
-            clickParticipateListener = clickParticipateListener,
+            eventListener = eventListener,
             binding = binding,
         )
 
