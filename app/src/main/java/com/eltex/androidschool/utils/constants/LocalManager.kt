@@ -1,6 +1,8 @@
 package com.eltex.androidschool.utils.constants
 
 object DataStoreConfig {
-    const val NEXT_ID = "next_id"
-    const val POSTS_FILE_NAME = "posts_file_name"
+    const val POST_CONFIG = "post_config"
+    const val EVENT_CONFIG = "event_config"
+    const val POSTS_FILE = "posts_file"
+    const val EVENTS_FILE = "events_file"
 }

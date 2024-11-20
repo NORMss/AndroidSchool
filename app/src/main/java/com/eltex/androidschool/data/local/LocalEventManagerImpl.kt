@@ -6,10 +6,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.eltex.androidschool.domain.local.LocalPostsManager
-import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.constants.DataStoreConfig.POSTS_FILE
-import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
+import com.eltex.androidschool.domain.local.LocalEventManager
+import com.eltex.androidschool.domain.model.Event
+import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
+import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENT_CONFIG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -17,40 +17,40 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class LocalPostsManagerImpl(
+class LocalEventManagerImpl(
     private val context: Context,
-) : LocalPostsManager {
+) : LocalEventManager {
     override suspend fun generateNextId(): Long {
         val nextId = getNextId().first() + 1
         saveNextId(nextId)
         return nextId
     }
 
-    override suspend fun addPost(post: Post) {
-        val posts = getPostsList()
+    override suspend fun addEvent(event: Event) {
+        val events = getEventsList()
 
-        savePostsToFile(posts + post)
+        saveEventsToFile(events + event)
     }
 
-    override suspend fun updatePost(id: Long, update: (Post) -> Post) {
-        val posts = getPostsList()
-        val updatedPosts = posts.map {
+    override suspend fun updateEvent(id: Long, update: (Event) -> Event) {
+        val events = getEventsList()
+        val updatedEvents = events.map {
             if (it.id == id) update(it) else it
         }
-        savePostsToFile(updatedPosts)
+        saveEventsToFile(updatedEvents)
     }
 
-    override fun getPosts(): Flow<List<Post>> = flow {
-        emit(getPostsList())
+    override fun getEvents(): Flow<List<Event>> = flow {
+        emit(getEventsList())
     }
 
-    override suspend fun deletePost(id: Long) {
-        val posts = getPostsList()
-        val updatedPosts = posts.filter { it.id != id }
-        savePostsToFile(updatedPosts)
+    override suspend fun deleteEvent(id: Long) {
+        val events = getEventsList()
+        val updatedEvents = events.filter { it.id != id }
+        saveEventsToFile(updatedEvents)
     }
 
-    private fun getPostsList(): List<Post> {
+    private fun getEventsList(): List<Event> {
         return if (file.exists()) {
             file.bufferedReader().use { reader ->
                 Json.decodeFromString(reader.readText())
@@ -72,16 +72,16 @@ class LocalPostsManagerImpl(
         }
     }
 
-    private fun savePostsToFile(posts: List<Post>) {
+    private fun saveEventsToFile(events: List<Event>) {
         file.bufferedWriter().use { writer ->
-            writer.write(Json.encodeToString(posts))
+            writer.write(Json.encodeToString(events))
         }
     }
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = POST_CONFIG)
-    private val file = context.filesDir.resolve("$POSTS_FILE.json")
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = EVENT_CONFIG)
+    private val file = context.filesDir.resolve("$EVENTS_FILE.json")
 
     private object PreferencesKey {
-        val NEXT_ID = longPreferencesKey("post_next_id")
+        val NEXT_ID = longPreferencesKey("next_id")
     }
 }

@@ -16,7 +16,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
 import com.eltex.androidschool.activity.post.EditPostActivity
 import com.eltex.androidschool.activity.post.NewPostActivity
-import com.eltex.androidschool.data.repository.InMemoryPostRepository
+import com.eltex.androidschool.data.local.LocalPostsManagerImpl
+import com.eltex.androidschool.data.repository.LocalPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.ui.ObserveAsEvents
@@ -89,13 +90,8 @@ class PostFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
-                if (state.posts.isNotEmpty()) {
-                    adapter.submitList(state.postsByDate)
-                    binding.root.visibility = View.VISIBLE
-                } else {
-                    binding.root.visibility = View.GONE
-                }
-
+                adapter.submitList(state.postsByDate)
+                binding.root.visibility = View.VISIBLE
                 state.toast?.let { toastData ->
                     ObserveAsEvents(toast = toastData, activity = activity)
                 }
@@ -152,7 +148,7 @@ class PostFragment : Fragment() {
         viewModelFactory {
             addInitializer(PostViewModel::class) {
                 PostViewModel(
-                    postRepository = InMemoryPostRepository(),
+                    postRepository = LocalPostRepository(LocalPostsManagerImpl(binding.root.context)),
                     resourceManager = AndroidResourceManager(binding.root.context),
                 )
             }

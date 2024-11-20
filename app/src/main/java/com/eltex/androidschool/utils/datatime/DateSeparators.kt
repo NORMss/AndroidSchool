@@ -37,13 +37,12 @@ object DateSeparators {
                     DateTimeUnit.DAY
                 ) -> resourceManager.getString(R.string.yesterday)
 
-//                else -> itemDate.format(LocalDate.Format { byUnicodePattern("dd MM yyyy") })
                 else -> dateFormater(itemDate, resourceManager)
             }
         }
 
         return groupedItems.map { (date, items) ->
-            GroupByDate(date, items)
+            GroupByDate(date, items.reversed())
         }
     }
 
