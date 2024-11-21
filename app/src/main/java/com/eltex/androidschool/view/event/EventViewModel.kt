@@ -1,17 +1,18 @@
 package com.eltex.androidschool.view.event
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eltex.androidschool.R
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.utils.datatime.DateSeparators
 import com.eltex.androidschool.utils.resourcemanager.ResourceManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class EventViewModel(
     private val eventRepository: EventRepository,
@@ -25,48 +26,33 @@ class EventViewModel(
             _state.update { state ->
                 state.copy(events = events)
             }
-            createPostsByDate()
+            createEventsByDate()
         }.launchIn(viewModelScope)
     }
 
     fun likeById(id: Long) {
-        eventRepository.likeById(id)
+        viewModelScope.launch(Dispatchers.IO) {
+            eventRepository.likeById(id)
+            refreshEvents()
+        }
     }
 
     fun participateById(id: Long) {
-        eventRepository.participateById(id)
-    }
-
-    fun share() {
-        sendToast(R.string.not_implemented, true)
-        resetToast()
-    }
-
-    fun play() {
-        sendToast(R.string.not_implemented, true)
-        resetToast()
-    }
-
-    fun more() {
-        sendToast(R.string.not_implemented, true)
-        resetToast()
-    }
-
-    private fun resetToast() {
-        _state.update {
-            it.copy(toast = null)
+        viewModelScope.launch(Dispatchers.IO) {
+            eventRepository.participateById(id)
+            refreshEvents()
         }
     }
 
-    private fun sendToast(@StringRes res: Int, short: Boolean = true) {
-        _state.update {
-            it.copy(
-                toast = Pair(res, short)
-            )
+    private suspend fun refreshEvents() {
+        val events = eventRepository.getEvents().first()
+        _state.update { state ->
+            state.copy(events = events)
         }
+        createEventsByDate()
     }
 
-    private fun createPostsByDate() {
+    private fun createEventsByDate() {
         if (_state.value.events.isNotEmpty()) {
             _state.update {
                 it.copy(
@@ -80,14 +66,23 @@ class EventViewModel(
     }
 
     fun deleteEvent(id: Long) {
-        eventRepository.deleteById(id)
+        viewModelScope.launch(Dispatchers.IO) {
+            eventRepository.deleteEventById(id)
+            refreshEvents()
+        }
     }
 
     fun editEvent(id: Long, textContent: String) {
-        eventRepository.editById(id, textContent)
+        viewModelScope.launch(Dispatchers.IO) {
+            eventRepository.editEventById(id, textContent)
+            refreshEvents()
+        }
     }
 
     fun addEvent(textContent: String, imageContent: String?) {
-        eventRepository.addEvent(textContent, imageContent)
+        viewModelScope.launch(Dispatchers.IO) {
+            eventRepository.addEvent(textContent, imageContent)
+            refreshEvents()
+        }
     }
 }

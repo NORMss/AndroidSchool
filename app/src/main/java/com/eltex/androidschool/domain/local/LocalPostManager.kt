@@ -4,9 +4,9 @@ import com.eltex.androidschool.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 
 interface LocalPostsManager {
-    suspend fun savePost(post: Post)
+    suspend fun addPost(post: Post)
     fun getPosts(): Flow<List<Post>>
-    suspend fun deletePost(postId: Long)
+    suspend fun deletePost(id: Long)
     suspend fun generateNextId(): Long
-    suspend fun updatePost(post: Post)
+    suspend fun updatePost(id: Long, update: (Post) -> Post)
 }

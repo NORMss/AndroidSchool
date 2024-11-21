@@ -1,5 +1,6 @@
 package com.eltex.androidschool.view.event
 
+import LocalEventRepository
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
@@ -16,13 +17,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
 import com.eltex.androidschool.activity.event.EditEventActivity
 import com.eltex.androidschool.activity.event.NewEventActivity
-import com.eltex.androidschool.data.repository.InMemoryEventRepository
+import com.eltex.androidschool.data.local.LocalEventManagerImpl
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.ui.ObserveAsEvents
 import com.eltex.androidschool.ui.OffsetDecoration
 import com.eltex.androidschool.utils.constants.IntentPutExtra
+import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.event.adapter.event.EventAdapter
 import com.eltex.androidschool.view.event.adapter.eventbydate.EventByDateAdapter
@@ -50,7 +51,7 @@ class EventFragment : Fragment() {
             }
 
             override fun onPlayClicked(event: Event) {
-                viewModel.play()
+                binding.root.context.toast(R.string.not_implemented, false)
             }
 
             override fun onParticipateClicked(event: Event) {
@@ -64,7 +65,7 @@ class EventFragment : Fragment() {
         viewModelFactory {
             addInitializer(EventViewModel::class) {
                 EventViewModel(
-                    eventRepository = InMemoryEventRepository(),
+                    eventRepository = LocalEventRepository(LocalEventManagerImpl(binding.root.context.applicationContext)),
                     resourceManager = AndroidResourceManager(binding.root.context),
                 )
             }
@@ -126,15 +127,8 @@ class EventFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
-                state.events.isNotEmpty().let {
-                    if (it) {
-                        adapter.submitList(state.eventsByDate)
-                        binding.root.visibility = View.VISIBLE
-                    } else {
-                        binding.root.visibility = View.GONE
-                    }
-                }
-
+                adapter.submitList(state.eventsByDate)
+                binding.root.visibility = View.VISIBLE
                 state.toast?.let { toastData ->
                     ObserveAsEvents(toast = toastData, activity = activity)
                 }
