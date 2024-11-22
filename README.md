@@ -24,9 +24,9 @@ com.eltex.androidschool
     │   profileInstalled
     │
     └───datastore
-            events_file.json.preferences_pb
+            event_config.preferences_pb
 ```
-events_file.json.preferences_pb
+event_config.preferences_pb
 ```
 1 {
   1: "next_id"
