@@ -17,11 +17,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
 import com.eltex.androidschool.activity.event.EditEventActivity
 import com.eltex.androidschool.activity.event.NewEventActivity
+import com.eltex.androidschool.data.local.DataStoreHolder
 import com.eltex.androidschool.data.local.LocalEventManagerImpl
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.ui.ObserveAsEvents
 import com.eltex.androidschool.ui.OffsetDecoration
+import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.utils.toast.toast
@@ -65,8 +67,16 @@ class EventFragment : Fragment() {
         viewModelFactory {
             addInitializer(EventViewModel::class) {
                 EventViewModel(
-                    eventRepository = LocalEventRepository(LocalEventManagerImpl(binding.root.context.applicationContext)),
-                    resourceManager = AndroidResourceManager(binding.root.context),
+                    eventRepository = LocalEventRepository(
+                        LocalEventManagerImpl(
+                            requireContext().applicationContext,
+                            DataStoreHolder.getInstance(
+                                requireContext().applicationContext,
+                                "$EVENTS_FILE.json"
+                            ),
+                        ),
+                    ),
+                    resourceManager = AndroidResourceManager(requireContext().applicationContext),
                 )
             }
         }
@@ -121,6 +131,11 @@ class EventFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeViewModelState()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun observeViewModelState() {

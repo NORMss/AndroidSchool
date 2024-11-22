@@ -16,12 +16,14 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
 import com.eltex.androidschool.activity.post.EditPostActivity
 import com.eltex.androidschool.activity.post.NewPostActivity
+import com.eltex.androidschool.data.local.DataStoreHolder
 import com.eltex.androidschool.data.local.LocalPostsManagerImpl
 import com.eltex.androidschool.data.repository.LocalPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.ui.ObserveAsEvents
 import com.eltex.androidschool.ui.OffsetDecoration
+import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.utils.toast.toast
@@ -148,8 +150,18 @@ class PostFragment : Fragment() {
         viewModelFactory {
             addInitializer(PostViewModel::class) {
                 PostViewModel(
-                    postRepository = LocalPostRepository(LocalPostsManagerImpl(binding.root.context)),
-                    resourceManager = AndroidResourceManager(binding.root.context),
+                    resourceManager = AndroidResourceManager(
+                        requireContext().applicationContext,
+                    ),
+                    postRepository = LocalPostRepository(
+                        LocalPostsManagerImpl(
+                            requireContext().applicationContext,
+                            DataStoreHolder.getInstance(
+                                requireContext().applicationContext,
+                                "$POST_CONFIG.json"
+                            ),
+                        ),
+                    ),
                 )
             }
         }

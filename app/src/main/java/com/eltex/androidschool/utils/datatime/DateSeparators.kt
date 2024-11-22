@@ -42,8 +42,8 @@ object DateSeparators {
         }
 
         return groupedItems.map { (date, items) ->
-            GroupByDate(date, items.reversed())
-        }
+            GroupByDate(date, items.sortedByDescending { it.published })
+        }.reversed()
     }
 
     private fun dateFormater(
