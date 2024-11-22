@@ -158,7 +158,7 @@ class PostFragment : Fragment() {
                             requireContext().applicationContext,
                             DataStoreHolder.getInstance(
                                 requireContext().applicationContext,
-                                "$POST_CONFIG.json"
+                                POST_CONFIG
                             ),
                         ),
                     ),

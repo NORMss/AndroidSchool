@@ -23,7 +23,7 @@ import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.ui.ObserveAsEvents
 import com.eltex.androidschool.ui.OffsetDecoration
-import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
+import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENT_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.utils.toast.toast
@@ -72,7 +72,7 @@ class EventFragment : Fragment() {
                             requireContext().applicationContext,
                             DataStoreHolder.getInstance(
                                 requireContext().applicationContext,
-                                "$EVENTS_FILE.json"
+                                EVENT_CONFIG
                             ),
                         ),
                     ),
