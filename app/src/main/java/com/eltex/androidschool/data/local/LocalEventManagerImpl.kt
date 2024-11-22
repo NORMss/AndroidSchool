@@ -5,11 +5,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import com.eltex.androidschool.domain.local.LocalEventManager
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
-import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENT_CONFIG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -18,7 +16,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class LocalEventManagerImpl(
-    private val context: Context,
+    context: Context,
+    private val dataStore: DataStore<Preferences>
 ) : LocalEventManager {
     override suspend fun generateNextId(): Long {
         val nextId = getNextId().first() + 1
@@ -61,13 +60,13 @@ class LocalEventManagerImpl(
     }
 
     private suspend fun saveNextId(nextId: Long) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferencesKey.NEXT_ID] = nextId
         }
     }
 
     private fun getNextId(): Flow<Long> {
-        return context.dataStore.data.map { preferences ->
+        return dataStore.data.map { preferences ->
             preferences[PreferencesKey.NEXT_ID] ?: 0L
         }
     }
@@ -78,8 +77,8 @@ class LocalEventManagerImpl(
         }
     }
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = EVENT_CONFIG)
-    private val file = context.filesDir.resolve("$EVENTS_FILE.json")
+    //    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = EVENT_CONFIG)
+    private val file = context.applicationContext.filesDir.resolve("$EVENTS_FILE.json")
 
     private object PreferencesKey {
         val NEXT_ID = longPreferencesKey("next_id")

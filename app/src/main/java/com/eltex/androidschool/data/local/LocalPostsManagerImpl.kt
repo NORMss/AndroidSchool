@@ -5,11 +5,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import com.eltex.androidschool.domain.local.LocalPostsManager
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.constants.DataStoreConfig.POSTS_FILE
-import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -18,7 +16,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class LocalPostsManagerImpl(
-    private val context: Context,
+    context: Context,
+    private val  dataStore: DataStore<Preferences>,
+
 ) : LocalPostsManager {
     override suspend fun generateNextId(): Long {
         val nextId = getNextId().first() + 1
@@ -61,13 +61,13 @@ class LocalPostsManagerImpl(
     }
 
     private suspend fun saveNextId(nextId: Long) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferencesKey.NEXT_ID] = nextId
         }
     }
 
     private fun getNextId(): Flow<Long> {
-        return context.dataStore.data.map { preferences ->
+        return dataStore.data.map { preferences ->
             preferences[PreferencesKey.NEXT_ID] ?: 0L
         }
     }
@@ -78,7 +78,7 @@ class LocalPostsManagerImpl(
         }
     }
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = POST_CONFIG)
+//    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = POST_CONFIG)
     private val file = context.filesDir.resolve("$POSTS_FILE.json")
 
     private object PreferencesKey {

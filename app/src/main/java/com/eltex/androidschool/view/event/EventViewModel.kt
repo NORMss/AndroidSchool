@@ -80,7 +80,7 @@ class EventViewModel(
     }
 
     fun addEvent(textContent: String, imageContent: String?) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             eventRepository.addEvent(textContent, imageContent)
             refreshEvents()
         }
