@@ -1,24 +1,89 @@
 # Project AndroidSchool 
 
-**Part 18-intents**
+**Part 19-files**
 ## Demo Program
 <details>
   <summary>Video</summary>
-  
-  https://github.com/user-attachments/assets/7c64e291-7628-4c23-9c59-0174e69a032a
+
+  https://github.com/user-attachments/assets/a0e0e724-2cb9-47eb-9191-c473dc7421cb
 
 </details>
 
-<details>
-  <summary>Screenshots</summary>
-  
-  ![image](https://github.com/user-attachments/assets/53380e5c-4578-48d9-88af-5dc1f8026223)
+## Example of application directory and files
+```
+com.eltex.androidschool
+├───cache
+│   └───image_cache
+│           50...a0.0
+│           50...a0.1
+│           journal
+│
+├───code_cache
+└───files
+    │   events_file.json
+    │   profileInstalled
+    │
+    └───datastore
+            events_file.json.preferences_pb
+```
+events_file.json.preferences_pb
+```
+1 {
+  1: "next_id"
+  2 {
+    4: 3
+  }
+}
+```
 
-  ![image](https://github.com/user-attachments/assets/498a3404-7745-42af-b1b4-581f29c0fa51)
-  
-  ![image](https://github.com/user-attachments/assets/9b85f341-7bda-497b-a94f-0259fc7953e7)
-
-  ![image](https://github.com/user-attachments/assets/8ca797de-e7c3-45b0-be88-35a0544c92e2)
-
-
-</details>
+events_file.json
+```
+[
+    {
+        "id": 1,
+        "authorId": 1000,
+        "author": "Sergey Bezborodov",
+        "authorJob": "Junior Android Developer",
+        "authorAvatar": "https://avatars.githubusercontent.com/u/47896309?v=4",
+        "content": "Присоединяйтесь к встрече мобильных разработчиков. Будем дискутировать на тему развития KMP за прошедший год 2024.",
+        "datetime": "2024-11-22T16:05:38.121717Z",
+        "published": "2024-11-22T16:05:38.122037Z",
+        "coords": {
+            "lat": 54.9833,
+            "long": 82.8964
+        },
+        "type": "ONLINE",
+        "likeOwnerIds": [],
+        "likedByMe": false,
+        "speakerIds": [],
+        "participantsIds": [],
+        "participatedByMe": true,
+        "attachment": null,
+        "link": "https://github.com/NORMss",
+        "users": []
+    },
+    {
+        "id": 3,
+        "authorId": 1000,
+        "author": "Sergey Bezborodov",
+        "authorJob": "Junior Android Developer",
+        "authorAvatar": "https://avatars.githubusercontent.com/u/47896309?v=4",
+        "content": "В конце года, подведём итоги на офлайн всетрче ",
+        "datetime": "2024-11-22T16:06:02.855007Z",
+        "published": "2024-11-22T16:06:02.855192Z",
+        "coords": {
+            "lat": 54.9833,
+            "long": 82.8964
+        },
+        "type": "ONLINE",
+        "likeOwnerIds": [],
+        "likedByMe": true,
+        "speakerIds": [],
+        "participantsIds": [],
+        "participatedByMe": false,
+        "attachment": null,
+        "link": "https://github.com/NORMss",
+        "users": []
+    }
+]
+```
