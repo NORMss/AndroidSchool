@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".view.event.EventFragment">
+    tools:context=".view.fragment.event.EventFragment">
 
     <include
         android:id="@+id/separator"

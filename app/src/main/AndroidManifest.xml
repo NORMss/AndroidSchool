@@ -15,10 +15,10 @@
         android:theme="@style/Theme.AndroidSchool"
         tools:targetApi="31">
         <activity
-            android:name=".activity.event.EditEventActivity"
+            android:name=".view.activity.event.EditEventActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.event.NewEventActivity"
+            android:name=".view.activity.event.NewEventActivity"
             android:exported="true"
             android:label="@string/new_event_title">
             <intent-filter>
@@ -30,10 +30,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.post.EditPostActivity"
+            android:name=".view.activity.post.EditPostActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.post.NewPostActivity"
+            android:name=".view.activity.post.NewPostActivity"
             android:exported="true"
             android:label="@string/new_post_title">
             <intent-filter>
@@ -45,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".view.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
