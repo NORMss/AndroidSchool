@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".view.post.PostFragment">
+    tools:context=".view.fragment.post.PostFragment">
 
     <include
         android:id="@+id/postsByDate"
