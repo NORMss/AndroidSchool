@@ -39,4 +39,6 @@
     <string name="no_media_selected">No media selected</string>
     <string name="new_event_title">New event</string>
     <string name="edit_event_title">Edit event</string>
+    <string name="post_created">Post successfully created</string>
+    <string name="event_created">Event successfully created</string>
 </resources>

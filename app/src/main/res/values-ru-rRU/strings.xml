@@ -34,5 +34,7 @@
     <string name="no_media_selected">Медиа не выбрано</string>
     <string name="new_event_title">Новый ивент</string>
     <string name="edit_event_title">Редактирование ивента</string>
+    <string name="post_created">Пост успешно создан</string>
+    <string name="event_created">Ивент успешно создан</string>
 
 </resources>

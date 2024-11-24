@@ -1,5 +1,6 @@
 package com.eltex.androidschool.domain.repository
 
+import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 
@@ -8,5 +9,5 @@ interface PostRepository {
     suspend fun likeById(id: Long)
     suspend fun deletePostById(id: Long)
     suspend fun editPostById(id: Long, textContent: String)
-    suspend fun addPost(textContent: String, imageContent: String?)
+    suspend fun addPost(textContent: String, attachment: Attachment?)
 }

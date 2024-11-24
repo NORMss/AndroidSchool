@@ -14,19 +14,20 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
-import com.eltex.androidschool.view.activity.post.EditPostActivity
-import com.eltex.androidschool.view.activity.post.NewPostActivity
 import com.eltex.androidschool.data.local.DataStoreHolder
 import com.eltex.androidschool.data.local.LocalPostsManagerImpl
 import com.eltex.androidschool.data.repository.LocalPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.ui.ObserveAsEvents
-import com.eltex.androidschool.ui.OffsetDecoration
+import com.eltex.androidschool.utils.constants.DataStoreConfig.POSTS_FILE
 import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.activity.post.EditPostActivity
+import com.eltex.androidschool.view.activity.post.NewPostActivity
+import com.eltex.androidschool.view.common.ObserveAsEvents
+import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.postbydate.PostByDateAdapter
 import kotlinx.coroutines.flow.launchIn
@@ -104,8 +105,8 @@ class PostFragment : Fragment() {
     private val newPostLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                val content = result.data?.getStringArrayListExtra(Intent.EXTRA_TEXT)
-                content?.let { viewModel.addPost(it[0], it[1]) }
+//                val content = result.data?.getStringArrayListExtra(Intent.EXTRA_TEXT)
+//                content?.let { viewModel.addPost(it[0], it[1]) }
             }
         }
 
@@ -155,11 +156,11 @@ class PostFragment : Fragment() {
                     ),
                     postRepository = LocalPostRepository(
                         LocalPostsManagerImpl(
-                            requireContext().applicationContext,
                             DataStoreHolder.getInstance(
                                 requireContext().applicationContext,
                                 POST_CONFIG
                             ),
+                            requireContext().applicationContext.filesDir.resolve("$POSTS_FILE.json"),
                         ),
                     ),
                 )
