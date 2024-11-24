@@ -1,4 +1,4 @@
-package com.eltex.androidschool.utils.datatime
+package com.eltex.androidschool.utils.datetime
 
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
@@ -10,9 +10,9 @@ import kotlinx.datetime.toLocalDateTime
 
 object DateTimeStringFormater {
     @OptIn(FormatStringsInDatetimeFormats::class)
-    fun dateTimeStringToString(dateTime: String): String {
+    fun dateTimeStringToString(dateTime: Instant): String {
         return try {
-            Instant.parse(dateTime)
+            dateTime
                 .toLocalDateTime(TimeZone.currentSystemDefault()).let {
                     it.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy HH:mm") })
                 }

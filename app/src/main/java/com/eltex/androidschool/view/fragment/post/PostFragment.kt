@@ -55,6 +55,24 @@ class PostFragment : Fragment() {
         }
     )
 
+    private val viewModel by viewModels<PostViewModel> {
+        viewModelFactory {
+            addInitializer(PostViewModel::class) {
+                PostViewModel(
+                    postRepository = LocalPostRepository(
+                        LocalPostsManagerImpl(
+                            DataStoreHolder.getInstance(
+                                requireContext().applicationContext,
+                                POST_CONFIG
+                            ),
+                            requireContext().applicationContext.filesDir.resolve("$POSTS_FILE.json"),
+                        ),
+                    ),
+                )
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -144,27 +162,6 @@ class PostFragment : Fragment() {
                 }
             }
             show()
-        }
-    }
-
-    private val viewModel by viewModels<PostViewModel> {
-        viewModelFactory {
-            addInitializer(PostViewModel::class) {
-                PostViewModel(
-                    resourceManager = AndroidResourceManager(
-                        requireContext().applicationContext,
-                    ),
-                    postRepository = LocalPostRepository(
-                        LocalPostsManagerImpl(
-                            DataStoreHolder.getInstance(
-                                requireContext().applicationContext,
-                                POST_CONFIG
-                            ),
-                            requireContext().applicationContext.filesDir.resolve("$POSTS_FILE.json"),
-                        ),
-                    ),
-                )
-            }
         }
     }
 

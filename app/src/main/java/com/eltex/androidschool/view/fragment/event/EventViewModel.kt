@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
-import com.eltex.androidschool.utils.datatime.DateSeparators
-import com.eltex.androidschool.utils.resourcemanager.ResourceManager
+import com.eltex.androidschool.utils.datetime.DateSeparators
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +15,6 @@ import kotlinx.coroutines.launch
 
 class EventViewModel(
     private val eventRepository: EventRepository,
-    private val resourceManager: ResourceManager,
 ) : ViewModel() {
     private val _state = MutableStateFlow(EventState())
     val state = _state.asStateFlow()
@@ -53,7 +51,6 @@ class EventViewModel(
         _state.update { state ->
             val groupedEvents = DateSeparators.groupByDate(
                 items = updatedEvents,
-                resourceManager = resourceManager,
             )
             state.copy(events = updatedEvents, eventsByDate = groupedEvents)
         }

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.eltex.androidschool.databinding.EventsByDateBinding
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.utils.datetime.DateSeparators
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
 
 class EventByDateAdapter(

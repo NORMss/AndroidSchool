@@ -2,7 +2,7 @@ package com.eltex.androidschool.view.fragment.event.adapter.eventbydate
 
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.utils.datetime.DateSeparators
 
 class EventByDateItemCallback : ItemCallback<DateSeparators.GroupByDate<Event>>() {
     override fun areItemsTheSame(

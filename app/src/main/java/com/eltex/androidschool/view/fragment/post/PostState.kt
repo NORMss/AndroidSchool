@@ -1,7 +1,7 @@
 package com.eltex.androidschool.view.fragment.post
 
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.datatime.DateSeparators.GroupByDate
+import com.eltex.androidschool.utils.datetime.DateSeparators.GroupByDate
 
 data class PostState(
     val posts: List<Post> = emptyList(),

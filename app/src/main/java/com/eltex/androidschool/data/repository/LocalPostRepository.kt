@@ -33,7 +33,7 @@ class LocalPostRepository(
                 authorJob = "Junior Android Developer",
                 authorAvatar = "https://avatars.githubusercontent.com/u/47896309?v=4",
                 content = textContent,
-                published = Clock.System.now().toString(),
+                published = Clock.System.now(),
                 coordinates = Coordinates(
                     lat = 54.9833,
                     long = 82.8964,

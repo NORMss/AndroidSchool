@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
-import com.eltex.androidschool.utils.datatime.DateSeparators
-import com.eltex.androidschool.utils.resourcemanager.ResourceManager
+import com.eltex.androidschool.utils.datetime.DateSeparators
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +16,6 @@ import kotlinx.coroutines.launch
 
 class PostViewModel(
     private val postRepository: PostRepository,
-    private val resourceManager: ResourceManager,
 ) : ViewModel() {
     private val _state = MutableStateFlow(PostState())
     val state = _state.asStateFlow()
@@ -48,7 +46,6 @@ class PostViewModel(
         _state.update { state ->
             val groupedPosts = DateSeparators.groupByDate(
                 items = updatedPosts,
-                resourceManager = resourceManager
             )
             state.copy(posts = updatedPosts, postsByDate = groupedPosts)
         }

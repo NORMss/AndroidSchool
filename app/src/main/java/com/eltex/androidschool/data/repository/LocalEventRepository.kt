@@ -38,8 +38,8 @@ class LocalEventRepository(
                 authorJob = "Junior Android Developer",
                 authorAvatar = "https://avatars.githubusercontent.com/u/47896309?v=4",
                 content = textContent,
-                datetime = Clock.System.now().toString(),
-                published = Clock.System.now().toString(),
+                datetime = Clock.System.now(),
+                published = Clock.System.now(),
                 coords = Coordinates(
                     lat = 54.9833,
                     long = 82.8964,

@@ -8,7 +8,7 @@ import com.eltex.androidschool.databinding.EventBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
-import com.eltex.androidschool.utils.datatime.DateTimeStringFormater
+import com.eltex.androidschool.utils.datetime.DateTimeStringFormater
 
 class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.root) {
     fun bind(event: Event) {
@@ -25,21 +25,37 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
         when (event.attachment?.type) {
             AttachmentType.IMAGE -> binding.contentImage.load(event.attachment.url) {
                 listener(
-                    onSuccess = { _, _ -> binding.contentImage.visibility = View.VISIBLE },
-                    onError = { _, _ -> binding.contentImage.visibility = View.GONE }
+                    onSuccess = { _, _ ->
+                        binding.contentImage.visibility = View.VISIBLE
+                        binding.contentVideo.visibility = View.GONE
+                        binding.play.visibility = View.GONE
+                    },
+                    onError = { _, _ ->
+                        binding.contentImage.visibility = View.GONE
+                        binding.contentVideo.visibility = View.GONE
+                        binding.play.visibility = View.GONE
+                    }
                 )
+
             }
 
             AttachmentType.AUDIO -> {
-                binding.play.visibility = View.VISIBLE
                 binding.contentImage.visibility = View.GONE
+                binding.contentVideo.visibility = View.GONE
+                binding.play.visibility = View.VISIBLE
             }
 
-            AttachmentType.VIDEO -> {}
-            null -> {
-                binding.play.visibility = View.GONE
+            AttachmentType.VIDEO -> {
                 binding.contentImage.visibility = View.GONE
+                binding.contentVideo.visibility = View.VISIBLE
                 binding.play.visibility = View.GONE
+            }
+
+            null -> {
+                binding.contentImage.visibility = View.GONE
+                binding.contentVideo.visibility = View.GONE
+                binding.play.visibility = View.GONE
+
             }
         }
 
