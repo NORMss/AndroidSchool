@@ -1,24 +1,28 @@
 package com.eltex.androidschool.data.local
 
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import com.eltex.androidschool.domain.local.LocalEventManager
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.io.File
 
 class LocalEventManagerImpl(
-    context: Context,
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    private val file: File
 ) : LocalEventManager {
+
+    private val _eventsFlow = MutableStateFlow(getEventsList())
+    private val eventsFlow = _eventsFlow.asStateFlow()
+
     override suspend fun generateNextId(): Long {
         val nextId = getNextId().first() + 1
         saveNextId(nextId)
@@ -27,8 +31,9 @@ class LocalEventManagerImpl(
 
     override suspend fun addEvent(event: Event) {
         val events = getEventsList()
-
-        saveEventsToFile(events + event)
+        val newList = events + event
+        saveEventsToFile(newList)
+        notifyListeners(newList)
     }
 
     override suspend fun updateEvent(id: Long, update: (Event) -> Event) {
@@ -37,16 +42,16 @@ class LocalEventManagerImpl(
             if (it.id == id) update(it) else it
         }
         saveEventsToFile(updatedEvents)
+        notifyListeners(updatedEvents)
     }
 
-    override fun getEvents(): Flow<List<Event>> = flow {
-        emit(getEventsList())
-    }
+    override fun getEvents(): Flow<List<Event>> = eventsFlow
 
     override suspend fun deleteEvent(id: Long) {
         val events = getEventsList()
         val updatedEvents = events.filter { it.id != id }
         saveEventsToFile(updatedEvents)
+        notifyListeners(updatedEvents)
     }
 
     private fun getEventsList(): List<Event> {
@@ -77,8 +82,11 @@ class LocalEventManagerImpl(
         }
     }
 
+    private fun notifyListeners(updatedEvents: List<Event>) {
+        _eventsFlow.value = updatedEvents
+    }
+
     //    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = EVENT_CONFIG)
-    private val file = context.applicationContext.filesDir.resolve("$EVENTS_FILE.json")
 
     private object PreferencesKey {
         val NEXT_ID = longPreferencesKey("next_id")

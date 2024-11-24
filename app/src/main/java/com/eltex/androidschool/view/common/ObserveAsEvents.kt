@@ -1,4 +1,4 @@
-package com.eltex.androidschool.ui
+package com.eltex.androidschool.view.common
 
 import android.app.Activity
 import com.eltex.androidschool.utils.toast.toast

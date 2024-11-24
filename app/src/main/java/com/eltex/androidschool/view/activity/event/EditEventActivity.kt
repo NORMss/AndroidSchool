@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.ActivityEditEventBinding
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.ui.EdgeToEdgeHelper
+import com.eltex.androidschool.view.common.EdgeToEdgeHelper
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.toast.toast
 import kotlinx.serialization.encodeToString

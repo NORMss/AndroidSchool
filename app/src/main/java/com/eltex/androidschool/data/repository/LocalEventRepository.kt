@@ -1,6 +1,5 @@
 import com.eltex.androidschool.domain.local.LocalEventManager
 import com.eltex.androidschool.domain.model.Attachment
-import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
@@ -30,7 +29,7 @@ class LocalEventRepository(
         localEventManager.deleteEvent(id)
     }
 
-    override suspend fun addEvent(textContent: String, imageContent: String?) {
+    override suspend fun addEvent(textContent: String, attachment: Attachment?, link: String?) {
         localEventManager.addEvent(
             Event(
                 id = localEventManager.generateNextId(),
@@ -51,10 +50,8 @@ class LocalEventRepository(
                 speakerIds = emptySet(),
                 participantsIds = emptySet(),
                 participatedByMe = false,
-                attachment = imageContent?.let {
-                    Attachment(it, AttachmentType.IMAGE)
-                },
-                link = "https://github.com/NORMss",
+                attachment = attachment,
+                link = link,
                 users = emptyList(),
             )
         )
@@ -62,26 +59,7 @@ class LocalEventRepository(
 
     override suspend fun editEventById(id: Long, textContent: String) {
         localEventManager.updateEvent(id) { event ->
-            Event(
-                id = id,
-                authorId = event.authorId,
-                author = event.author,
-                authorJob = event.authorJob,
-                authorAvatar = event.authorAvatar,
-                content = textContent,
-                datetime = event.datetime,
-                published = event.published,
-                coords = event.coords,
-                type = event.type,
-                likeOwnerIds = event.likeOwnerIds,
-                likedByMe = event.likedByMe,
-                speakerIds = event.speakerIds,
-                participantsIds = event.participantsIds,
-                participatedByMe = event.participatedByMe,
-                attachment = event.attachment,
-                link = event.link,
-                users = event.users,
-            )
+            event.copy(content = textContent)
         }
     }
 }

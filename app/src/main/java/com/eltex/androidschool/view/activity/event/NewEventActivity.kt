@@ -1,5 +1,6 @@
 package com.eltex.androidschool.view.activity.event
 
+import LocalEventRepository
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -7,12 +8,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
 import com.eltex.androidschool.R
+import com.eltex.androidschool.data.local.DataStoreHolder
+import com.eltex.androidschool.data.local.LocalEventManagerImpl
 import com.eltex.androidschool.databinding.ActivityNewEventBinding
-import com.eltex.androidschool.ui.EdgeToEdgeHelper
+import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
+import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENT_CONFIG
 import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.common.EdgeToEdgeHelper
 
 class NewEventActivity : AppCompatActivity() {
 
@@ -25,9 +32,6 @@ class NewEventActivity : AppCompatActivity() {
         val binding = ActivityNewEventBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var contentImage: String? = null
-        var contentText: String
-
         EdgeToEdgeHelper.enableEdgeToEdge(findViewById(android.R.id.content))
 
         handleIncomingIntent(binding)
@@ -39,7 +43,7 @@ class NewEventActivity : AppCompatActivity() {
                         onStart = { binding.contentImage.visibility = View.VISIBLE },
                         onSuccess = { _, _ ->
                             binding.contentImage.visibility = View.VISIBLE
-                            contentImage = uri.toString()
+                            viewModel.setAttachment(uri)
                         },
                         onError = { _, _ -> binding.contentImage.visibility = View.GONE }
                     )
@@ -50,16 +54,18 @@ class NewEventActivity : AppCompatActivity() {
         }
 
         binding.toolbar.menu.findItem(R.id.save).setOnMenuItemClickListener {
-            contentText = binding.editText.text?.toString().orEmpty()
+            viewModel.setText(binding.editText.text?.toString().orEmpty())
 
-            if (contentText.isNotEmpty()) {
+            if (viewModel.state.value.textContent.isNotEmpty()) {
                 setResult(
                     RESULT_OK,
-                    Intent().putStringArrayListExtra(
-                        Intent.EXTRA_TEXT,
-                        arrayListOf(contentText, contentImage)
-                    )
+//                    Intent().putStringArrayListExtra(
+//                        Intent.EXTRA_TEXT,
+//                        arrayListOf(contentText, contentImage)
+//                    )
                 )
+                viewModel.addPost()
+                applicationContext.toast(R.string.event_created, false)
                 finish()
             } else {
                 application.toast(R.string.text_is_empty, false)
@@ -75,6 +81,24 @@ class NewEventActivity : AppCompatActivity() {
 
         binding.attachButton.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+    }
+
+    private val viewModel by viewModels<NewEventViewModel> {
+        viewModelFactory {
+            addInitializer(NewEventViewModel::class) {
+                NewEventViewModel(
+                    eventRepository = LocalEventRepository(
+                        LocalEventManagerImpl(
+                            dataStore = DataStoreHolder.getInstance(
+                                applicationContext,
+                                EVENT_CONFIG
+                            ),
+                            file = applicationContext.filesDir.resolve("$EVENTS_FILE.json")
+                        ),
+                    ),
+                )
+            }
         }
     }
 

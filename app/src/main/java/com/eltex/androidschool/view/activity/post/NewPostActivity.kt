@@ -7,12 +7,19 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
 import com.eltex.androidschool.R
+import com.eltex.androidschool.data.local.DataStoreHolder
+import com.eltex.androidschool.data.local.LocalPostsManagerImpl
+import com.eltex.androidschool.data.repository.LocalPostRepository
 import com.eltex.androidschool.databinding.ActivityNewPostBinding
-import com.eltex.androidschool.ui.EdgeToEdgeHelper
+import com.eltex.androidschool.utils.constants.DataStoreConfig.POSTS_FILE
+import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
 import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.common.EdgeToEdgeHelper
 
 class NewPostActivity : AppCompatActivity() {
 
@@ -25,9 +32,6 @@ class NewPostActivity : AppCompatActivity() {
         val binding = ActivityNewPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var contentImage: String? = null
-        var contentText: String
-
         EdgeToEdgeHelper.enableEdgeToEdge(findViewById(android.R.id.content))
 
         handleIncomingIntent(binding)
@@ -39,7 +43,7 @@ class NewPostActivity : AppCompatActivity() {
                         onStart = { binding.contentImage.visibility = View.VISIBLE },
                         onSuccess = { _, _ ->
                             binding.contentImage.visibility = View.VISIBLE
-                            contentImage = uri.toString()
+                            viewModel.setAttachment(uri)
                         },
                         onError = { _, _ -> binding.contentImage.visibility = View.GONE }
                     )
@@ -50,19 +54,15 @@ class NewPostActivity : AppCompatActivity() {
         }
 
         binding.toolbar.menu.findItem(R.id.save).setOnMenuItemClickListener {
-            contentText = binding.editText.text?.toString().orEmpty()
+            viewModel.setText(binding.editText.text?.toString().orEmpty())
 
-            if (contentText.isNotEmpty()) {
-                setResult(
-                    RESULT_OK,
-                    Intent().putStringArrayListExtra(
-                        Intent.EXTRA_TEXT,
-                        arrayListOf(contentText, contentImage)
-                    )
-                )
+            if (viewModel.state.value.textContent.isNotEmpty()) {
+                setResult(RESULT_OK)
+                viewModel.addPost()
+                applicationContext.toast(R.string.post_created, false)
                 finish()
             } else {
-                application.toast(R.string.text_is_empty, false)
+                applicationContext.toast(R.string.text_is_empty, false)
             }
 
             true
@@ -85,6 +85,24 @@ class NewPostActivity : AppCompatActivity() {
                 if (sharedText != null) {
                     binding.editText.setText(sharedText)
                 }
+            }
+        }
+    }
+
+    private val viewModel by viewModels<NewPostViewModel> {
+        viewModelFactory {
+            addInitializer(NewPostViewModel::class) {
+                NewPostViewModel(
+                    postRepository = LocalPostRepository(
+                        LocalPostsManagerImpl(
+                            DataStoreHolder.getInstance(
+                                applicationContext,
+                                POST_CONFIG
+                            ),
+                            applicationContext.filesDir.resolve("$POSTS_FILE.json")
+                        ),
+                    ),
+                )
             }
         }
     }

@@ -15,18 +15,19 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.R
-import com.eltex.androidschool.view.activity.event.EditEventActivity
-import com.eltex.androidschool.view.activity.event.NewEventActivity
 import com.eltex.androidschool.data.local.DataStoreHolder
 import com.eltex.androidschool.data.local.LocalEventManagerImpl
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.ui.ObserveAsEvents
-import com.eltex.androidschool.ui.OffsetDecoration
+import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
 import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENT_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.activity.event.EditEventActivity
+import com.eltex.androidschool.view.activity.event.NewEventActivity
+import com.eltex.androidschool.view.common.ObserveAsEvents
+import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
 import com.eltex.androidschool.view.fragment.event.adapter.eventbydate.EventByDateAdapter
 import kotlinx.coroutines.flow.launchIn
@@ -69,11 +70,11 @@ class EventFragment : Fragment() {
                 EventViewModel(
                     eventRepository = LocalEventRepository(
                         LocalEventManagerImpl(
-                            requireContext().applicationContext,
                             DataStoreHolder.getInstance(
                                 requireContext().applicationContext,
                                 EVENT_CONFIG
                             ),
+                            requireContext().applicationContext.filesDir.resolve("$EVENTS_FILE.json")
                         ),
                     ),
                     resourceManager = AndroidResourceManager(requireContext().applicationContext),
@@ -85,8 +86,8 @@ class EventFragment : Fragment() {
     private val newEventLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                val content = result.data?.getStringArrayListExtra(Intent.EXTRA_TEXT)
-                content?.let { viewModel.addEvent(it[0], it[1]) }
+//                val content = result.data?.getStringArrayListExtra(Intent.EXTRA_TEXT)
+//                content?.let { viewModel.addEvent(it[0], it[1]) }
             }
         }
 
