@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.eltex.androidschool.databinding.PostsByDateBinding
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.utils.datetime.DateSeparators
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 
 class PostByDateAdapter(

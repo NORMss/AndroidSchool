@@ -2,7 +2,7 @@ package com.eltex.androidschool.view.fragment.post.adapter.postbydate
 
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.utils.datetime.DateSeparators
 
 class PostByDateItemCallback : ItemCallback<DateSeparators.GroupByDate<Post>>() {
     override fun areItemsTheSame(

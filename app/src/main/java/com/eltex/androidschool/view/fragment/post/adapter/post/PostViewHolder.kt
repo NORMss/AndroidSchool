@@ -6,7 +6,7 @@ import coil.load
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.datatime.DateTimeStringFormater
+import com.eltex.androidschool.utils.datetime.DateTimeStringFormater
 
 class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root) {
     fun bind(post: Post) {

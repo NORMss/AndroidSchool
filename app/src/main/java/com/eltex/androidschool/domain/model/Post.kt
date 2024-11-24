@@ -1,6 +1,7 @@
 package com.eltex.androidschool.domain.model
 
-import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.utils.datetime.DateSeparators
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,7 +12,7 @@ data class Post(
     val authorJob: String,
     val authorAvatar: String?,
     val content: String,
-    override val published: String,
+    override val published: Instant,
     val coordinates: Coordinates?,
     val link: String?,
     val mentionedMe: Boolean,

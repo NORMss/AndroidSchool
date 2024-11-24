@@ -22,7 +22,6 @@ import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
 import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENT_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
-import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.activity.event.EditEventActivity
 import com.eltex.androidschool.view.activity.event.NewEventActivity
@@ -77,7 +76,6 @@ class EventFragment : Fragment() {
                             requireContext().applicationContext.filesDir.resolve("$EVENTS_FILE.json")
                         ),
                     ),
-                    resourceManager = AndroidResourceManager(requireContext().applicationContext),
                 )
             }
         }

@@ -1,6 +1,7 @@
 package com.eltex.androidschool.domain.model
 
-import com.eltex.androidschool.utils.datatime.DateSeparators
+import com.eltex.androidschool.utils.datetime.DateSeparators
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,8 +12,8 @@ data class Event(
     val authorJob: String?,
     val authorAvatar: String?,
     val content: String,
-    val datetime: String,
-    override val published: String,
+    val datetime: Instant,
+    override val published: Instant,
     val coords: Coordinates?,
     val type: EventType,
     val likeOwnerIds: Set<Long>,
