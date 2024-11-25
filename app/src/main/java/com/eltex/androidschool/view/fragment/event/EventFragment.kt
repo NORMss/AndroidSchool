@@ -15,13 +15,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.local.DataStoreHolder
-import com.eltex.androidschool.data.local.LocalEventManagerImpl
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
-import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENT_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.activity.event.EditEventActivity
@@ -69,13 +66,7 @@ class EventFragment : Fragment() {
             addInitializer(EventViewModel::class) {
                 EventViewModel(
                     eventRepository = LocalEventRepository(
-                        LocalEventManagerImpl(
-                            dataStore = DataStoreHolder.getInstance(
-                                requireContext().applicationContext,
-                                EVENT_CONFIG
-                            ),
-                            file = requireContext().applicationContext.filesDir.resolve("$EVENTS_FILE.json")
-                        ),
+                        localEventManager = (context?.applicationContext as App).localEventsManager
                     ),
                 )
             }

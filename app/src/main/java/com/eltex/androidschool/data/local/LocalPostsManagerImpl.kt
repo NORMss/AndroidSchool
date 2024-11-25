@@ -1,11 +1,14 @@
 package com.eltex.androidschool.data.local
 
+import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import com.eltex.androidschool.domain.local.LocalPostsManager
 import com.eltex.androidschool.domain.model.Post
+import com.eltex.androidschool.utils.constants.DataStoreConfig.POSTS_FILE
+import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -86,5 +89,22 @@ class LocalPostsManagerImpl(
 
     private object PreferencesKey {
         val NEXT_ID = longPreferencesKey("next_id")
+    }
+
+    companion object {
+        private var instance: LocalPostsManagerImpl? = null
+
+        fun getInstance(context: Context): LocalPostsManagerImpl {
+            if (instance == null) {
+                instance = LocalPostsManagerImpl(
+                    dataStore = DataStoreHolder.getInstance(
+                        context.applicationContext,
+                        POST_CONFIG
+                    ),
+                    file = context.applicationContext.filesDir.resolve("$POSTS_FILE.json")
+                )
+            }
+            return instance!!
+        }
     }
 }

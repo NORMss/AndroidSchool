@@ -14,14 +14,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.local.DataStoreHolder
-import com.eltex.androidschool.data.local.LocalPostsManagerImpl
 import com.eltex.androidschool.data.repository.LocalPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.constants.DataStoreConfig.POSTS_FILE
-import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.activity.post.EditPostActivity
@@ -60,13 +57,7 @@ class PostFragment : Fragment() {
             addInitializer(PostViewModel::class) {
                 PostViewModel(
                     postRepository = LocalPostRepository(
-                        LocalPostsManagerImpl(
-                            dataStore = DataStoreHolder.getInstance(
-                                requireContext().applicationContext,
-                                POST_CONFIG
-                            ),
-                            file = requireContext().applicationContext.filesDir.resolve("$POSTS_FILE.json"),
-                        ),
+                        localPostsManager = (context?.applicationContext as App).localPostsManager,
                     ),
                 )
             }

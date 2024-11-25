@@ -11,13 +11,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
+import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.local.DataStoreHolder
-import com.eltex.androidschool.data.local.LocalPostsManagerImpl
 import com.eltex.androidschool.data.repository.LocalPostRepository
 import com.eltex.androidschool.databinding.ActivityNewPostBinding
-import com.eltex.androidschool.utils.constants.DataStoreConfig.POSTS_FILE
-import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.common.EdgeToEdgeHelper
 
@@ -94,13 +91,7 @@ class NewPostActivity : AppCompatActivity() {
             addInitializer(NewPostViewModel::class) {
                 NewPostViewModel(
                     postRepository = LocalPostRepository(
-                        LocalPostsManagerImpl(
-                            DataStoreHolder.getInstance(
-                                applicationContext,
-                                POST_CONFIG
-                            ),
-                            applicationContext.filesDir.resolve("$POSTS_FILE.json")
-                        ),
+                        localPostsManager = (applicationContext as App).localPostsManager
                     ),
                 )
             }
