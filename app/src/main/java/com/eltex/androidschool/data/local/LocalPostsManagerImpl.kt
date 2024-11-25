@@ -85,6 +85,6 @@ class LocalPostsManagerImpl(
     }
 
     private object PreferencesKey {
-        val NEXT_ID = longPreferencesKey("post_next_id")
+        val NEXT_ID = longPreferencesKey("next_id")
     }
 }

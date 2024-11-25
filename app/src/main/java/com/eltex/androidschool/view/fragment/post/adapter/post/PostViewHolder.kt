@@ -33,6 +33,7 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
                 binding.contentImage.visibility = View.GONE
                 binding.contentVideo.visibility = View.GONE
             }
+
             null -> {
                 binding.contentImage.visibility = View.GONE
                 binding.contentVideo.visibility = View.GONE

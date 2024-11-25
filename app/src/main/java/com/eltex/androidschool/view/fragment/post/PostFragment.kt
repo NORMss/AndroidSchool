@@ -3,6 +3,7 @@ package com.eltex.androidschool.view.fragment.post
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +23,6 @@ import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.constants.DataStoreConfig.POSTS_FILE
 import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
-import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.activity.post.EditPostActivity
 import com.eltex.androidschool.view.activity.post.NewPostActivity
@@ -61,11 +61,11 @@ class PostFragment : Fragment() {
                 PostViewModel(
                     postRepository = LocalPostRepository(
                         LocalPostsManagerImpl(
-                            DataStoreHolder.getInstance(
+                            dataStore = DataStoreHolder.getInstance(
                                 requireContext().applicationContext,
                                 POST_CONFIG
                             ),
-                            requireContext().applicationContext.filesDir.resolve("$POSTS_FILE.json"),
+                            file = requireContext().applicationContext.filesDir.resolve("$POSTS_FILE.json"),
                         ),
                     ),
                 )
@@ -80,7 +80,7 @@ class PostFragment : Fragment() {
     ): View {
         _binding = FragmentPostBinding.inflate(inflater, container, false)
 
-        binding.postsByDate.posts.adapter = adapter
+        _binding?.postsByDate?.posts?.adapter = adapter
 
         binding.newPost.setOnClickListener {
             val intent = Intent(requireContext(), NewPostActivity::class.java)
@@ -111,6 +111,7 @@ class PostFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
+                Log.d("MyLog", state.postsByDate.toString())
                 adapter.submitList(state.postsByDate)
                 binding.root.visibility = View.VISIBLE
                 state.toast?.let { toastData ->

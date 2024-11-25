@@ -4,6 +4,7 @@ import LocalEventRepository
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,11 +70,11 @@ class EventFragment : Fragment() {
                 EventViewModel(
                     eventRepository = LocalEventRepository(
                         LocalEventManagerImpl(
-                            DataStoreHolder.getInstance(
+                            dataStore = DataStoreHolder.getInstance(
                                 requireContext().applicationContext,
                                 EVENT_CONFIG
                             ),
-                            requireContext().applicationContext.filesDir.resolve("$EVENTS_FILE.json")
+                            file = requireContext().applicationContext.filesDir.resolve("$EVENTS_FILE.json")
                         ),
                     ),
                 )
@@ -141,6 +142,7 @@ class EventFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
+                Log.d("MyLog", state.eventsByDate.toString())
                 adapter.submitList(state.eventsByDate)
                 binding.root.visibility = View.VISIBLE
                 state.toast?.let { toastData ->
