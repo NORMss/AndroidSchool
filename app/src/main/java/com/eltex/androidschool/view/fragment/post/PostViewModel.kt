@@ -1,6 +1,5 @@
 package com.eltex.androidschool.view.fragment.post
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.model.Post
@@ -57,7 +56,6 @@ class PostViewModel(
                 _state.update { state ->
                     state.copy(posts = posts)
                 }
-                Log.d("MyLog", _state.value.posts.last().toString())
                 createPostsByDate(posts)
             }
             .launchIn(viewModelScope)

@@ -67,9 +67,9 @@ class PostByDateViewHolder(
                 instant = date,
                 resourceManager = resourceManager
             )
-            postByDatePayload.items?.let { items ->
-                postAdapter.submitList(items)
-            }
+        }
+        postByDatePayload.items?.let { items ->
+            postAdapter.submitList(items)
         }
     }
 }

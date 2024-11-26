@@ -1,6 +1,5 @@
 package com.eltex.androidschool.view.activity.event
 
-import LocalEventRepository
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -12,12 +11,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
+import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.local.DataStoreHolder
-import com.eltex.androidschool.data.local.LocalEventManagerImpl
+import com.eltex.androidschool.data.repository.SqliteEventRepository
 import com.eltex.androidschool.databinding.ActivityNewEventBinding
-import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
-import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENT_CONFIG
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.common.EdgeToEdgeHelper
 
@@ -88,14 +85,8 @@ class NewEventActivity : AppCompatActivity() {
         viewModelFactory {
             addInitializer(NewEventViewModel::class) {
                 NewEventViewModel(
-                    eventRepository = LocalEventRepository(
-                        LocalEventManagerImpl(
-                            dataStore = DataStoreHolder.getInstance(
-                                applicationContext,
-                                EVENT_CONFIG
-                            ),
-                            file = applicationContext.filesDir.resolve("$EVENTS_FILE.json")
-                        ),
+                    eventRepository = SqliteEventRepository(
+                        postDao = (applicationContext as App).eventDao
                     ),
                 )
             }

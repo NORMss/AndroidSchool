@@ -1,9 +1,9 @@
 package com.eltex.androidschool.view.fragment.event
 
-import LocalEventRepository
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +14,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.local.DataStoreHolder
-import com.eltex.androidschool.data.local.LocalEventManagerImpl
+import com.eltex.androidschool.data.repository.SqliteEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENTS_FILE
-import com.eltex.androidschool.utils.constants.DataStoreConfig.EVENT_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.activity.event.EditEventActivity
@@ -67,14 +65,8 @@ class EventFragment : Fragment() {
         viewModelFactory {
             addInitializer(EventViewModel::class) {
                 EventViewModel(
-                    eventRepository = LocalEventRepository(
-                        LocalEventManagerImpl(
-                            DataStoreHolder.getInstance(
-                                requireContext().applicationContext,
-                                EVENT_CONFIG
-                            ),
-                            requireContext().applicationContext.filesDir.resolve("$EVENTS_FILE.json")
-                        ),
+                    eventRepository = SqliteEventRepository(
+                        postDao = (context?.applicationContext as App).eventDao
                     ),
                 )
             }
@@ -141,6 +133,7 @@ class EventFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
+                Log.d("MyLog", state.eventsByDate.toString())
                 adapter.submitList(state.eventsByDate)
                 binding.root.visibility = View.VISIBLE
                 state.toast?.let { toastData ->

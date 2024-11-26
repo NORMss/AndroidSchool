@@ -3,6 +3,7 @@ package com.eltex.androidschool.view.fragment.post
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,16 +14,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.local.DataStoreHolder
-import com.eltex.androidschool.data.local.LocalPostsManagerImpl
-import com.eltex.androidschool.data.repository.LocalPostRepository
+import com.eltex.androidschool.data.repository.SqlitePostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.constants.DataStoreConfig.POSTS_FILE
-import com.eltex.androidschool.utils.constants.DataStoreConfig.POST_CONFIG
 import com.eltex.androidschool.utils.constants.IntentPutExtra
-import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.activity.post.EditPostActivity
 import com.eltex.androidschool.view.activity.post.NewPostActivity
@@ -59,15 +56,9 @@ class PostFragment : Fragment() {
         viewModelFactory {
             addInitializer(PostViewModel::class) {
                 PostViewModel(
-                    postRepository = LocalPostRepository(
-                        LocalPostsManagerImpl(
-                            DataStoreHolder.getInstance(
-                                requireContext().applicationContext,
-                                POST_CONFIG
-                            ),
-                            requireContext().applicationContext.filesDir.resolve("$POSTS_FILE.json"),
-                        ),
-                    ),
+                    postRepository = SqlitePostRepository(
+                        (context?.applicationContext as App).postDao
+                    )
                 )
             }
         }
@@ -80,7 +71,7 @@ class PostFragment : Fragment() {
     ): View {
         _binding = FragmentPostBinding.inflate(inflater, container, false)
 
-        binding.postsByDate.posts.adapter = adapter
+        _binding?.postsByDate?.posts?.adapter = adapter
 
         binding.newPost.setOnClickListener {
             val intent = Intent(requireContext(), NewPostActivity::class.java)
@@ -111,6 +102,7 @@ class PostFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
+                Log.d("MyLog", state.postsByDate.toString())
                 adapter.submitList(state.postsByDate)
                 binding.root.visibility = View.VISIBLE
                 state.toast?.let { toastData ->
