@@ -1,4 +1,4 @@
-package com.eltex.androidschool.data.local
+package com.eltex.androidschool.data.local.post
 
 import com.eltex.androidschool.domain.model.Post
 import kotlinx.coroutines.flow.Flow

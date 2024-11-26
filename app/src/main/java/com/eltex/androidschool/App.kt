@@ -1,7 +1,9 @@
 package com.eltex.androidschool
 
 import android.app.Application
-import com.eltex.androidschool.data.local.PostDaoImpl
+import com.eltex.androidschool.data.local.AppDb
+import com.eltex.androidschool.data.local.event.EventDaoImpl
+import com.eltex.androidschool.data.local.post.PostDaoImpl
 import com.eltex.androidschool.data.manager.LocalEventManagerImpl
 import com.eltex.androidschool.data.manager.LocalPostsManagerImpl
 
@@ -15,10 +17,16 @@ class App : Application() {
     lateinit var postDao: PostDaoImpl
         private set
 
+    lateinit var eventDao: EventDaoImpl
+        private set
+
+    private lateinit var appDb: AppDb
+
     override fun onCreate() {
         super.onCreate()
-        localPostsManager = LocalPostsManagerImpl.getInstance(this)
-        localEventsManager = LocalEventManagerImpl.getInstance(this)
-        postDao = PostDaoImpl.getInstance(this)
+
+        appDb = AppDb.getInstance(this)
+        postDao = appDb.postDao
+        eventDao = appDb.eventDao
     }
 }

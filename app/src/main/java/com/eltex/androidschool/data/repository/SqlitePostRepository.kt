@@ -1,6 +1,6 @@
 package com.eltex.androidschool.data.repository
 
-import com.eltex.androidschool.data.local.PostDao
+import com.eltex.androidschool.data.local.post.PostDao
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Post

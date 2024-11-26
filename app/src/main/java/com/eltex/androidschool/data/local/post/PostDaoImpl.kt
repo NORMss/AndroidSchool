@@ -1,7 +1,6 @@
-package com.eltex.androidschool.data.local
+package com.eltex.androidschool.data.local.post
 
 import android.content.ContentValues
-import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.eltex.androidschool.domain.model.Attachment
@@ -30,7 +29,7 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
         var post: Post? = null
         val cursor = db.query(
             PostTable.TABLE_NAME,
-            null,
+            PostTable.allColumns(),
             "${PostTable.ID} = ?",
             arrayOf(id.toString()),
             null,
@@ -93,7 +92,7 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
     private fun loadPostsFromDb() {
         val cursor = db.query(
             PostTable.TABLE_NAME,
-            null,
+            PostTable.allColumns(),
             null,
             null,
             null,
@@ -139,30 +138,4 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
 
     private fun deserializeAttachment(json: String): Attachment =
         Json.decodeFromString<Attachment>(json)
-
-    companion object {
-        @Volatile
-        private var instance: PostDaoImpl? = null
-
-        fun getInstance(context: Context): PostDaoImpl {
-            val application = context.applicationContext
-
-
-            instance?.let {
-                return it
-            }
-
-            synchronized(this) {
-                instance?.let { return it }
-            }
-
-            val dbHelper = PostDaoImpl(DbHelper(application).writableDatabase)
-
-
-            instance = dbHelper
-
-            return dbHelper
-        }
-
-    }
 }

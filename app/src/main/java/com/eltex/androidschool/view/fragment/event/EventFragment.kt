@@ -1,6 +1,5 @@
 package com.eltex.androidschool.view.fragment.event
 
-import LocalEventRepository
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
+import com.eltex.androidschool.data.repository.SqliteEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.utils.constants.IntentPutExtra
@@ -65,8 +65,8 @@ class EventFragment : Fragment() {
         viewModelFactory {
             addInitializer(EventViewModel::class) {
                 EventViewModel(
-                    eventRepository = LocalEventRepository(
-                        localEventManager = (context?.applicationContext as App).localEventsManager
+                    eventRepository = SqliteEventRepository(
+                        postDao = (context?.applicationContext as App).eventDao
                     ),
                 )
             }
