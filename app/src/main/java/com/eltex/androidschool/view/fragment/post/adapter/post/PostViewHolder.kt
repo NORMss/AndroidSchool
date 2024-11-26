@@ -1,5 +1,6 @@
 package com.eltex.androidschool.view.fragment.post.adapter.post
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
@@ -9,11 +10,11 @@ import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.datetime.DateTimeStringFormater
 
 class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root) {
+
     fun bind(post: Post) {
         val header = binding.header
 
         binding.contentImage.visibility = View.VISIBLE
-        header.monogramText.visibility = View.VISIBLE
         header.username.text = post.author
 
         header.monogram.load(post.authorAvatar) {
@@ -21,14 +22,30 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
         }
 
         when (post.attachment?.type) {
-            AttachmentType.IMAGE -> binding.contentImage.load(post.attachment.url) {
-                listener(
-                    onSuccess = { _, _ -> binding.contentImage.visibility = View.VISIBLE },
-                    onError = { _, _ -> binding.contentImage.visibility = View.GONE }
-                )
+            AttachmentType.IMAGE -> {
+                binding.contentImage.load(post.attachment.url) {
+                    crossfade(true)
+                    listener(
+                        onSuccess = { _, _ ->
+                            binding.contentImage.visibility = View.VISIBLE
+                            binding.contentVideo.visibility = View.GONE
+                            Log.d("MyLog", "onSuccess")
+                        },
+                        onError = { _, _ ->
+                            binding.contentImage.visibility = View.GONE
+                            binding.contentVideo.visibility = View.GONE
+                            Log.d("MyLog", "onError")
+                        }
+                    )
+                }
+                binding.contentVideo.visibility = View.GONE
             }
 
-            AttachmentType.VIDEO -> binding.contentVideo.visibility = View.VISIBLE
+            AttachmentType.VIDEO -> {
+                binding.contentVideo.visibility = View.VISIBLE
+                binding.contentImage.visibility = View.GONE
+            }
+
             AttachmentType.AUDIO -> {
                 binding.contentImage.visibility = View.GONE
                 binding.contentVideo.visibility = View.GONE
@@ -37,6 +54,7 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
             null -> {
                 binding.contentImage.visibility = View.GONE
                 binding.contentVideo.visibility = View.GONE
+                Log.d("MyLog", "attachment null")
             }
         }
 

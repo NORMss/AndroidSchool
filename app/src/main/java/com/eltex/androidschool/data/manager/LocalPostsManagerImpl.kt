@@ -1,4 +1,4 @@
-package com.eltex.androidschool.data.local
+package com.eltex.androidschool.data.manager
 
 import android.content.Context
 import androidx.datastore.core.DataStore
