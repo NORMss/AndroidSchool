@@ -15,11 +15,11 @@ interface EventDao {
     @Upsert
     suspend fun saveEvent(event: EventEntity)
 
-    @Query("SELECT * FROM $EVENT_TABLE WHERE id = :id ORDER BY id DESC")
+    @Query("SELECT * FROM $EVENT_TABLE WHERE id = :id")
 
     suspend fun getEvent(id: Long): EventEntity?
 
-    @Query("SELECT * FROM $EVENT_TABLE ORDER BY id DESC")
+    @Query("SELECT * FROM $EVENT_TABLE")
 
     fun getEvents(): Flow<List<EventEntity>>
 }
