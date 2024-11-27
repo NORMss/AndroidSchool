@@ -52,7 +52,7 @@ data class PostEntity(
                 link = link,
                 mentionedMe = mentionedMe,
                 likedByMe = likedByMe,
-                attachment = attachment
+                attachment = attachment,
             )
         }
 

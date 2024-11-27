@@ -4,8 +4,6 @@ import android.app.Application
 import com.eltex.androidschool.data.local.AppDb
 import com.eltex.androidschool.data.local.event.EventDao
 import com.eltex.androidschool.data.local.post.PostDao
-import com.eltex.androidschool.data.manager.LocalEventManagerImpl
-import com.eltex.androidschool.data.manager.LocalPostsManagerImpl
 
 class App : Application() {
     lateinit var postDao: PostDao

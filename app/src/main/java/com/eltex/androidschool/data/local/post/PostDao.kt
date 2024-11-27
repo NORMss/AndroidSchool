@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM $POST_TABLE ORDER BY id DESC")
+    @Query("SELECT * FROM $POST_TABLE")
     fun getPosts(): Flow<List<PostEntity>>
 
-    @Query("SELECT * FROM $POST_TABLE WHERE id = :id ORDER BY id DESC")
+    @Query("SELECT * FROM $POST_TABLE WHERE id = :id")
     suspend fun getPost(id: Long): PostEntity?
 
     @Upsert
