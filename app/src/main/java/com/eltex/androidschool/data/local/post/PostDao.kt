@@ -1,12 +1,23 @@
 package com.eltex.androidschool.data.local.post
 
-import com.eltex.androidschool.domain.model.Post
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Upsert
+import com.eltex.androidschool.data.local.post.entity.PostEntity
+import com.eltex.androidschool.utils.constants.Db.POST_TABLE
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface PostDao {
-    fun getPosts(): Flow<List<Post>>
-    suspend fun getPost(id: Long): Post?
-    suspend fun addPost(post: Post)
+    @Query("SELECT * FROM $POST_TABLE ORDER BY id DESC")
+    fun getPosts(): Flow<List<PostEntity>>
+
+    @Query("SELECT * FROM $POST_TABLE WHERE id = :id ORDER BY id DESC")
+    suspend fun getPost(id: Long): PostEntity?
+
+    @Upsert
+    suspend fun savePost(post: PostEntity)
+
+    @Query("DELETE FROM $POST_TABLE WHERE id = :id")
     suspend fun deletePost(id: Long)
-    suspend fun updatePost(id: Long, post: Post)
 }

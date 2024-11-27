@@ -13,7 +13,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.SqlitePostRepository
+import com.eltex.androidschool.data.repository.RoomPostRepository
 import com.eltex.androidschool.databinding.ActivityNewPostBinding
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.common.EdgeToEdgeHelper
@@ -90,7 +90,7 @@ class NewPostActivity : AppCompatActivity() {
         viewModelFactory {
             addInitializer(NewPostViewModel::class) {
                 NewPostViewModel(
-                    postRepository = SqlitePostRepository(
+                    postRepository = RoomPostRepository(
                         (applicationContext as App).postDao
                     ),
                 )

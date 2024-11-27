@@ -1,12 +1,25 @@
 package com.eltex.androidschool.data.local.event
 
-import com.eltex.androidschool.domain.model.Event
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Upsert
+import com.eltex.androidschool.data.local.event.entity.EventEntity
+import com.eltex.androidschool.utils.constants.Db.EVENT_TABLE
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface EventDao {
-    suspend fun updateEvent(id: Long, event: Event)
+    @Query("DELETE FROM $EVENT_TABLE WHERE id = :id")
     suspend fun deleteEvent(id: Long)
-    suspend fun addEvent(event: Event)
-    suspend fun getEvent(id: Long): Event?
-    fun getEvents(): Flow<List<Event>>
+
+    @Upsert
+    suspend fun saveEvent(event: EventEntity)
+
+    @Query("SELECT * FROM $EVENT_TABLE WHERE id = :id ORDER BY id DESC")
+
+    suspend fun getEvent(id: Long): EventEntity?
+
+    @Query("SELECT * FROM $EVENT_TABLE ORDER BY id DESC")
+
+    fun getEvents(): Flow<List<EventEntity>>
 }

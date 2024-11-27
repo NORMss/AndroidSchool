@@ -1,42 +1,45 @@
 package com.eltex.androidschool.data.repository
 
 import com.eltex.androidschool.data.local.event.EventDao
+import com.eltex.androidschool.data.local.event.entity.EventEntity
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
 import com.eltex.androidschool.domain.repository.EventRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 
-class SqliteEventRepository(
-    private val postDao: EventDao
+class RoomEventRepository(
+    private val eventDao: EventDao
 ) : EventRepository {
 
-    override fun getEvents(): Flow<List<Event>> = postDao.getEvents()
+    override fun getEvents(): Flow<List<Event>> =
+        eventDao.getEvents().map { it.map(EventEntity::toEvent) }
 
     override suspend fun likeById(id: Long) {
-        val post = postDao.getEvent(id)
+        val post = eventDao.getEvent(id)
         post?.copy(likedByMe = !post.likedByMe)?.let {
-            postDao.updateEvent(id, it)
+            eventDao.saveEvent(it)
         }
     }
 
     override suspend fun participateById(id: Long) {
-        val post = postDao.getEvent(id)
-        post?.copy(participatedByMe = !post.participatedByMe)?.let {
-            postDao.updateEvent(id, it)
+        val event = eventDao.getEvent(id)
+        event?.copy(participatedByMe = !event.participatedByMe)?.let {
+            eventDao.saveEvent(it)
         }
     }
 
     override suspend fun deleteEventById(id: Long) {
-        postDao.deleteEvent(id)
+        eventDao.deleteEvent(id)
     }
 
     override suspend fun editEventById(id: Long, textContent: String) {
-        val post = postDao.getEvent(id)
+        val post = eventDao.getEvent(id)
         post?.copy(content = textContent)?.let {
-            postDao.updateEvent(id, it)
+            eventDao.saveEvent(it)
         }
     }
 
@@ -64,6 +67,6 @@ class SqliteEventRepository(
             link = link,
             users = emptyList(),
         )
-        postDao.addEvent(newEvent)
+        eventDao.saveEvent(EventEntity.fromEvent(newEvent))
     }
 }

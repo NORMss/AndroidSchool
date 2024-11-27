@@ -1,13 +1,36 @@
 package com.eltex.androidschool.data.local
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import com.eltex.androidschool.data.local.event.EventDaoImpl
-import com.eltex.androidschool.data.local.post.PostDaoImpl
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.eltex.androidschool.data.local.converter.AttachmentTypeConverter
+import com.eltex.androidschool.data.local.converter.CoordinatesTypeConverter
+import com.eltex.androidschool.data.local.converter.InstantTypeConverter
+import com.eltex.androidschool.data.local.converter.SetCollectionTypeConverter
+import com.eltex.androidschool.data.local.converter.UserPreviewTypeConverter
+import com.eltex.androidschool.data.local.event.EventDao
+import com.eltex.androidschool.data.local.event.entity.EventEntity
+import com.eltex.androidschool.data.local.post.PostDao
+import com.eltex.androidschool.data.local.post.entity.PostEntity
+import com.eltex.androidschool.utils.constants.Db.DB_NAME
 
-class AppDb(db: SQLiteDatabase) {
-    val postDao = PostDaoImpl(db)
-    val eventDao = EventDaoImpl(db)
+
+@Database(
+    entities = [PostEntity::class, EventEntity::class],
+    version = 1,
+)
+@TypeConverters(
+    AttachmentTypeConverter::class,
+    CoordinatesTypeConverter::class,
+    UserPreviewTypeConverter::class,
+    InstantTypeConverter::class,
+    SetCollectionTypeConverter::class,
+)
+abstract class AppDb : RoomDatabase() {
+    abstract val postDao: PostDao
+    abstract val eventDao: EventDao
 
     companion object {
         @Volatile
@@ -25,7 +48,19 @@ class AppDb(db: SQLiteDatabase) {
                 instance?.let { return it }
             }
 
-            val dbHelper = AppDb(DbHelper(application).writableDatabase)
+            val dbHelper = Room.databaseBuilder(
+                application,
+                AppDb::class.java,
+                DB_NAME,
+            )
+                .createFromAsset("app_db.db")
+                .addTypeConverter(AttachmentTypeConverter())
+                .addTypeConverter(CoordinatesTypeConverter())
+                .addTypeConverter(UserPreviewTypeConverter())
+                .addTypeConverter(SetCollectionTypeConverter())
+                .addTypeConverter(InstantTypeConverter())
+                .fallbackToDestructiveMigration()
+                .build()
 
 
             instance = dbHelper
