@@ -9,18 +9,18 @@ import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.repository.PostRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewPostViewModel(
     private val postRepository: PostRepository,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(NewPostState())
-    val state = _state.asStateFlow()
+    val state: StateFlow<NewPostState>
+        field = MutableStateFlow(NewPostState())
 
     fun setAttachment(uri: Uri) {
-        _state.update {
+        state.update {
             it.copy(
                 attachment = Attachment(
                     url = uri.toString(),
@@ -31,7 +31,7 @@ class NewPostViewModel(
     }
 
     fun setText(text: String) {
-        _state.update {
+        state.update {
             it.copy(
                 textContent = text,
             )
@@ -39,8 +39,8 @@ class NewPostViewModel(
     }
 
     fun addPost() {
-        val textContent = _state.value.textContent.trim()
-        if (textContent.isEmpty() && _state.value.attachment == null) {
+        val textContent = state.value.textContent.trim()
+        if (textContent.isEmpty() && state.value.attachment == null) {
             return
         }
 
@@ -48,9 +48,9 @@ class NewPostViewModel(
             try {
                 postRepository.addPost(
                     textContent = textContent,
-                    attachment = _state.value.attachment,
+                    attachment = state.value.attachment,
                 )
-                _state.update { NewPostState() }
+                state.update { NewPostState() }
             } catch (e: Exception) {
                 Log.e("NewPostViewModel", "Failed to add post", e)
             }
