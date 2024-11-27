@@ -49,7 +49,7 @@ data class EventEntity(
     @ColumnInfo("link")
     val link: String?,
     @ColumnInfo("users")
-    val users: List<UserPreview>
+    val users: List<UserPreview>,
 ) {
     companion object {
         fun fromEvent(event: Event): EventEntity = with(event) {
