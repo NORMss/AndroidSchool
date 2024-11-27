@@ -16,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.SqlitePostRepository
+import com.eltex.androidschool.data.repository.RoomPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.constants.IntentPutExtra
@@ -56,7 +56,7 @@ class PostFragment : Fragment() {
         viewModelFactory {
             addInitializer(PostViewModel::class) {
                 PostViewModel(
-                    postRepository = SqlitePostRepository(
+                    postRepository = RoomPostRepository(
                         (context?.applicationContext as App).postDao
                     )
                 )

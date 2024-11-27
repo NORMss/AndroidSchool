@@ -13,7 +13,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.load
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.SqliteEventRepository
+import com.eltex.androidschool.data.repository.RoomEventRepository
 import com.eltex.androidschool.databinding.ActivityNewEventBinding
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.common.EdgeToEdgeHelper
@@ -85,8 +85,8 @@ class NewEventActivity : AppCompatActivity() {
         viewModelFactory {
             addInitializer(NewEventViewModel::class) {
                 NewEventViewModel(
-                    eventRepository = SqliteEventRepository(
-                        postDao = (applicationContext as App).eventDao
+                    eventRepository = RoomEventRepository(
+                        eventDao = (applicationContext as App).eventDao
                     ),
                 )
             }
