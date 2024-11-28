@@ -9,18 +9,18 @@ import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.repository.EventRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewEventViewModel(
     private val eventRepository: EventRepository,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(NewEventState())
-    val state = _state.asStateFlow()
+    val state: StateFlow<NewEventState>
+        field = MutableStateFlow(NewEventState())
 
     fun setAttachment(uri: Uri) {
-        _state.update {
+        state.update {
             it.copy(
                 attachment = Attachment(
                     url = uri.toString(),
@@ -31,7 +31,7 @@ class NewEventViewModel(
     }
 
     fun setText(text: String) {
-        _state.update {
+        state.update {
             it.copy(
                 textContent = text,
             )
@@ -39,7 +39,7 @@ class NewEventViewModel(
     }
 
     fun setLink(text: String) {
-        _state.update {
+        state.update {
             it.copy(
                 link = Uri.parse(text)?.toString(),
             )
@@ -47,8 +47,8 @@ class NewEventViewModel(
     }
 
     fun addPost() {
-        val textContent = _state.value.textContent.trim()
-        if (textContent.isEmpty() && _state.value.attachment == null) {
+        val textContent = state.value.textContent.trim()
+        if (textContent.isEmpty() && state.value.attachment == null) {
             return
         }
 
@@ -56,10 +56,10 @@ class NewEventViewModel(
             try {
                 eventRepository.addEvent(
                     textContent = textContent,
-                    attachment = _state.value.attachment,
-                    link = _state.value.link,
+                    attachment = state.value.attachment,
+                    link = state.value.link,
                 )
-                _state.update { NewEventState() }
+                state.update { NewEventState() }
             } catch (e: Exception) {
                 Log.e("NewPostViewModel", "Failed to add post", e)
             }

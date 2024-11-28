@@ -7,7 +7,7 @@ import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.utils.datetime.DateSeparators
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 class EventViewModel(
     private val eventRepository: EventRepository,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(EventState())
-    val state = _state.asStateFlow()
+    val state: StateFlow<EventState>
+        field = MutableStateFlow(EventState())
 
     init {
         observeEvents()
@@ -48,7 +48,7 @@ class EventViewModel(
     }
 
     private fun createEventsByDate(updatedEvents: List<Event>) {
-        _state.update { state ->
+        state.update { state ->
             val groupedEvents = DateSeparators.groupByDate(
                 items = updatedEvents,
             )
@@ -59,7 +59,7 @@ class EventViewModel(
     private fun observeEvents() {
         eventRepository.getEvents()
             .onEach { events ->
-                _state.update { state ->
+                state.update { state ->
                     state.copy(events = events)
                 }
                 createEventsByDate(events)
