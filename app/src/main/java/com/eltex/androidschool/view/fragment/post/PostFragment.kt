@@ -109,7 +109,7 @@ class PostFragment : Fragment() {
                     ObserveAsEvents(toast = toastData, activity = activity)
                 }
             }
-            .launchIn(lifecycleScope)
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private val newPostLauncher =

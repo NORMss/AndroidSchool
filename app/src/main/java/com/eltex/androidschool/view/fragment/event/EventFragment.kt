@@ -140,7 +140,7 @@ class EventFragment : Fragment() {
                     ObserveAsEvents(toast = toastData, activity = activity)
                 }
             }
-            .launchIn(lifecycleScope)
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun share(event: Event) {

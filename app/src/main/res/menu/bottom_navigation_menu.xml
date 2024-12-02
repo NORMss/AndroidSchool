@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/fragmentPosts"
+        android:icon="@drawable/feed"
+        android:title="@string/posts" />
+
+    <item
+        android:id="@+id/fragmentEvents"
+        android:icon="@drawable/event"
+        android:title="@string/events" />
+
+    <item
+        android:id="@+id/fragmentUsers"
+        android:icon="@drawable/people"
+        android:title="@string/users" />
+
+</menu>
