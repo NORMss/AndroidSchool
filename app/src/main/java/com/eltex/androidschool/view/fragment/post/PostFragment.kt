@@ -100,7 +100,7 @@ class PostFragment : Fragment() {
 
     private fun observeViewModelState() {
         viewModel.state
-            .flowWithLifecycle(lifecycle)
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach { state ->
                 Log.d("MyLog", state.postsByDate.toString())
                 adapter.submitList(state.postsByDate)

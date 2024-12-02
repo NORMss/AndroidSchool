@@ -1,4 +1,4 @@
-package com.eltex.androidschool.view.fragment.toolbar
+package com.eltex.androidschool.view.fragment.navigation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +13,6 @@ class BottomNavigationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_bootom_navigation, container, false)
+        return inflater.inflate(R.layout.fragment_bottom_navigation, container, false)
     }
 }

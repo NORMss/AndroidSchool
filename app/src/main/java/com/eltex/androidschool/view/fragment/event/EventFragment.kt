@@ -131,7 +131,7 @@ class EventFragment : Fragment() {
 
     private fun observeViewModelState() {
         viewModel.state
-            .flowWithLifecycle(lifecycle)
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach { state ->
                 Log.d("MyLog", state.eventsByDate.toString())
                 adapter.submitList(state.eventsByDate)
