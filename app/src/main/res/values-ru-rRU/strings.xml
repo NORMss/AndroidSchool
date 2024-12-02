@@ -36,5 +36,8 @@
     <string name="edit_event_title">Редактирование ивента</string>
     <string name="post_created">Пост успешно создан</string>
     <string name="event_created">Ивент успешно создан</string>
+    <string name="posts">Посты</string>
+    <string name="events">Ивенты</string>
+    <string name="users">Пользователи</string>
 
 </resources>
