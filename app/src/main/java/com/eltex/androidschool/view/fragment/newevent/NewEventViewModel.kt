@@ -46,7 +46,7 @@ class NewEventViewModel(
         }
     }
 
-    fun addPost() {
+    fun addEvent() {
         val textContent = state.value.textContent.trim()
         if (textContent.isEmpty() && state.value.attachment == null) {
             return

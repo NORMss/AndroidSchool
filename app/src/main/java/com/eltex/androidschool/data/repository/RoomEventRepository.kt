@@ -18,16 +18,20 @@ class RoomEventRepository(
     override fun getEvents(): Flow<List<Event>> =
         eventDao.getEvents().map { it.map(EventEntity::toEvent) }
 
+    override suspend fun getEventById(id: Long): Event {
+        return eventDao.getEvent(id).toEvent()
+    }
+
     override suspend fun likeById(id: Long) {
         val post = eventDao.getEvent(id)
-        post?.copy(likedByMe = !post.likedByMe)?.let {
+        post.copy(likedByMe = !post.likedByMe).let {
             eventDao.saveEvent(it)
         }
     }
 
     override suspend fun participateById(id: Long) {
         val event = eventDao.getEvent(id)
-        event?.copy(participatedByMe = !event.participatedByMe)?.let {
+        event.copy(participatedByMe = !event.participatedByMe).let {
             eventDao.saveEvent(it)
         }
     }
@@ -38,7 +42,7 @@ class RoomEventRepository(
 
     override suspend fun editEventById(id: Long, textContent: String) {
         val post = eventDao.getEvent(id)
-        post?.copy(content = textContent)?.let {
+        post.copy(content = textContent).let {
             eventDao.saveEvent(it)
         }
     }

@@ -9,27 +9,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RoomEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.toast.toast
-import com.eltex.androidschool.view.fragment.editevent.EditEventFragment
-import com.eltex.androidschool.view.fragment.newevent.NewEventFragment
 import com.eltex.androidschool.view.common.ObserveAsEvents
 import com.eltex.androidschool.view.common.OffsetDecoration
+import com.eltex.androidschool.view.fragment.editevent.EditEventFragment
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
 import com.eltex.androidschool.view.fragment.event.adapter.eventbydate.EventByDateAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class EventFragment : Fragment() {
@@ -73,14 +72,6 @@ class EventFragment : Fragment() {
         }
     }
 
-    private val newEventLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-//                val content = result.data?.getStringArrayListExtra(Intent.EXTRA_TEXT)
-//                content?.let { viewModel.addEvent(it[0], it[1]) }
-            }
-        }
-
     private val editEventLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -102,11 +93,6 @@ class EventFragment : Fragment() {
         val view = binding.root
 
         _binding?.eventsByDate?.events?.adapter = adapter
-
-//        binding.newEvent.setOnClickListener {
-//            val intent = Intent(requireContext(), NewEventFragment::class.java)
-//            newEventLauncher.launch(intent)
-//        }
 
         _binding?.eventsByDate?.events?.addItemDecoration(
             OffsetDecoration(
@@ -168,10 +154,13 @@ class EventFragment : Fragment() {
                     }
 
                     R.id.edit -> {
-                        val intent = Intent(requireContext(), EditEventFragment::class.java).apply {
-                            putExtra(IntentPutExtra.KEY_EVENT, Json.encodeToString(event))
-                        }
-                        editEventLauncher.launch(intent)
+                        requireParentFragment().requireParentFragment().findNavController()
+                            .navigate(
+                                R.id.action_bottomNavigation_to_editEventFragment,
+                                bundleOf(
+                                    EditEventFragment.EVENT_ID to event.id,
+                                )
+                            )
                         true
                     }
 
