@@ -21,8 +21,8 @@ import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.toast.toast
-import com.eltex.androidschool.view.activity.event.EditEventActivity
-import com.eltex.androidschool.view.activity.event.NewEventActivity
+import com.eltex.androidschool.view.fragment.editevent.EditEventFragment
+import com.eltex.androidschool.view.fragment.newevent.NewEventFragment
 import com.eltex.androidschool.view.common.ObserveAsEvents
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
@@ -103,10 +103,10 @@ class EventFragment : Fragment() {
 
         _binding?.eventsByDate?.events?.adapter = adapter
 
-        binding.newEvent.setOnClickListener {
-            val intent = Intent(requireContext(), NewEventActivity::class.java)
-            newEventLauncher.launch(intent)
-        }
+//        binding.newEvent.setOnClickListener {
+//            val intent = Intent(requireContext(), NewEventFragment::class.java)
+//            newEventLauncher.launch(intent)
+//        }
 
         _binding?.eventsByDate?.events?.addItemDecoration(
             OffsetDecoration(
@@ -168,7 +168,7 @@ class EventFragment : Fragment() {
                     }
 
                     R.id.edit -> {
-                        val intent = Intent(requireContext(), EditEventActivity::class.java).apply {
+                        val intent = Intent(requireContext(), EditEventFragment::class.java).apply {
                             putExtra(IntentPutExtra.KEY_EVENT, Json.encodeToString(event))
                         }
                         editEventLauncher.launch(intent)

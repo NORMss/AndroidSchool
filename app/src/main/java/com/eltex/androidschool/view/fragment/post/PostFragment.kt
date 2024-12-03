@@ -21,8 +21,8 @@ import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.toast.toast
-import com.eltex.androidschool.view.activity.post.EditPostActivity
-import com.eltex.androidschool.view.activity.post.NewPostActivity
+import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
+import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
 import com.eltex.androidschool.view.common.ObserveAsEvents
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
@@ -73,10 +73,10 @@ class PostFragment : Fragment() {
 
         _binding?.postsByDate?.posts?.adapter = adapter
 
-        binding.newPost.setOnClickListener {
-            val intent = Intent(requireContext(), NewPostActivity::class.java)
-            newPostLauncher.launch(intent)
-        }
+//        binding.newPost.setOnClickListener {
+//            val intent = Intent(requireContext(), NewPostFragment::class.java)
+//            newPostLauncher.launch(intent)
+//        }
 
         binding.postsByDate.posts.addItemDecoration(
             OffsetDecoration(
@@ -143,7 +143,7 @@ class PostFragment : Fragment() {
                     }
 
                     R.id.edit -> {
-                        val intent = Intent(requireContext(), EditPostActivity::class.java).apply {
+                        val intent = Intent(requireContext(), EditPostFragment::class.java).apply {
                             putExtra(IntentPutExtra.KEY_POST, Json.encodeToString(post))
                         }
                         editPostLauncher.launch(intent)
