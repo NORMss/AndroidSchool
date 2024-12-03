@@ -1,40 +1,38 @@
 package com.eltex.androidschool.view.fragment.post
 
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RoomPostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.constants.IntentPutExtra
 import com.eltex.androidschool.utils.toast.toast
-import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
-import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
 import com.eltex.androidschool.view.common.ObserveAsEvents
 import com.eltex.androidschool.view.common.OffsetDecoration
+import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.postbydate.PostByDateAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlin.getValue
 
 class PostFragment : Fragment() {
     private var _binding: FragmentPostBinding? = null
     private val binding get() = _binding!!
+
 
     private val adapter = PostByDateAdapter(
         object : PostAdapter.PostListener {
@@ -73,11 +71,6 @@ class PostFragment : Fragment() {
 
         _binding?.postsByDate?.posts?.adapter = adapter
 
-//        binding.newPost.setOnClickListener {
-//            val intent = Intent(requireContext(), NewPostFragment::class.java)
-//            newPostLauncher.launch(intent)
-//        }
-
         binding.postsByDate.posts.addItemDecoration(
             OffsetDecoration(
                 horizontalOffset = resources.getDimensionPixelSize(R.dimen.list_offset),
@@ -112,26 +105,6 @@ class PostFragment : Fragment() {
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    private val newPostLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-//                val content = result.data?.getStringArrayListExtra(Intent.EXTRA_TEXT)
-//                content?.let { viewModel.addPost(it[0], it[1]) }
-            }
-        }
-
-    private val editPostLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data = result.data?.getStringExtra(Intent.EXTRA_TEXT)
-                data?.let {
-                    val post = Json.decodeFromString<Post>(data)
-                    println(post)
-                    viewModel.editPost(post.id, post.content)
-                }
-            }
-        }
-
     private fun popupMenuLogic(post: Post, view: View) {
         PopupMenu(view.context, view).apply {
             inflate(R.menu.post_menu)
@@ -143,10 +116,13 @@ class PostFragment : Fragment() {
                     }
 
                     R.id.edit -> {
-                        val intent = Intent(requireContext(), EditPostFragment::class.java).apply {
-                            putExtra(IntentPutExtra.KEY_POST, Json.encodeToString(post))
-                        }
-                        editPostLauncher.launch(intent)
+                        requireParentFragment().requireParentFragment().findNavController()
+                            .navigate(
+                                R.id.action_bottomNavigation_to_editPostFragment,
+                                bundleOf(
+                                    EditPostFragment.POST_ID to post.id,
+                                )
+                            )
                         true
                     }
 

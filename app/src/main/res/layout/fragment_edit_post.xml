@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragment.newpost.NewPostFragment">
+    tools:context=".view.fragment.editpost.EditPostFragment">
 
     <EditText
         android:id="@+id/editText"
@@ -20,7 +20,7 @@
         android:padding="@dimen/common_spacing"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="LabelFor"
         tools:text="@tools:sample/lorem[10]" />
 

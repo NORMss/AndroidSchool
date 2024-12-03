@@ -17,9 +17,13 @@ class RoomPostRepository(
     override fun getPosts(): Flow<List<Post>> =
         postDao.getPosts().map { it.map(PostEntity::toPost) }
 
+    override suspend fun getPostById(id: Long): Post {
+        return postDao.getPost(id).toPost()
+    }
+
     override suspend fun likeById(id: Long) {
         val post = postDao.getPost(id)
-        post?.copy(likedByMe = !post.likedByMe)?.let {
+        post.copy(likedByMe = !post.likedByMe).let {
             postDao.savePost(it)
         }
     }
@@ -30,7 +34,7 @@ class RoomPostRepository(
 
     override suspend fun editPostById(id: Long, textContent: String) {
         val post = postDao.getPost(id)
-        post?.copy(content = textContent)?.let {
+        post.copy(content = textContent).let {
             postDao.savePost(it)
         }
     }

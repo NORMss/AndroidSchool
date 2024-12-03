@@ -6,6 +6,7 @@ import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 
 class LocalPostRepository(
@@ -18,6 +19,12 @@ class LocalPostRepository(
         localPostsManager.updatePost(id) {
             it.copy(likedByMe = !it.likedByMe)
         }
+    }
+
+    override suspend fun getPostById(id: Long): Post {
+        return localPostsManager.getPosts().first().filter {
+            it.id == id
+        }.first()
     }
 
     override suspend fun deletePostById(id: Long) {

@@ -13,7 +13,7 @@ interface PostDao {
     fun getPosts(): Flow<List<PostEntity>>
 
     @Query("SELECT * FROM $POST_TABLE WHERE id = :id")
-    suspend fun getPost(id: Long): PostEntity?
+    suspend fun getPost(id: Long): PostEntity
 
     @Upsert
     suspend fun savePost(post: PostEntity)

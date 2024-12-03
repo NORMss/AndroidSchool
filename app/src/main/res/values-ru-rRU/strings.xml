@@ -39,5 +39,9 @@
     <string name="posts">Посты</string>
     <string name="events">Ивенты</string>
     <string name="users">Пользователи</string>
+    <string name="post_not_found">Пост не найден</string>
+    <string name="post_edited">Пост отредактирован</string>
+    <string name="event_edited">Событие отредактировано</string>
+    <string name="event_not_found">Событие не найдено</string>
 
 </resources>

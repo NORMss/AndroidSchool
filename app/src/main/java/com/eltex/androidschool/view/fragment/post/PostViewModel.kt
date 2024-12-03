@@ -35,12 +35,6 @@ class PostViewModel(
         }
     }
 
-    fun editPost(id: Long, textContent: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            postRepository.editPostById(id, textContent)
-        }
-    }
-
     private fun createPostsByDate(updatedPosts: List<Post>) {
         state.update { state ->
             val groupedPosts = DateSeparators.groupByDate(

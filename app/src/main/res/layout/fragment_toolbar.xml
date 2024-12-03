@@ -9,8 +9,10 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        style="@style/Widget.Material3.Toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:menu="@menu/new_post_menu" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/container"

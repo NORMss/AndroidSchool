@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.FragmentToolbarBinding
 import kotlinx.coroutines.flow.launchIn
@@ -22,6 +24,11 @@ class ToolbarFragment : Fragment() {
 
         val saveItem = binding.toolbar.menu.findItem(R.id.save)
 
+        val navController =
+            requireNotNull(childFragmentManager.findFragmentById(R.id.container)).findNavController()
+
+        binding.toolbar.setupWithNavController(navController)
+
         val toolBarViewModel by activityViewModels<ToolbarViewModel>()
 
         toolBarViewModel.state.onEach {
@@ -33,7 +40,6 @@ class ToolbarFragment : Fragment() {
             toolBarViewModel.saveClicked(true)
             true
         }
-
         return binding.root
     }
 }
