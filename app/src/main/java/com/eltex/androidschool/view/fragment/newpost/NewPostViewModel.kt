@@ -1,4 +1,4 @@
-package com.eltex.androidschool.view.activity.event
+package com.eltex.androidschool.view.fragment.newpost
 
 import android.net.Uri
 import android.util.Log
@@ -6,18 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
-import com.eltex.androidschool.domain.repository.EventRepository
+import com.eltex.androidschool.domain.repository.PostRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class NewEventViewModel(
-    private val eventRepository: EventRepository,
+class NewPostViewModel(
+    private val postRepository: PostRepository,
 ) : ViewModel() {
-    val state: StateFlow<NewEventState>
-        field = MutableStateFlow(NewEventState())
+    val state: StateFlow<NewPostState>
+        field = MutableStateFlow(NewPostState())
 
     fun setAttachment(uri: Uri) {
         state.update {
@@ -38,14 +38,6 @@ class NewEventViewModel(
         }
     }
 
-    fun setLink(text: String) {
-        state.update {
-            it.copy(
-                link = Uri.parse(text)?.toString(),
-            )
-        }
-    }
-
     fun addPost() {
         val textContent = state.value.textContent.trim()
         if (textContent.isEmpty() && state.value.attachment == null) {
@@ -54,12 +46,11 @@ class NewEventViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                eventRepository.addEvent(
+                postRepository.addPost(
                     textContent = textContent,
                     attachment = state.value.attachment,
-                    link = state.value.link,
                 )
-                state.update { NewEventState() }
+                state.update { NewPostState() }
             } catch (e: Exception) {
                 Log.e("NewPostViewModel", "Failed to add post", e)
             }

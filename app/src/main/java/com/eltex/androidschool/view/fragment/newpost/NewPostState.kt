@@ -1,9 +1,8 @@
-package com.eltex.androidschool.view.activity.event
+package com.eltex.androidschool.view.fragment.newpost
 
 import com.eltex.androidschool.domain.model.Attachment
 
-data class NewEventState(
+data class NewPostState(
     val textContent: String = "",
-    val link: String? = null,
     val attachment: Attachment? = null,
 )

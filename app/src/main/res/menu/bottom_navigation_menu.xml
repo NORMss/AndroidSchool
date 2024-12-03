@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/fragmentPosts"
+        android:id="@+id/postFragment"
         android:icon="@drawable/feed"
         android:title="@string/posts" />
 
     <item
-        android:id="@+id/fragmentEvents"
+        android:id="@+id/eventFragment"
         android:icon="@drawable/event"
         android:title="@string/events" />
 
     <item
-        android:id="@+id/fragmentUsers"
+        android:id="@+id/usersFragment"
         android:icon="@drawable/people"
         android:title="@string/users" />
 

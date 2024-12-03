@@ -5,21 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.activity.post.NewPostActivity">
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/new_post_menu"
-        app:navigationIcon="?homeAsUpIndicator"
-        app:navigationIconTint="?colorOnPrimary"
-        app:title="@string/new_post_title"
-        app:titleTextColor="?colorOnPrimary" />
+    tools:context=".view.fragment.newevent.NewEventFragment">
 
     <EditText
         android:id="@+id/editText"
