@@ -16,10 +16,8 @@ interface EventDao {
     suspend fun saveEvent(event: EventEntity)
 
     @Query("SELECT * FROM $EVENT_TABLE WHERE id = :id")
-
-    suspend fun getEvent(id: Long): EventEntity?
+    suspend fun getEvent(id: Long): EventEntity
 
     @Query("SELECT * FROM $EVENT_TABLE")
-
     fun getEvents(): Flow<List<EventEntity>>
 }

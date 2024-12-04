@@ -44,6 +44,8 @@
     <string name="posts">Posts</string>
     <string name="events">Events</string>
     <string name="users">Users</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="post_not_found">Post not found</string>
+    <string name="post_edited">Post edited</string>
+    <string name="event_edited">Event edited</string>
+    <string name="event_not_found">Event not found</string>
 </resources>

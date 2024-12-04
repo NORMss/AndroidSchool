@@ -1,6 +1,7 @@
 package com.eltex.androidschool.view.activity
 
 import android.os.Bundle
+import com.eltex.androidschool.R
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.eltex.androidschool.databinding.ActivityMainBinding
@@ -13,6 +14,7 @@ class MainActivity : AppCompatActivity() {
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(findViewById(R.id.toolbar))
 
         EdgeToEdgeHelper.enableEdgeToEdge(findViewById(android.R.id.content))
     }

@@ -5,6 +5,7 @@ import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
 import com.eltex.androidschool.domain.repository.EventRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 
 class LocalEventRepository(
@@ -17,6 +18,12 @@ class LocalEventRepository(
         localEventManager.updateEvent(id) {
             it.copy(likedByMe = !it.likedByMe)
         }
+    }
+
+    override suspend fun getEventById(id: Long): Event {
+        return localEventManager.getEvents().first().filter {
+            it.id == id
+        }.first()
     }
 
     override suspend fun participateById(id: Long) {

@@ -2,12 +2,44 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_navigation"
     app:startDestination="@id/bottomNavigation">
 
     <fragment
         android:id="@+id/bottomNavigation"
         android:name="com.eltex.androidschool.view.fragment.navigation.BottomNavigationFragment"
-        android:label="fragment_toolbar"
-        tools:layout="@layout/fragment_bottom_navigation" />
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_bottom_navigation" >
+        <action
+            android:id="@+id/action_bottomNavigation_to_newEventFragment"
+            app:destination="@id/newEventFragment" />
+        <action
+            android:id="@+id/action_bottomNavigation_to_editEventFragment"
+            app:destination="@id/editEventFragment" />
+        <action
+            android:id="@+id/action_bottomNavigation_to_newPostFragment"
+            app:destination="@id/newPostFragment" />
+        <action
+            android:id="@+id/action_bottomNavigation_to_editPostFragment"
+            app:destination="@id/editPostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newEventFragment"
+        android:name="com.eltex.androidschool.view.fragment.newevent.NewEventFragment"
+        android:label="@string/new_event_title"
+        tools:layout="@layout/fragment_new_event" />
+    <fragment
+        android:id="@+id/newPostFragment"
+        android:name="com.eltex.androidschool.view.fragment.newpost.NewPostFragment"
+        android:label="@string/new_post_title"
+        tools:layout="@layout/fragment_new_post" />
+    <fragment
+        android:id="@+id/editEventFragment"
+        android:name="com.eltex.androidschool.view.fragment.editevent.EditEventFragment"
+        android:label="@string/edit_event_title"
+        tools:layout="@layout/fragment_edit_event" />
+    <fragment
+        android:id="@+id/editPostFragment"
+        android:name="com.eltex.androidschool.view.fragment.editpost.EditPostFragment"
+        android:label="@string/edit_post_title"
+        tools:layout="@layout/fragment_edit_post" />
 </navigation>

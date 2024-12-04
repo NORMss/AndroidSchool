@@ -10,7 +10,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.fragment.findNavController
 import coil.load
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
@@ -18,6 +23,8 @@ import com.eltex.androidschool.data.repository.RoomEventRepository
 import com.eltex.androidschool.databinding.FragmentNewEventBinding
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.getValue
 
 class NewEventFragment : Fragment() {
@@ -42,11 +49,8 @@ class NewEventFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentNewEventBinding.inflate(inflater, container, false)
-//        setContentView(binding.root)
 
-//        EdgeToEdgeHelper.enableEdgeToEdge(findViewById(android.R.id.content))
-
-        handleIncomingIntent(binding)
+        val navController = findNavController()
 
         pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
@@ -65,35 +69,40 @@ class NewEventFragment : Fragment() {
             }
         }
 
-//        binding.toolbar.menu.findItem(R.id.save).setOnMenuItemClickListener {
-//            viewModel.setText(binding.editText.text?.toString().orEmpty())
-//
-//            if (viewModel.state.value.textContent.isNotEmpty()) {
-////                setResult(
-////                    RESULT_OK,
-//////                    Intent().putStringArrayListExtra(
-//////                        Intent.EXTRA_TEXT,
-//////                        arrayListOf(contentText, contentImage)
-//////                    )
-////                )
-//                viewModel.addPost()
-//                requireContext().applicationContext.toast(R.string.event_created, false)
-////                finish()
-//            } else {
-//                requireContext().applicationContext.toast(R.string.text_is_empty, false)
-//            }
-//
-//            true
-//        }
-//
-//        binding.toolbar.setNavigationOnClickListener {
-////            setResult(RESULT_CANCELED)
-////            finish()
-//        }
+        toolbarViewModel.state.onEach {
+            viewModel.setText(binding.editText.text?.toString().orEmpty())
+            if (it.saveClicked) {
+                if (viewModel.state.value.textContent.isNotBlank()) {
+                    viewModel.addEvent()
+                    requireContext().applicationContext.toast(R.string.event_created, false)
+                    navController.navigateUp()
+                } else {
+                    requireContext().applicationContext.toast(R.string.text_is_empty, false)
+                }
+                toolbarViewModel.saveClicked(false)
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         binding.attachButton.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
+
+
+        viewLifecycleOwner.lifecycle.addObserver(
+            object : LifecycleEventObserver {
+                override fun onStateChanged(
+                    source: LifecycleOwner,
+                    event: Lifecycle.Event
+                ) {
+                    when (event) {
+                        Lifecycle.Event.ON_START -> toolbarViewModel.setSaveVisible(true)
+                        Lifecycle.Event.ON_STOP -> toolbarViewModel.setSaveVisible(false)
+                        Lifecycle.Event.ON_DESTROY -> source.lifecycle.removeObserver(this)
+                        else -> Unit
+                    }
+                }
+            }
+        )
 
         return binding.root
     }
@@ -108,16 +117,5 @@ class NewEventFragment : Fragment() {
                 )
             }
         }
-    }
-
-    private fun handleIncomingIntent(binding: FragmentNewEventBinding) {
-//        intent.apply {
-//            if (action == Intent.ACTION_SEND && type == "text/plain") {
-//                val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
-//                if (sharedText != null) {
-//                    binding.editText.setText(sharedText)
-//                }
-//            }
-//        }
     }
 }
