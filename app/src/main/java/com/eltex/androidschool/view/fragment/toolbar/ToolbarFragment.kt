@@ -1,5 +1,6 @@
 package com.eltex.androidschool.view.fragment.toolbar
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class ToolbarFragment : Fragment() {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        parentFragmentManager.beginTransaction()
+            .setPrimaryNavigationFragment(this)
+            .commit()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
