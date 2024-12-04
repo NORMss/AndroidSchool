@@ -11,6 +11,8 @@
 
 <details>
   <summary>Screenshots</summary>
+
+  ![image](https://github.com/user-attachments/assets/ebcb1cc1-e8fa-4fc6-bcbb-adb639e380ca)
   
   ![image](https://github.com/user-attachments/assets/78342d96-8038-4507-88df-5267f96532b9)
 
