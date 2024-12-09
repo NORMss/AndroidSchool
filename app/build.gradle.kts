@@ -63,6 +63,10 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.okhttp.bom))
+
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
