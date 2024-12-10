@@ -1,17 +1,14 @@
 package com.eltex.androidschool.view.fragment.post
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
 import com.eltex.androidschool.utils.datetime.DateSeparators
-import kotlinx.coroutines.Dispatchers
+import com.eltex.androidschool.utils.remote.Callback
+import com.eltex.androidschool.view.common.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class PostViewModel(
     private val postRepository: PostRepository,
@@ -20,18 +17,94 @@ class PostViewModel(
         field = MutableStateFlow(PostState())
 
     init {
-        observePosts()
+        loadPosts()
     }
 
     fun likeById(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            postRepository.likeById(id)
-        }
+        postRepository.likeById(
+            id,
+            object : Callback<Post> {
+                override fun onSuccess(data: Post) {
+                    state.update {
+                        it.copy(
+                            posts = state.value.posts.map {
+                                if (it.id == data.id) {
+                                    data
+                                } else {
+                                    it
+                                }
+                            },
+                            status = Status.Idle,
+                        )
+                    }
+                    createPostsByDate(state.value.posts)
+                }
+
+                override fun onError(throwable: Throwable) {
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
+                }
+            }
+        )
     }
 
     fun deletePost(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            postRepository.deletePostById(id)
+        postRepository.deleteById(
+            id,
+            object : Callback<Unit> {
+                override fun onSuccess(data: Unit) {
+                    state.update {
+                        it.copy(
+                            posts = state.value.posts.filter { it.id != id },
+                            status = Status.Idle,
+                        )
+                    }
+                    createPostsByDate(state.value.posts)
+                }
+
+                override fun onError(throwable: Throwable) {
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
+                }
+            }
+        )
+    }
+
+    fun loadPosts() {
+        postRepository.getPosts(
+            object : Callback<List<Post>> {
+                override fun onSuccess(data: List<Post>) {
+                    state.update {
+                        it.copy(
+                            posts = data,
+                            status = Status.Idle,
+                        )
+                    }
+                    createPostsByDate(state.value.posts)
+                }
+
+                override fun onError(throwable: Throwable) {
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
+                }
+            }
+        )
+    }
+
+    fun consumerError() {
+        state.update {
+            it.copy(
+                status = Status.Idle,
+            )
         }
     }
 
@@ -42,16 +115,5 @@ class PostViewModel(
             )
             state.copy(posts = updatedPosts, postsByDate = groupedPosts)
         }
-    }
-
-    private fun observePosts() {
-        postRepository.getPosts()
-            .onEach { posts ->
-                state.update { state ->
-                    state.copy(posts = posts)
-                }
-                createPostsByDate(posts)
-            }
-            .launchIn(viewModelScope)
     }
 }

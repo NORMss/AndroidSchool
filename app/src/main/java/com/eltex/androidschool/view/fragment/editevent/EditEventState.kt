@@ -2,6 +2,7 @@ package com.eltex.androidschool.view.fragment.editevent
 
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
+import com.eltex.androidschool.view.common.Status
 import kotlinx.datetime.Instant
 
 data class EditEventState(
@@ -23,6 +24,12 @@ data class EditEventState(
         participatedByMe = false,
         attachment = null,
         link = null,
-        users = emptyList()
-    )
-)
+        users = emptyMap(),
+    ),
+    val status: Status = Status.Idle,
+) {
+    val isRefreshing: Boolean = status == Status.Loading
+    val isEmptyLoading: Boolean = status == Status.Loading
+    val emptyError: Throwable? = (status as? Status.Error)?.throwable
+    val refreshingError: Throwable? = (status as? Status.Error)?.throwable
+}

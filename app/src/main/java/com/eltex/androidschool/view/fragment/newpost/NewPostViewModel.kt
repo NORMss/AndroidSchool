@@ -1,17 +1,16 @@
 package com.eltex.androidschool.view.fragment.newpost
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
+import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
-import kotlinx.coroutines.Dispatchers
+import com.eltex.androidschool.utils.remote.Callback
+import com.eltex.androidschool.view.common.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class NewPostViewModel(
     private val postRepository: PostRepository,
@@ -43,17 +42,37 @@ class NewPostViewModel(
         if (textContent.isEmpty() && state.value.attachment == null) {
             return
         }
+        postRepository.savePost(
+            id = 0,
+            content = textContent,
+            attachment = state.value.attachment,
+            object : Callback<Post> {
+                override fun onSuccess(data: Post) {
+                    state.update {
+                        it.copy(
+                            textContent = data.content,
+                            attachment = data.attachment,
+                            status = Status.Idle,
+                        )
+                    }
+                }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                postRepository.addPost(
-                    textContent = textContent,
-                    attachment = state.value.attachment,
-                )
-                state.update { NewPostState() }
-            } catch (e: Exception) {
-                Log.e("NewPostViewModel", "Failed to add post", e)
+                override fun onError(throwable: Throwable) {
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
+                }
             }
+        )
+    }
+
+    fun consumerError() {
+        state.update {
+            it.copy(
+                status = Status.Idle,
+            )
         }
     }
 }

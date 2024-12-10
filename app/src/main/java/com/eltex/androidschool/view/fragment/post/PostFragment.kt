@@ -2,12 +2,13 @@ package com.eltex.androidschool.view.fragment.post
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
@@ -16,11 +17,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RoomPostRepository
+import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.domain.model.Post
+import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.utils.toast.toast
-import com.eltex.androidschool.view.common.ObserveAsEvents
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
@@ -54,8 +55,8 @@ class PostFragment : Fragment() {
         viewModelFactory {
             addInitializer(PostViewModel::class) {
                 PostViewModel(
-                    postRepository = RoomPostRepository(
-                        (context?.applicationContext as App).postDao
+                    postRepository = RemotePostRepository(
+                        (context?.applicationContext as App).client
                     )
                 )
             }
@@ -78,6 +79,10 @@ class PostFragment : Fragment() {
             )
         )
 
+        binding.retryButton.setOnClickListener {
+            viewModel.loadPosts()
+        }
+
         return binding.root
     }
 
@@ -95,12 +100,22 @@ class PostFragment : Fragment() {
         viewModel.state
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach { state ->
-                Log.d("MyLog", state.postsByDate.toString())
+                binding.errorGroup.isVisible = state.isEmptyError
+                state.status.throwableOtNull?.getErrorText(requireContext())?.let { errorText ->
+                    binding.errorText.text = errorText
+                    binding.progress.isVisible = state.isEmptyLoading
+
+                    if (state.isRefreshError) {
+                        Toast.makeText(
+                            requireContext(),
+                            errorText,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        viewModel.consumerError()
+                    }
+                }
                 adapter.submitList(state.postsByDate)
                 binding.root.visibility = View.VISIBLE
-                state.toast?.let { toastData ->
-                    ObserveAsEvents(toast = toastData, activity = activity)
-                }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }

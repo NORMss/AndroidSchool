@@ -48,4 +48,7 @@
     <string name="post_edited">Post edited</string>
     <string name="event_edited">Event edited</string>
     <string name="event_not_found">Event not found</string>
+    <string name="network_error">Network Error</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="retry">Retry</string>
 </resources>

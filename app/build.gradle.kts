@@ -33,6 +33,7 @@ android {
                 }
             }
         buildConfigField("String", "API_KEY", secretProps.getProperty("API_KEY"))
+        buildConfigField("String", "USER_TOKEN", secretProps.getProperty("USER_TOKEN"))
     }
 
     buildTypes {
@@ -69,6 +70,7 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.swiperefreshlayout)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.kotlinx.serialization.json)

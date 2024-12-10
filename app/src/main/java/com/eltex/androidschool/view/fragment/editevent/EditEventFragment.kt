@@ -15,7 +15,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RoomEventRepository
+import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentEditEventBinding
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
@@ -38,8 +38,8 @@ class EditEventFragment : Fragment() {
                 viewModelFactory {
                     addInitializer(EditEventViewModel::class) {
                         EditEventViewModel(
-                            eventRepository = RoomEventRepository(
-                                (requireContext().applicationContext as App).eventDao
+                            eventRepository = RemoteEventRepository(
+                                (requireContext().applicationContext as App).client
                             ),
                             eventId = eventId,
                         )
