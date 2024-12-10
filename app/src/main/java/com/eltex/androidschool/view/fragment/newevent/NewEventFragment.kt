@@ -19,7 +19,7 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RoomEventRepository
+import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentNewEventBinding
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
@@ -111,8 +111,8 @@ class NewEventFragment : Fragment() {
         viewModelFactory {
             addInitializer(NewEventViewModel::class) {
                 NewEventViewModel(
-                    eventRepository = RoomEventRepository(
-                        eventDao = (requireContext().applicationContext as App).eventDao
+                    eventRepository = RemoteEventRepository(
+                        (requireContext().applicationContext as App).client
                     ),
                 )
             }

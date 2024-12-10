@@ -16,7 +16,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RoomPostRepository
+import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentEditPostBinding
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
@@ -39,8 +39,8 @@ class EditPostFragment : Fragment() {
                 viewModelFactory {
                     addInitializer(EditPostViewModel::class) {
                         EditPostViewModel(
-                            postRepository = RoomPostRepository(
-                                (requireContext().applicationContext as App).postDao
+                            postRepository = RemotePostRepository(
+                                (requireContext().applicationContext as App).client
                             ),
                             postId = postId,
                         )

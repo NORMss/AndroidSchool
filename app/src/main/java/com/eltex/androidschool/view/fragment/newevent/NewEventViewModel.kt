@@ -1,17 +1,16 @@
 package com.eltex.androidschool.view.fragment.newevent
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
+import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
-import kotlinx.coroutines.Dispatchers
+import com.eltex.androidschool.utils.remote.Callback
+import com.eltex.androidschool.view.common.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class NewEventViewModel(
     private val eventRepository: EventRepository,
@@ -51,18 +50,30 @@ class NewEventViewModel(
         if (textContent.isEmpty() && state.value.attachment == null) {
             return
         }
+        eventRepository.saveEvent(
+            id = 0,
+            content = textContent,
+            attachment = state.value.attachment,
+            link = "https://normno.ru",
+            object : Callback<Event> {
+                override fun onSuccess(data: Event) {
+                    state.update {
+                        it.copy(
+                            textContent = data.content,
+                            attachment = data.attachment,
+                            status = Status.Idle,
+                        )
+                    }
+                }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                eventRepository.addEvent(
-                    textContent = textContent,
-                    attachment = state.value.attachment,
-                    link = state.value.link,
-                )
-                state.update { NewEventState() }
-            } catch (e: Exception) {
-                Log.e("NewPostViewModel", "Failed to add post", e)
+                override fun onError(throwable: Throwable) {
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
+                }
             }
-        }
+        )
     }
 }

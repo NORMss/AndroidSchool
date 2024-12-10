@@ -1,13 +1,11 @@
 package com.eltex.androidschool.view.fragment.event
 
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -18,7 +16,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RoomEventRepository
+import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.utils.toast.toast
@@ -29,7 +27,6 @@ import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
 import com.eltex.androidschool.view.fragment.event.adapter.eventbydate.EventByDateAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.serialization.json.Json
 
 class EventFragment : Fragment() {
     private var _binding: FragmentEventBinding? = null
@@ -64,25 +61,13 @@ class EventFragment : Fragment() {
         viewModelFactory {
             addInitializer(EventViewModel::class) {
                 EventViewModel(
-                    eventRepository = RoomEventRepository(
-                        eventDao = (context?.applicationContext as App).eventDao
+                    eventRepository = RemoteEventRepository(
+                        (context?.applicationContext as App).client
                     ),
                 )
             }
         }
     }
-
-    private val editEventLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data = result.data?.getStringExtra(Intent.EXTRA_TEXT)
-                data?.let {
-                    val event = Json.decodeFromString<Event>(data)
-                    println(event)
-                    viewModel.editEvent(event.id, event.content)
-                }
-            }
-        }
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -43,5 +43,7 @@
     <string name="post_edited">Пост отредактирован</string>
     <string name="event_edited">Событие отредактировано</string>
     <string name="event_not_found">Событие не найдено</string>
-
+    <string name="network_error">Оштбка сети</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="retry">Ещё раз</string>
 </resources>

@@ -4,23 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RoomPostRepository
+import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentNewPostBinding
+import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -72,6 +76,22 @@ class NewPostFragment : Fragment() {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.state
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                it.status.throwableOtNull?.getErrorText(requireContext())?.let { errorText ->
+
+                    if (it.isRefreshError) {
+                        Toast.makeText(
+                            requireContext(),
+                            errorText,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        viewModel.consumerError()
+                    }
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         binding.attachButton.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
@@ -99,8 +119,8 @@ class NewPostFragment : Fragment() {
         viewModelFactory {
             addInitializer(NewPostViewModel::class) {
                 NewPostViewModel(
-                    postRepository = RoomPostRepository(
-                        (requireContext().applicationContext as App).postDao
+                    postRepository = RemotePostRepository(
+                        (requireContext().applicationContext as App).client
                     ),
                 )
             }

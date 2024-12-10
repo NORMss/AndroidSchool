@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserPreview(
-    val avatar: String,
-    val name: String
+    val avatar: String?,
+    val name: String,
 )
