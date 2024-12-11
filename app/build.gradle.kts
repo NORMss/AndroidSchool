@@ -64,6 +64,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.converter.kotlinx.serialization)
+    implementation(libs.retrofit)
     implementation(platform(libs.okhttp.bom))
 
     implementation(libs.okhttp)

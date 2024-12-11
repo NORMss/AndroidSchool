@@ -61,7 +61,7 @@ class EventFragment : Fragment() {
             addInitializer(EventViewModel::class) {
                 EventViewModel(
                     eventRepository = RemoteEventRepository(
-                        (context?.applicationContext as App).client
+                        (context?.applicationContext as App).eventApi
                     ),
                 )
             }
