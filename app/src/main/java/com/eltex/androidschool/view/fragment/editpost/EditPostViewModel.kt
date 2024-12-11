@@ -57,6 +57,7 @@ class EditPostViewModel(
     }
 
     private fun getPost(id: Long) {
+        state.update { it.copy(status = Status.Loading) }
         postRepository.getPosts(
             object : Callback<List<Post>> {
                 override fun onSuccess(data: List<Post>) {

@@ -23,7 +23,6 @@ class PostByDateAdapter(
             postListener = postListener,
             binding = binding,
         )
-
         return viewHolder
     }
 

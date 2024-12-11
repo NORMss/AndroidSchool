@@ -51,4 +51,6 @@
     <string name="network_error">Network Error</string>
     <string name="unknown_error">Unknown Error</string>
     <string name="retry">Retry</string>
+    <string name="content">Content</string>
+    <string name="link">Link</string>
 </resources>

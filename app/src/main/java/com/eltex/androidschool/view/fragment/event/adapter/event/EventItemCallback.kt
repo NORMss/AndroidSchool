@@ -11,7 +11,9 @@ class EventItemCallback : DiffUtil.ItemCallback<Event>() {
     override fun getChangePayload(oldItem: Event, newItem: Event): Any? {
         return EventPayload(
             likedByMe = newItem.likedByMe.takeIf { it != oldItem.likedByMe },
-            participatedByMe = newItem.participatedByMe.takeIf { it != oldItem.participatedByMe }
+            likeOwnerIds = newItem.likeOwnerIds.takeIf { it != oldItem.likeOwnerIds },
+            participatedByMe = newItem.participatedByMe.takeIf { it != oldItem.participatedByMe },
+            participantsIds = newItem.participantsIds.takeIf { it != oldItem.participantsIds },
         )
             .takeIf {
                 it.isNotEmpty()

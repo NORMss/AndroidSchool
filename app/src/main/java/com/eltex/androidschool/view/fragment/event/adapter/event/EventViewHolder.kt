@@ -9,6 +9,7 @@ import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
 import com.eltex.androidschool.utils.datetime.DateTimeStringFormater
+import java.util.Locale
 
 class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.root) {
     fun bind(event: Event) {
@@ -74,6 +75,10 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
         updateLikedByMe(event.likedByMe)
 
         updateParticipateByMe(event.participatedByMe)
+
+        updateParticipantsIds(event.participantsIds)
+
+        updateLikeOwnerIds(event.likeOwnerIds)
     }
 
     fun bind(eventPayload: EventPayload) {
@@ -83,19 +88,33 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
         eventPayload.participatedByMe?.let {
             updateParticipateByMe(it)
         }
+        eventPayload.participantsIds?.let {
+            updateParticipantsIds(it)
+        }
+        eventPayload.likeOwnerIds?.let {
+            updateLikeOwnerIds(it)
+        }
     }
 
     private fun updateLikedByMe(
         likedBeMe: Boolean,
     ) {
         binding.likeButton.isSelected = likedBeMe
-        binding.likeButton.text = if (likedBeMe) "1" else "0"
+    }
+
+    private fun updateLikeOwnerIds(likeOwnerIds: Set<Long>) {
+        binding.likeButton.text = String.format(Locale.getDefault(), "%d", likeOwnerIds.size)
     }
 
     private fun updateParticipateByMe(
         participateByMe: Boolean,
     ) {
         binding.participate.isSelected = participateByMe
-        binding.participate.text = if (participateByMe) "1" else "0"
+    }
+
+    private fun updateParticipantsIds(
+        participantsIds: Set<Long>,
+    ) {
+        binding.participate.text = String.format(Locale.getDefault(), "%d", participantsIds.size)
     }
 }

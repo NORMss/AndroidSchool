@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -17,7 +19,9 @@ import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentEditEventBinding
+import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -57,8 +61,38 @@ class EditEventFragment : Fragment() {
                     viewModel.setText(binding.editText.text?.toString().orEmpty())
                     if (viewModel.state.value.event.content.isNotBlank()) {
                         viewModel.editEvent()
-                        requireContext().applicationContext.toast(R.string.post_edited, false)
-                        findNavController().navigateUp()
+                        when (viewModel.state.value.status) {
+                            is Status.Error -> {
+                                requireContext().applicationContext.also { context ->
+                                    viewModel.state.value.status.throwableOtNull?.getErrorText(
+                                        context
+                                    )
+                                        .let { errorText ->
+                                            Toast.makeText(
+                                                context,
+                                                errorText,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                }
+                            }
+
+                            Status.Idle -> {
+                                requireContext().applicationContext.toast(
+                                    R.string.event_created,
+                                    false
+                                )
+                                requireActivity().supportFragmentManager.setFragmentResult(
+                                    EVENT_EDITED,
+                                    bundleOf()
+                                )
+                                findNavController().navigateUp()
+                            }
+
+                            else -> {
+                                Unit
+                            }
+                        }
                     } else {
                         requireContext().applicationContext.toast(R.string.text_is_empty, false)
                     }
@@ -91,5 +125,7 @@ class EditEventFragment : Fragment() {
 
     companion object {
         const val EVENT_ID = "event_id"
+        const val EVENT_EDITED = "event_edited"
+
     }
 }

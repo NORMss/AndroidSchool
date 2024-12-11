@@ -24,6 +24,7 @@ import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.utils.toast.toast
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
+import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.postbydate.PostByDateAdapter
 import kotlinx.coroutines.flow.launchIn
@@ -31,14 +32,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.getValue
 
 class PostFragment : Fragment() {
-    private var _binding: FragmentPostBinding? = null
-    private val binding get() = _binding!!
-
-
     private val adapter = PostByDateAdapter(
         object : PostAdapter.PostListener {
             override fun onLikeClicked(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.likeById(post.id, post.likedByMe)
             }
 
             override fun onShareClicked(post: Post) {
@@ -68,9 +65,23 @@ class PostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPostBinding.inflate(inflater, container, false)
+        val binding = FragmentPostBinding.inflate(inflater, container, false)
 
-        _binding?.postsByDate?.posts?.adapter = adapter
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            NewPostFragment.POST_SAVED,
+            viewLifecycleOwner
+        ) { _, _ ->
+            viewModel.loadPosts()
+        }
+
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            EditPostFragment.POST_EDITED,
+            viewLifecycleOwner
+        ) { _, _ ->
+            viewModel.loadPosts()
+        }
+
+        binding.postsByDate.posts.adapter = adapter
 
         binding.postsByDate.posts.addItemDecoration(
             OffsetDecoration(
@@ -83,32 +94,31 @@ class PostFragment : Fragment() {
             viewModel.loadPosts()
         }
 
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.loadPosts()
+        }
+
+
+        observeViewModelState(binding)
+
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        observeViewModelState()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun observeViewModelState() {
+    private fun observeViewModelState(binding: FragmentPostBinding) {
         viewModel.state
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach { state ->
                 binding.errorGroup.isVisible = state.isEmptyError
-                state.status.throwableOtNull?.getErrorText(requireContext())?.let { errorText ->
-                    binding.errorText.text = errorText
-                    binding.progress.isVisible = state.isEmptyLoading
-
+                val errorText = state.status.throwableOtNull?.getErrorText(requireContext())
+                binding.errorText.text = errorText
+                binding.progress.isVisible = state.isEmptyLoading
+                binding.swipeRefresh.isRefreshing = state.isRefreshing
+                binding.swipeRefresh.isVisible = state.posts.isNotEmpty()
+                errorText?.let { it ->
                     if (state.isRefreshError) {
                         Toast.makeText(
                             requireContext(),
-                            errorText,
+                            it,
                             Toast.LENGTH_SHORT
                         ).show()
                         viewModel.consumerError()

@@ -20,9 +20,10 @@ class PostViewModel(
         loadPosts()
     }
 
-    fun likeById(id: Long) {
+    fun likeById(id: Long, isLiked: Boolean) {
         postRepository.likeById(
             id,
+            isLiked,
             object : Callback<Post> {
                 override fun onSuccess(data: Post) {
                     state.update {
@@ -77,6 +78,7 @@ class PostViewModel(
     }
 
     fun loadPosts() {
+        state.update { it.copy(status = Status.Loading) }
         postRepository.getPosts(
             object : Callback<List<Post>> {
                 override fun onSuccess(data: List<Post>) {

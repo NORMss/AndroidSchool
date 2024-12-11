@@ -11,6 +11,8 @@ import com.eltex.androidschool.view.common.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 class NewEventViewModel(
     private val eventRepository: EventRepository,
@@ -37,10 +39,18 @@ class NewEventViewModel(
         }
     }
 
-    fun setLink(text: String) {
+    fun setLink(text: String?) {
         state.update {
             it.copy(
-                link = Uri.parse(text)?.toString(),
+                link = text ?: Uri.parse(text)?.toString(),
+            )
+        }
+    }
+
+    fun setDateTime(text: String?) {
+        state.update {
+            it.copy(
+                dateTime = text?.let { Instant.parse(it) } ?: Clock.System.now()
             )
         }
     }
@@ -53,14 +63,16 @@ class NewEventViewModel(
         eventRepository.saveEvent(
             id = 0,
             content = textContent,
+            dateTime = state.value.dateTime,
             attachment = state.value.attachment,
-            link = "https://normno.ru",
+            link = state.value.link,
             object : Callback<Event> {
                 override fun onSuccess(data: Event) {
                     state.update {
                         it.copy(
                             textContent = data.content,
                             attachment = data.attachment,
+                            dateTime = data.datetime,
                             status = Status.Idle,
                         )
                     }

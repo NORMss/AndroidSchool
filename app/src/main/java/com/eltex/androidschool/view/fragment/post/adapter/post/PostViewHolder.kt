@@ -1,6 +1,5 @@
 package com.eltex.androidschool.view.fragment.post.adapter.post
 
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
@@ -8,6 +7,7 @@ import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.datetime.DateTimeStringFormater
+import java.util.Locale
 
 class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root) {
 
@@ -29,12 +29,10 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
                         onSuccess = { _, _ ->
                             binding.contentImage.visibility = View.VISIBLE
                             binding.contentVideo.visibility = View.GONE
-                            Log.d("MyLog", "onSuccess")
                         },
                         onError = { _, _ ->
                             binding.contentImage.visibility = View.GONE
                             binding.contentVideo.visibility = View.GONE
-                            Log.d("MyLog", "onError")
                         }
                     )
                 }
@@ -54,7 +52,6 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
             null -> {
                 binding.contentImage.visibility = View.GONE
                 binding.contentVideo.visibility = View.GONE
-                Log.d("MyLog", "attachment null")
             }
         }
 
@@ -63,16 +60,24 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
         binding.contentText.text = post.content
 
         updateLikedByMe(post.likedByMe)
+
+        updateLikeOwnerIds(post.likeOwnerIds)
     }
 
     fun bind(payload: PostPayload) {
         payload.likedByMe?.let { likedByMe ->
             updateLikedByMe(likedByMe)
         }
+        payload.likeOwnerIds?.let {
+            updateLikeOwnerIds(it)
+        }
     }
 
     private fun updateLikedByMe(likedByMe: Boolean) {
         binding.likeButton.isSelected = likedByMe
-        binding.likeButton.text = if (likedByMe) "1" else "0"
+    }
+
+    private fun updateLikeOwnerIds(likeOwnerIds: Set<Long>) {
+        binding.likeButton.text = String.format(Locale.getDefault(), "%d", likeOwnerIds.size)
     }
 }
