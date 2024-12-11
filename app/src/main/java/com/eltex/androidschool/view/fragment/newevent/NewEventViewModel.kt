@@ -4,7 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
+import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Event
+import com.eltex.androidschool.domain.model.EventType
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.utils.remote.Callback
 import com.eltex.androidschool.view.common.Status
@@ -61,11 +63,29 @@ class NewEventViewModel(
             return
         }
         eventRepository.saveEvent(
-            id = 0,
-            content = textContent,
-            dateTime = state.value.dateTime,
-            attachment = state.value.attachment,
-            link = state.value.link,
+            event = Event(
+                id = 0,
+                authorId = 0,
+                author = "",
+                authorJob = "",
+                authorAvatar = "",
+                content = state.value.textContent,
+                datetime = state.value.dateTime,
+                published = Instant.fromEpochSeconds(0),
+                coords = Coordinates(
+                    lat = 54.9833,
+                    long = 82.8964,
+                ),
+                type = EventType.OFFLINE,
+                likeOwnerIds = emptySet(),
+                likedByMe = false,
+                speakerIds = emptySet(),
+                participantsIds = emptySet(),
+                participatedByMe = false,
+                attachment = state.value.attachment,
+                link = state.value.link,
+                users = emptyMap(),
+            ),
             object : Callback<Event> {
                 override fun onSuccess(data: Event) {
                     state.update {

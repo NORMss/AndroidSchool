@@ -1,185 +1,112 @@
 package com.eltex.androidschool.data.repository
 
-import com.eltex.androidschool.domain.model.Attachment
-import com.eltex.androidschool.domain.model.Coordinates
+import com.eltex.androidschool.data.remote.api.PostApi
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
-import com.eltex.androidschool.utils.remote.Callback
-import kotlinx.datetime.Clock
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import okhttp3.Call
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import okhttp3.internal.EMPTY_REQUEST
-import java.io.IOException
+import com.eltex.androidschool.utils.remote.Callback as DomainCallback
+import retrofit2.Callback as RetrofitCallback
 
 class RemotePostRepository(
-    private val client: OkHttpClient
+    private val postApi: PostApi
 ) : PostRepository {
-    private companion object {
-        val JSON_TYPE = "application/json".toMediaType()
-    }
-
-    private val json = Json {
-        ignoreUnknownKeys = true
-    }
-
-    override fun getPosts(callback: Callback<List<Post>>) {
-        val request = Request.Builder()
-            .url("https://eltex-android.ru/api/posts")
-            .build()
-        val call = client.newCall(request)
+    override fun getPosts(callback: DomainCallback<List<Post>>) {
+        val call = postApi.getPosts()
         call.enqueue(
-            object : okhttp3.Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    callback.onError(e)
+            object : RetrofitCallback<List<Post>> {
+                override fun onResponse(
+                    call: retrofit2.Call<List<Post>?>,
+                    response: retrofit2.Response<List<Post>?>
+                ) {
+                    if (response.isSuccessful) {
+                        callback.onSuccess(requireNotNull(response.body()))
+                    } else {
+                        callback.onError(RuntimeException("Response code is ${response.code()}"))
+                    }
                 }
 
-                override fun onResponse(call: Call, response: Response) {
-                    if (response.isSuccessful) {
-                        val body = response.body
-                        if (body == null) {
-                            callback.onError(RuntimeException("Response body is null"))
-                            return
-                        }
-                        try {
-                            callback.onSuccess(json.decodeFromString(body.string()))
-                        } catch (e: Exception) {
-                            callback.onError(e)
-                        }
-                    } else {
-                        callback.onError(RuntimeException("Response code: ${response.code}"))
-                    }
+                override fun onFailure(
+                    call: retrofit2.Call<List<Post>?>,
+                    e: Throwable
+                ) {
+                    callback.onError(e)
                 }
             }
         )
     }
 
-    override fun likeById(id: Long, isLiked: Boolean, callback: Callback<Post>) {
-        val request = if (isLiked) {
-            Request.Builder()
-                .delete(EMPTY_REQUEST)
-                .url("https://eltex-android.ru/api/posts/$id/likes")
-                .build()
-        } else {
-            Request.Builder()
-                .post(EMPTY_REQUEST)
-                .url("https://eltex-android.ru/api/posts/$id/likes")
-                .build()
+    override fun likeById(id: Long, isLiked: Boolean, callback: DomainCallback<Post>) {
+        val call = when (isLiked) {
+            true -> postApi.unlikeById(id)
+            false -> postApi.likeById(id)
         }
-        val call = client.newCall(request)
         call.enqueue(
-            object : okhttp3.Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    callback.onError(e)
+            object : RetrofitCallback<Post> {
+                override fun onResponse(
+                    call: retrofit2.Call<Post?>,
+                    response: retrofit2.Response<Post?>
+                ) {
+                    if (response.isSuccessful) {
+                        callback.onSuccess(requireNotNull(response.body()))
+                    } else {
+                        callback.onError(RuntimeException("Response code is ${response.code()}"))
+                    }
                 }
 
-                override fun onResponse(call: Call, response: Response) {
-                    if (response.isSuccessful) {
-                        val body = response.body
-                        if (body == null) {
-                            callback.onError(RuntimeException("Response body is null"))
-                            return
-                        }
-                        try {
-                            callback.onSuccess(json.decodeFromString(body.string()))
-                        } catch (e: Exception) {
-                            callback.onError(e)
-                        }
-                    } else {
-                        callback.onError(RuntimeException("Response code: ${response.code}"))
-                    }
+                override fun onFailure(
+                    call: retrofit2.Call<Post?>,
+                    e: Throwable
+                ) {
+                    callback.onError(e)
                 }
             }
         )
     }
 
     override fun savePost(
-        id: Long,
-        content: String,
-        attachment: Attachment?,
-        callback: Callback<Post>,
+        post: Post,
+        callback: DomainCallback<Post>,
     ) {
-        val request = Request.Builder()
-            .post(
-                json.encodeToString(
-                    Post(
-                        id = id,
-                        authorId = 0,
-                        author = "Sergey Bezborodov",
-                        authorJob = "Junior Android Developer",
-                        authorAvatar = "https://avatars.githubusercontent.com/u/47896309?v=4",
-                        content = content,
-                        published = Clock.System.now(),
-                        coords = Coordinates(
-                            lat = 54.9833,
-                            long = 82.8964,
-                        ),
-                        link = "https://github.com/NORMss/",
-                        mentionIds = emptySet(),
-                        mentionedMe = false,
-                        likeOwnerIds = emptySet(),
-                        likedByMe = false,
-                        attachment = attachment,
-                        users = emptyMap(),
-                    )
-                ).toRequestBody(JSON_TYPE)
-            )
-            .url("https://eltex-android.ru/api/posts")
-            .build()
-        val call = client.newCall(request)
+        val call = postApi.save(post)
         call.enqueue(
-            object : okhttp3.Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    callback.onError(e)
+            object : RetrofitCallback<Post> {
+                override fun onResponse(
+                    call: retrofit2.Call<Post?>,
+                    response: retrofit2.Response<Post?>
+                ) {
+                    if (response.isSuccessful) {
+                        callback.onSuccess(requireNotNull(response.body()))
+                    } else {
+                        callback.onError(RuntimeException("Response code is ${response.code()}"))
+                    }
                 }
 
-                override fun onResponse(call: Call, response: Response) {
-                    if (response.isSuccessful) {
-                        val body = response.body
-                        if (body == null) {
-                            callback.onError(RuntimeException("Response body is null"))
-                            return
-                        }
-                        try {
-                            callback.onSuccess(json.decodeFromString(body.string()))
-                        } catch (e: Exception) {
-                            callback.onError(e)
-                        }
-                    } else {
-                        callback.onError(RuntimeException("Response code: ${response.code}"))
-                    }
+                override fun onFailure(
+                    call: retrofit2.Call<Post?>,
+                    e: Throwable
+                ) {
+                    callback.onError(e)
                 }
             }
         )
     }
 
-    override fun deleteById(id: Long, callback: Callback<Unit>) {
-        val request = Request.Builder()
-            .delete()
-            .url("https://eltex-android.ru/api/posts/$id")
-            .build()
-        val call = client.newCall(request)
+    override fun deleteById(id: Long, callback: DomainCallback<Unit>) {
+        val call = postApi.deleteById(id)
         call.enqueue(
-            object : okhttp3.Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    callback.onError(e)
+            object : RetrofitCallback<Unit> {
+                override fun onResponse(
+                    call: retrofit2.Call<Unit?>,
+                    response: retrofit2.Response<Unit?>
+                ) {
+                    if (response.isSuccessful) {
+                        callback.onSuccess(requireNotNull(response.body()))
+                    } else {
+                        callback.onError(RuntimeException("Response code is ${response.code()}"))
+                    }
                 }
 
-                override fun onResponse(call: Call, response: Response) {
-                    if (response.isSuccessful) {
-                        try {
-                            callback.onSuccess(Unit)
-                        } catch (e: Exception) {
-                            callback.onError(e)
-                        }
-                    } else {
-                        callback.onError(RuntimeException("Response code: ${response.code}"))
-                    }
+                override fun onFailure(call: retrofit2.Call<Unit?>, e: Throwable) {
+                    callback.onError(e)
                 }
             }
         )

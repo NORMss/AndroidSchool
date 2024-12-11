@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 
 class EditEventViewModel(
     private val eventRepository: EventRepository,
-    private val eventId: Long,
+    eventId: Long,
 ) : ViewModel() {
     val state: StateFlow<EditEventState>
         field = MutableStateFlow(EditEventState())
@@ -81,11 +81,7 @@ class EditEventViewModel(
 
     fun editEvent() {
         eventRepository.saveEvent(
-            id = eventId,
-            content = state.value.event.content,
-            dateTime = state.value.event.datetime,
-            attachment = null,
-            link = state.value.event.link,
+            event = state.value.event,
             callback = object : Callback<Event> {
                 override fun onSuccess(data: Event) {
                     state.update {

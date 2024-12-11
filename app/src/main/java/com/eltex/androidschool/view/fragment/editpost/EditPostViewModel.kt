@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 
 class EditPostViewModel(
     private val postRepository: PostRepository,
-    private val postId: Long,
+    postId: Long,
 ) : ViewModel() {
     val state: StateFlow<EditPostState>
         field = MutableStateFlow(EditPostState())
@@ -32,9 +32,7 @@ class EditPostViewModel(
 
     fun editPost() {
         postRepository.savePost(
-            postId,
-            state.value.post.content,
-            attachment = null,
+            state.value.post,
             object : Callback<Post> {
                 override fun onSuccess(data: Post) {
                     state.update {

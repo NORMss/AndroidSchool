@@ -2,9 +2,17 @@ package com.eltex.androidschool
 
 import android.app.Application
 import com.eltex.androidschool.data.remote.OkHttpClientFactory
+import com.eltex.androidschool.data.remote.api.EventApi
+import com.eltex.androidschool.data.remote.api.PostApi
 import okhttp3.OkHttpClient
 
 class App : Application() {
+    lateinit var postApi: PostApi
+        private set
+
+    lateinit var eventApi: EventApi
+        private set
+
     lateinit var client: OkHttpClient
         private set
 
@@ -12,5 +20,9 @@ class App : Application() {
         super.onCreate()
 
         client = OkHttpClientFactory.INSTANCE
+
+        postApi = PostApi.INSTANCE
+
+        eventApi = EventApi.INSTANCE
     }
 }

@@ -53,7 +53,7 @@ class PostFragment : Fragment() {
             addInitializer(PostViewModel::class) {
                 PostViewModel(
                     postRepository = RemotePostRepository(
-                        (context?.applicationContext as App).client
+                        (context?.applicationContext as App).postApi
                     )
                 )
             }
