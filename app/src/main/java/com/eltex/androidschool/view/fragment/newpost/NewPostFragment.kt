@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.isVisible
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -26,6 +26,7 @@ import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentNewPostBinding
 import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -67,8 +68,33 @@ class NewPostFragment : Fragment() {
             if (it.saveClicked) {
                 if (viewModel.state.value.textContent.isNotBlank()) {
                     viewModel.addPost()
-                    requireContext().applicationContext.toast(R.string.post_created, false)
-                    navController.navigateUp()
+                    when (viewModel.state.value.status) {
+                        is Status.Error -> {
+                            requireContext().applicationContext.also { context ->
+                                viewModel.state.value.status.throwableOtNull?.getErrorText(context)
+                                    .let { errorText ->
+                                        Toast.makeText(
+                                            context,
+                                            errorText,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                            }
+                        }
+
+                        Status.Idle -> {
+                            requireContext().applicationContext.toast(R.string.post_created, false)
+                            requireActivity().supportFragmentManager.setFragmentResult(
+                                POST_SAVED,
+                                bundleOf()
+                            )
+                            navController.navigateUp()
+                        }
+
+                        else -> {
+                            Unit
+                        }
+                    }
                 } else {
                     requireContext().applicationContext.toast(R.string.text_is_empty, false)
                 }
@@ -80,7 +106,6 @@ class NewPostFragment : Fragment() {
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 it.status.throwableOtNull?.getErrorText(requireContext())?.let { errorText ->
-
                     if (it.isRefreshError) {
                         Toast.makeText(
                             requireContext(),
@@ -90,6 +115,7 @@ class NewPostFragment : Fragment() {
                         viewModel.consumerError()
                     }
                 }
+
             }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         binding.attachButton.setOnClickListener {
@@ -125,5 +151,9 @@ class NewPostFragment : Fragment() {
                 )
             }
         }
+    }
+
+    companion object {
+        const val POST_SAVED = "post_saved"
     }
 }

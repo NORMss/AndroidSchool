@@ -26,7 +26,6 @@ class RemotePostRepository(
 
     private val json = Json {
         ignoreUnknownKeys = true
-//        coerceInputValues = true
     }
 
     override fun getPosts(callback: Callback<List<Post>>) {
@@ -60,11 +59,18 @@ class RemotePostRepository(
         )
     }
 
-    override fun likeById(id: Long, callback: Callback<Post>) {
-        val request = Request.Builder()
-            .post(EMPTY_REQUEST)
-            .url("https://eltex-android.ru/api/posts/$id/likes")
-            .build()
+    override fun likeById(id: Long, isLiked: Boolean, callback: Callback<Post>) {
+        val request = if (isLiked) {
+            Request.Builder()
+                .delete(EMPTY_REQUEST)
+                .url("https://eltex-android.ru/api/posts/$id/likes")
+                .build()
+        } else {
+            Request.Builder()
+                .post(EMPTY_REQUEST)
+                .url("https://eltex-android.ru/api/posts/$id/likes")
+                .build()
+        }
         val call = client.newCall(request)
         call.enqueue(
             object : okhttp3.Callback {
@@ -114,9 +120,12 @@ class RemotePostRepository(
                             long = 82.8964,
                         ),
                         link = "https://github.com/NORMss/",
+                        mentionIds = emptySet(),
                         mentionedMe = false,
+                        likeOwnerIds = emptySet(),
                         likedByMe = false,
-                        attachment = attachment
+                        attachment = attachment,
+                        users = emptyMap(),
                     )
                 ).toRequestBody(JSON_TYPE)
             )

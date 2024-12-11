@@ -32,7 +32,7 @@ object DateSeparators {
         return groupedItems.map { (date, groupedItems) ->
             val instant = date.atStartOfDayIn(TimeZone.currentSystemDefault())
             GroupByDate(instant, groupedItems.sortedByDescending { it.published })
-        }.reversed()
+        }
     }
 
     fun formatInstantToString(

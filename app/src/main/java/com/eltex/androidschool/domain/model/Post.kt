@@ -25,10 +25,16 @@ data class Post(
     val coords: Coordinates?,
     @SerialName("link")
     val link: String?,
+    @SerialName("mentionIds")
+    val mentionIds: Set<Long>,
     @SerialName("mentionedMe")
     val mentionedMe: Boolean,
+    @SerialName("likeOwnerIds")
+    val likeOwnerIds: Set<Long>,
     @SerialName("likedByMe")
     val likedByMe: Boolean,
     @SerialName("attachment")
     val attachment: Attachment?,
+    @SerialName("users")
+    val users: Map<String, UserPreview>,
 ) : DateSeparators.Publishable

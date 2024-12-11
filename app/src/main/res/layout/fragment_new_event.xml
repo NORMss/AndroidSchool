@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".view.fragment.newevent.NewEventFragment">
 
+    <TextView
+        android:id="@+id/titleContent"
+        style="?textAppearanceTitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:text="@string/content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/editText"
         android:layout_width="0dp"
@@ -20,9 +30,47 @@
         android:padding="@dimen/common_spacing"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/titleContent"
         tools:ignore="LabelFor"
         tools:text="@tools:sample/lorem[10]" />
+
+    <TextView
+        android:id="@+id/titleLink"
+        style="?textAppearanceTitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:text="@string/link"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editText" />
+
+    <EditText
+        android:id="@+id/editLink"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="no"
+        android:background="@color/transparent"
+        android:gravity="top"
+        android:inputType="textUri"
+        android:maxLines="1"
+        android:padding="@dimen/common_spacing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleLink"
+        tools:ignore="LabelFor"
+        tools:text="@tools:sample/lorem[10]" />
+
+    <TextView
+        android:id="@+id/dateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16.dp"
+        android:layout_marginVertical="8dp"
+        android:visibility="gone"
+        style="?textAppearanceTitleLarge"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editLink"
+        tools:text="01.01.1970" />
 
     <ImageView
         android:id="@+id/contentImage"
@@ -35,7 +83,7 @@
         app:layout_constraintDimensionRatio="H,16:9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editText"
+        app:layout_constraintTop_toBottomOf="@id/dateTime"
         tools:src="@drawable/vertical_image"
         tools:visibility="gone" />
 
@@ -51,6 +99,19 @@
         android:textSize="14sp"
         app:icon="@drawable/attach"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contentImage" />
+        app:layout_constraintTop_toBottomOf="@+id/dateTime" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/datePikerButton"
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="16dp"
+        android:fontFamily="@font/roboto_medium"
+        android:stateListAnimator="@drawable/scale"
+        android:textSize="14sp"
+        app:icon="@drawable/event"
+        app:layout_constraintStart_toEndOf="@id/attachButton"
+        app:layout_constraintTop_toTopOf="@id/attachButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

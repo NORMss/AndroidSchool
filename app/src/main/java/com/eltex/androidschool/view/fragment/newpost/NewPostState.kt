@@ -9,11 +9,11 @@ data class NewPostState(
     val status: Status = Status.Idle,
 ) {
     val isRefreshing: Boolean
-        get() = status == Status.Loading && textContent.isBlank()
+        get() = status == Status.Loading && textContent.isNotBlank()
     val isEmptyLoading: Boolean
         get() = status == Status.Loading && textContent.isBlank()
     val isEmptyError: Boolean
-        get() = status is Status.Error && textContent.isNotBlank() == true
-    val isRefreshError: Boolean
         get() = status is Status.Error && textContent.isBlank()
+    val isRefreshError: Boolean
+        get() = status is Status.Error && textContent.isNotBlank()
 }

@@ -15,18 +15,21 @@ data class EditPostState(
         published = Instant.fromEpochSeconds(0L),
         coords = null,
         link = null,
+        mentionIds = emptySet(),
         mentionedMe = false,
+        likeOwnerIds = emptySet(),
         likedByMe = false,
         attachment = null,
+        users = emptyMap()
     ),
     val status: Status = Status.Idle,
 ) {
     val isRefreshing: Boolean
-        get() = status == Status.Loading && post.content.isBlank()
+        get() = status == Status.Loading && post.content.isNotBlank()
     val isEmptyLoading: Boolean
         get() = status == Status.Loading && post.content.isBlank()
     val isEmptyError: Boolean
-        get() = status is Status.Error && post.content.isNotBlank() == true
-    val isRefreshingError: Boolean
-        get() = status is Status.Error && post.content.isBlank()
+        get() = status is Status.Error && post.content.isNotBlank()
+    val isRefreshError: Boolean
+        get() = status is Status.Error && post.content.isNotBlank()
 }

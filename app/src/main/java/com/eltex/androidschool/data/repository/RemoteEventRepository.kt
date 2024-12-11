@@ -7,6 +7,7 @@ import com.eltex.androidschool.domain.model.EventType
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.utils.remote.Callback
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.Call
@@ -62,12 +63,21 @@ class RemoteEventRepository(
 
     override fun likeById(
         id: Long,
+        isLiked: Boolean,
         callback: Callback<Event>
     ) {
-        val request = Request.Builder()
-            .post(EMPTY_REQUEST)
-            .url("https://eltex-android.ru/api/events/$id/likes")
-            .build()
+        val request =
+            if (isLiked) {
+                Request.Builder()
+                    .delete(EMPTY_REQUEST)
+                    .url("https://eltex-android.ru/api/events/$id/likes")
+                    .build()
+            } else {
+                Request.Builder()
+                    .post(EMPTY_REQUEST)
+                    .url("https://eltex-android.ru/api/events/$id/likes")
+                    .build()
+            }
         val call = client.newCall(request)
         call.enqueue(
             object : okhttp3.Callback {
@@ -97,12 +107,21 @@ class RemoteEventRepository(
 
     override fun participateById(
         id: Long,
+        isParticipated: Boolean,
         callback: Callback<Event>
     ) {
-        val request = Request.Builder()
-            .post(EMPTY_REQUEST)
-            .url("https://eltex-android.ru/api/events/$id/participants")
-            .build()
+        val request =
+            if (isParticipated) {
+                Request.Builder()
+                    .delete(EMPTY_REQUEST)
+                    .url("https://eltex-android.ru/api/events/$id/participants")
+                    .build()
+            } else {
+                Request.Builder()
+                    .post(EMPTY_REQUEST)
+                    .url("https://eltex-android.ru/api/events/$id/participants")
+                    .build()
+            }
         val call = client.newCall(request)
         call.enqueue(
             object : okhttp3.Callback {
@@ -133,6 +152,7 @@ class RemoteEventRepository(
     override fun saveEvent(
         id: Long,
         content: String,
+        dateTime: Instant,
         attachment: Attachment?,
         link: String?,
         callback: Callback<Event>
@@ -147,7 +167,7 @@ class RemoteEventRepository(
                         authorJob = "Junior Android Developer",
                         authorAvatar = "https://avatars.githubusercontent.com/u/47896309?v=4",
                         content = content,
-                        datetime = Clock.System.now(),
+                        datetime = dateTime,
                         published = Clock.System.now(),
                         coords = Coordinates(
                             lat = 54.9833,

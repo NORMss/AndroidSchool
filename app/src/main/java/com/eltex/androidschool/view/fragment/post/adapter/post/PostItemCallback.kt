@@ -11,6 +11,7 @@ class PostItemCallback : ItemCallback<Post>() {
     override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
         return PostPayload(
             likedByMe = newItem.likedByMe.takeIf { it != oldItem.likedByMe },
+            likeOwnerIds = newItem.likeOwnerIds.takeIf { it != oldItem.likeOwnerIds }
         )
             .takeIf {
                 it.isNotEmpty()

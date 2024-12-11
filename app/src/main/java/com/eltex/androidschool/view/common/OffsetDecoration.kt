@@ -18,7 +18,7 @@ class OffsetDecoration(
         state: RecyclerView.State
     ) {
         outRect.top += verticalOffset
-        outRect.bottom += verticalOffset
+        outRect.bottom += 0
         outRect.left += horizontalOffset
         outRect.right += horizontalOffset
     }

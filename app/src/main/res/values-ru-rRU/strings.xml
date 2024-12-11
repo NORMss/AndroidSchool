@@ -46,4 +46,6 @@
     <string name="network_error">Оштбка сети</string>
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="retry">Ещё раз</string>
+    <string name="content">Контент</string>
+    <string name="link">Ссылка</string>
 </resources>

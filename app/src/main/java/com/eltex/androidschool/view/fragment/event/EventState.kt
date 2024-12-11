@@ -11,11 +11,11 @@ data class EventState(
     val status: Status = Status.Idle,
 ) {
     val isRefreshing: Boolean
-        get() = status == Status.Loading && events.isEmpty()
+        get() = status == Status.Loading && events.isNotEmpty()
     val isEmptyLoading: Boolean
         get() = status == Status.Loading && events.isEmpty()
     val isEmptyError: Boolean
-        get() = status is Status.Error && events.isNotEmpty() == true
-    val isRefreshingError: Boolean
         get() = status is Status.Error && events.isEmpty()
+    val isRefreshError: Boolean
+        get() = status is Status.Error && events.isNotEmpty()
 }

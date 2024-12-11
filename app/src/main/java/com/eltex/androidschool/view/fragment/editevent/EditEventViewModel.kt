@@ -83,8 +83,9 @@ class EditEventViewModel(
         eventRepository.saveEvent(
             id = eventId,
             content = state.value.event.content,
+            dateTime = state.value.event.datetime,
             attachment = null,
-            link = "",
+            link = state.value.event.link,
             callback = object : Callback<Event> {
                 override fun onSuccess(data: Event) {
                     state.update {

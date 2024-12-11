@@ -1,10 +1,11 @@
 package com.eltex.androidschool.view.fragment.editpost
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -18,7 +19,9 @@ import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentEditPostBinding
+import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -58,8 +61,39 @@ class EditPostFragment : Fragment() {
                     viewModel.setText(binding.editText.text?.toString().orEmpty())
                     if (viewModel.state.value.post.content.isNotBlank()) {
                         viewModel.editPost()
+                        when (viewModel.state.value.status) {
+                            is Status.Error -> {
+                                requireContext().applicationContext.also { context ->
+                                    viewModel.state.value.status.throwableOtNull?.getErrorText(
+                                        context
+                                    )
+                                        .let { errorText ->
+                                            Toast.makeText(
+                                                context,
+                                                errorText,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                }
+                            }
+
+                            Status.Idle -> {
+                                requireContext().applicationContext.toast(
+                                    R.string.post_edited,
+                                    false
+                                )
+                                requireActivity().supportFragmentManager.setFragmentResult(
+                                    POST_EDITED,
+                                    bundleOf()
+                                )
+                                findNavController().navigateUp()
+                            }
+
+                            else -> {
+                                Unit
+                            }
+                        }
                         requireContext().applicationContext.toast(R.string.post_edited, false)
-                        findNavController().navigateUp()
                     } else {
                         requireContext().applicationContext.toast(R.string.text_is_empty, false)
                     }
@@ -92,5 +126,6 @@ class EditPostFragment : Fragment() {
 
     companion object {
         const val POST_ID = "post_id"
+        const val POST_EDITED = "post_edited"
     }
 }

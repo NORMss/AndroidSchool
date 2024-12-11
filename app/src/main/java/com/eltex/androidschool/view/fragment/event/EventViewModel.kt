@@ -1,6 +1,5 @@
 package com.eltex.androidschool.view.fragment.event
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
@@ -21,9 +20,10 @@ class EventViewModel(
         loadEvents()
     }
 
-    fun likeById(id: Long) {
+    fun likeById(id: Long, isLiked: Boolean) {
         eventRepository.likeById(
             id,
+            isLiked,
             object : Callback<Event> {
                 override fun onSuccess(data: Event) {
                     state.update {
@@ -38,6 +38,7 @@ class EventViewModel(
                             status = Status.Idle,
                         )
                     }
+                    createEventsByDate(state.value.events)
                 }
 
                 override fun onError(throwable: Throwable) {
@@ -51,9 +52,10 @@ class EventViewModel(
         )
     }
 
-    fun participateById(id: Long) {
+    fun participateById(id: Long, isParticipated: Boolean) {
         eventRepository.participateById(
             id,
+            isParticipated,
             object : Callback<Event> {
                 override fun onSuccess(data: Event) {
                     state.update {
@@ -68,6 +70,7 @@ class EventViewModel(
                             status = Status.Idle,
                         )
                     }
+                    createEventsByDate(state.value.events)
                 }
 
                 override fun onError(throwable: Throwable) {
@@ -88,6 +91,7 @@ class EventViewModel(
                 override fun onSuccess(data: Unit) {
                     state.update {
                         it.copy(
+                            events = state.value.events.filter { it.id != id },
                             status = Status.Idle,
                         )
                     }
@@ -105,7 +109,8 @@ class EventViewModel(
         )
     }
 
-    private fun loadEvents() {
+    fun loadEvents() {
+        state.update { it.copy(status = Status.Loading) }
         eventRepository.getEvents(
             object : Callback<List<Event>> {
                 override fun onSuccess(data: List<Event>) {
@@ -124,10 +129,17 @@ class EventViewModel(
                             status = Status.Error(throwable),
                         )
                     }
-                    Log.d("MyLog", "loadPosts ${state.value.status}")
                 }
             }
         )
+    }
+
+    fun consumerError() {
+        state.update {
+            it.copy(
+                status = Status.Idle,
+            )
+        }
     }
 
     private fun createEventsByDate(updatedEvents: List<Event>) {
