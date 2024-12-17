@@ -64,6 +64,13 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugarJdkLibs)
+
+    implementation(libs.rxandroid)
+    implementation(libs.rxjava)
+    implementation(libs.rxkotlin)
+    implementation(libs.adapter.rxjava3)
+
     implementation(libs.converter.kotlinx.serialization)
     implementation(libs.retrofit)
     implementation(platform(libs.okhttp.bom))

@@ -1,10 +1,11 @@
 package com.eltex.androidschool.view.fragment.editpost
 
 import androidx.lifecycle.ViewModel
-import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
-import com.eltex.androidschool.utils.remote.Callback
 import com.eltex.androidschool.view.common.Status
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -13,6 +14,8 @@ class EditPostViewModel(
     private val postRepository: PostRepository,
     postId: Long,
 ) : ViewModel() {
+    val disposable = CompositeDisposable()
+
     val state: StateFlow<EditPostState>
         field = MutableStateFlow(EditPostState())
 
@@ -31,50 +34,49 @@ class EditPostViewModel(
     }
 
     fun editPost() {
-        postRepository.savePost(
-            state.value.post,
-            object : Callback<Post> {
-                override fun onSuccess(data: Post) {
+        postRepository.savePost(state.value.post)
+            .subscribeBy(
+                onSuccess = { post ->
                     state.update {
                         it.copy(
-                            post = data,
+                            post = post,
                             status = Status.Idle,
                         )
                     }
-                }
-
-                override fun onError(throwable: Throwable) {
+                },
+                onError = { throwable ->
                     state.update {
                         it.copy(
                             status = Status.Error(throwable),
                         )
                     }
                 }
-            }
-        )
+            ).addTo(disposable)
     }
 
     private fun getPost(id: Long) {
         state.update { it.copy(status = Status.Loading) }
-        postRepository.getPosts(
-            object : Callback<List<Post>> {
-                override fun onSuccess(data: List<Post>) {
-                    state.update {
-                        it.copy(
-                            post = data.filter { it.id == id }.first(),
-                            status = Status.Idle,
-                        )
-                    }
+        postRepository.getPosts().subscribeBy(
+            onSuccess = { post ->
+                state.update {
+                    it.copy(
+                        post = post.filter { it.id == id }.first(),
+                        status = Status.Idle,
+                    )
                 }
-
-                override fun onError(throwable: Throwable) {
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
+            },
+            onError = { throwable ->
+                state.update {
+                    it.copy(
+                        status = Status.Error(throwable),
+                    )
                 }
             }
-        )
+        ).addTo(disposable)
     }
+
+    override fun onCleared() {
+        disposable.dispose()
+    }
+
 }

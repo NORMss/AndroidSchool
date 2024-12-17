@@ -8,8 +8,10 @@ import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
 import com.eltex.androidschool.domain.repository.EventRepository
-import com.eltex.androidschool.utils.remote.Callback
 import com.eltex.androidschool.view.common.Status
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -19,6 +21,8 @@ import kotlinx.datetime.Instant
 class NewEventViewModel(
     private val eventRepository: EventRepository,
 ) : ViewModel() {
+    val disposable = CompositeDisposable()
+
     val state: StateFlow<NewEventState>
         field = MutableStateFlow(NewEventState())
 
@@ -86,26 +90,29 @@ class NewEventViewModel(
                 link = state.value.link,
                 users = emptyMap(),
             ),
-            object : Callback<Event> {
-                override fun onSuccess(data: Event) {
-                    state.update {
-                        it.copy(
-                            textContent = data.content,
-                            attachment = data.attachment,
-                            dateTime = data.datetime,
-                            status = Status.Idle,
-                        )
-                    }
+        ).subscribeBy(
+            onSuccess = { data ->
+                state.update {
+                    it.copy(
+                        textContent = data.content,
+                        attachment = data.attachment,
+                        dateTime = data.datetime,
+                        status = Status.Idle,
+                    )
                 }
-
-                override fun onError(throwable: Throwable) {
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
+            },
+            onError = { throwable ->
+                state.update {
+                    it.copy(
+                        status = Status.Error(throwable),
+                    )
                 }
             }
-        )
+        ).addTo(disposable)
     }
+
+    override fun onCleared() {
+        disposable.dispose()
+    }
+
 }
