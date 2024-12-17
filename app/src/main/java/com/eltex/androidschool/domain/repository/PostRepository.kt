@@ -1,11 +1,12 @@
 package com.eltex.androidschool.domain.repository
 
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.remote.Callback
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 
 interface PostRepository {
-    fun getPosts(callback: Callback<List<Post>>)
-    fun likeById(id: Long, isLiked: Boolean, callback: Callback<Post>)
-    fun savePost(post: Post, callback: Callback<Post>)
-    fun deleteById(id: Long, callback: Callback<Unit>)
+    fun getPosts(): Single<List<Post>>
+    fun likeById(id: Long, isLiked: Boolean): Single<Post>
+    fun savePost(post: Post): Single<Post>
+    fun deleteById(id: Long): Completable
 }

@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.utils.datetime.DateSeparators
-import com.eltex.androidschool.utils.remote.Callback
 import com.eltex.androidschool.view.common.Status
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -13,6 +15,8 @@ import kotlinx.coroutines.flow.update
 class EventViewModel(
     private val eventRepository: EventRepository,
 ) : ViewModel() {
+    val disposable = CompositeDisposable()
+
     val state: StateFlow<EventState>
         field = MutableStateFlow(EventState())
 
@@ -21,117 +25,103 @@ class EventViewModel(
     }
 
     fun likeById(id: Long, isLiked: Boolean) {
-        eventRepository.likeById(
-            id,
-            isLiked,
-            object : Callback<Event> {
-                override fun onSuccess(data: Event) {
-                    state.update {
-                        it.copy(
-                            events = state.value.events.map {
-                                if (it.id == data.id) {
-                                    data
-                                } else {
-                                    it
-                                }
-                            },
-                            status = Status.Idle,
-                        )
-                    }
-                    createEventsByDate(state.value.events)
+        eventRepository.likeById(id = id, isLiked = isLiked).subscribeBy(
+            onSuccess = { events ->
+                state.update {
+                    it.copy(
+                        events = state.value.events.map {
+                            if (it.id == events.id) {
+                                events
+                            } else {
+                                it
+                            }
+                        },
+                        status = Status.Idle,
+                    )
                 }
-
-                override fun onError(throwable: Throwable) {
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
+                createEventsByDate(state.value.events)
+            },
+            onError = { throwable ->
+                state.update {
+                    it.copy(
+                        status = Status.Error(throwable),
+                    )
                 }
             }
-        )
+        ).addTo(disposable)
     }
 
     fun participateById(id: Long, isParticipated: Boolean) {
-        eventRepository.participateById(
-            id,
-            isParticipated,
-            object : Callback<Event> {
-                override fun onSuccess(data: Event) {
-                    state.update {
-                        it.copy(
-                            events = state.value.events.map {
-                                if (it.id == data.id) {
-                                    data
-                                } else {
-                                    it
-                                }
-                            },
-                            status = Status.Idle,
-                        )
-                    }
-                    createEventsByDate(state.value.events)
+        eventRepository.participateById(id = id, isParticipated = isParticipated).subscribeBy(
+            onSuccess = { events ->
+                state.update {
+                    it.copy(
+                        events = state.value.events.map {
+                            if (it.id == events.id) {
+                                events
+                            } else {
+                                it
+                            }
+                        },
+                        status = Status.Idle,
+                    )
+                }
+                createEventsByDate(state.value.events)
+            },
+            onError = { throwable ->
+                state.update {
+                    it.copy(
+                        status = Status.Error(throwable),
+                    )
                 }
 
-                override fun onError(throwable: Throwable) {
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
-                }
             }
-        )
+        ).addTo(disposable)
     }
 
     fun deleteEvent(id: Long) {
-        eventRepository.deleteById(
-            id,
-            object : Callback<Unit> {
-                override fun onSuccess(data: Unit) {
-                    state.update {
-                        it.copy(
-                            events = state.value.events.filter { it.id != id },
-                            status = Status.Idle,
-                        )
-                    }
-                    createEventsByDate(state.value.events)
+        eventRepository.deleteById(id).subscribeBy(
+            onComplete = {
+                state.update {
+                    it.copy(
+                        events = state.value.events.filter { it.id != id },
+                        status = Status.Idle,
+                    )
+                }
+                createEventsByDate(state.value.events)
+            },
+            onError = { throwable ->
+                state.update {
+                    it.copy(
+                        status = Status.Error(throwable),
+                    )
                 }
 
-                override fun onError(throwable: Throwable) {
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
-                }
             }
-        )
+        ).addTo(disposable)
     }
 
     fun loadEvents() {
         state.update { it.copy(status = Status.Loading) }
-        eventRepository.getEvents(
-            object : Callback<List<Event>> {
-                override fun onSuccess(data: List<Event>) {
-                    state.update {
-                        it.copy(
-                            events = data,
-                            status = Status.Idle,
-                        )
-                    }
-                    createEventsByDate(state.value.events)
+        eventRepository.getEvents().subscribeBy(
+            onSuccess = { events ->
+                state.update {
+                    it.copy(
+                        events = events,
+                        status = Status.Idle,
+                    )
+                }
+                createEventsByDate(state.value.events)
+            },
+            onError = { throwable ->
+                state.update {
+                    it.copy(
+                        status = Status.Error(throwable),
+                    )
                 }
 
-                override fun onError(throwable: Throwable) {
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
-                }
             }
-        )
+        ).addTo(disposable)
     }
 
     fun consumerError() {
@@ -150,4 +140,9 @@ class EventViewModel(
             state.copy(events = updatedEvents, eventsByDate = groupedEvents)
         }
     }
+
+    override fun onCleared() {
+        disposable.dispose()
+    }
+
 }

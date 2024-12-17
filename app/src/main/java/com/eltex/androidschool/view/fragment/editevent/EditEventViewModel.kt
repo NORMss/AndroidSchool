@@ -4,10 +4,11 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
-import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
-import com.eltex.androidschool.utils.remote.Callback
 import com.eltex.androidschool.view.common.Status
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -16,6 +17,8 @@ class EditEventViewModel(
     private val eventRepository: EventRepository,
     eventId: Long,
 ) : ViewModel() {
+    val disposable = CompositeDisposable()
+
     val state: StateFlow<EditEventState>
         field = MutableStateFlow(EditEventState())
 
@@ -57,49 +60,51 @@ class EditEventViewModel(
     }
 
     private fun getEvent(id: Long) {
-        eventRepository.getEvents(
-            object : Callback<List<Event>> {
-                override fun onSuccess(data: List<Event>) {
-                    state.update {
-                        it.copy(
-                            event = data.filter { it.id == id }.first(),
-                            status = Status.Idle,
-                        )
-                    }
+        eventRepository.getEvents().subscribeBy(
+            onSuccess = { event ->
+                state.update {
+                    it.copy(
+                        event = event.filter { it.id == id }.first(),
+                        status = Status.Idle,
+                    )
                 }
 
-                override fun onError(throwable: Throwable) {
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
+            },
+            onError = { throwable ->
+                state.update {
+                    it.copy(
+                        status = Status.Error(throwable),
+                    )
                 }
+
             }
-        )
+        ).addTo(disposable)
     }
 
     fun editEvent() {
         eventRepository.saveEvent(
             event = state.value.event,
-            callback = object : Callback<Event> {
-                override fun onSuccess(data: Event) {
-                    state.update {
-                        it.copy(
-                            event = data,
-                            status = Status.Idle,
-                        )
-                    }
+        ).subscribeBy(
+            onSuccess = { event ->
+                state.update {
+                    it.copy(
+                        event = event,
+                        status = Status.Idle,
+                    )
                 }
-
-                override fun onError(throwable: Throwable) {
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
+            },
+            onError = { throwable ->
+                state.update {
+                    it.copy(
+                        status = Status.Error(throwable),
+                    )
                 }
-            }
+            },
         )
+            .addTo(disposable)
+    }
+
+    override fun onCleared() {
+        disposable.dispose()
     }
 }

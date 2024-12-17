@@ -7,8 +7,10 @@ import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
-import com.eltex.androidschool.utils.remote.Callback
 import com.eltex.androidschool.view.common.Status
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -17,6 +19,8 @@ import kotlinx.datetime.Instant
 class NewPostViewModel(
     private val postRepository: PostRepository,
 ) : ViewModel() {
+    val disposable = CompositeDisposable()
+
     val state: StateFlow<NewPostState>
         field = MutableStateFlow(NewPostState())
 
@@ -64,27 +68,27 @@ class NewPostViewModel(
                 likedByMe = false,
                 attachment = null,
                 users = emptyMap(),
-            ),
-            callback = object : Callback<Post> {
-                override fun onSuccess(data: Post) {
-                    state.update {
-                        it.copy(
-                            textContent = data.content,
-                            attachment = data.attachment,
-                            status = Status.Idle,
-                        )
-                    }
+            )
+        ).subscribeBy(
+            onSuccess = { data ->
+                state.update {
+                    it.copy(
+                        textContent = data.content,
+                        attachment = data.attachment,
+                        status = Status.Idle,
+                    )
                 }
 
-                override fun onError(throwable: Throwable) {
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
+            },
+            onError = { throwable ->
+                state.update {
+                    it.copy(
+                        status = Status.Error(throwable),
+                    )
                 }
+
             }
-        )
+        ).addTo(disposable)
     }
 
     fun consumerError() {
@@ -94,4 +98,9 @@ class NewPostViewModel(
             )
         }
     }
+
+    override fun onCleared() {
+        disposable.dispose()
+    }
+
 }
