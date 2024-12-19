@@ -19,37 +19,37 @@ import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
-import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.utils.remote.getErrorText
-import com.eltex.androidschool.utils.toast.toast
-import com.eltex.androidschool.view.common.ObserveAsEvents
+import com.eltex.androidschool.view.util.toast.toast
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editevent.EditEventFragment
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
 import com.eltex.androidschool.view.fragment.event.adapter.eventbydate.EventByDateAdapter
 import com.eltex.androidschool.view.fragment.newevent.NewEventFragment
+import com.eltex.androidschool.view.mapper.EventGroupByDateMapper
+import com.eltex.androidschool.view.model.EventUi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class EventFragment : Fragment() {
     private var adapter = EventByDateAdapter(
         object : EventAdapter.EventListener {
-            override fun onLikeClicked(event: Event) {
+            override fun onLikeClicked(event: EventUi) {
                 viewModel.likeById(event.id, event.likedByMe)
             }
 
-            override fun onShareClicked(event: Event) {
+            override fun onShareClicked(event: EventUi) {
                 share(event)
             }
 
-            override fun onMoreClicked(event: Event, view: View) {
+            override fun onMoreClicked(event: EventUi, view: View) {
                 popupMenuLogic(event, view)
             }
 
-            override fun onPlayClicked(event: Event) {
+            override fun onPlayClicked(event: EventUi) {
             }
 
-            override fun onParticipateClicked(event: Event) {
+            override fun onParticipateClicked(event: EventUi) {
                 viewModel.participateById(event.id, event.participatedByMe)
             }
 
@@ -63,6 +63,7 @@ class EventFragment : Fragment() {
                     eventRepository = RemoteEventRepository(
                         (context?.applicationContext as App).eventApi
                     ),
+                    mapper = EventGroupByDateMapper(),
                 )
             }
         }
@@ -136,14 +137,11 @@ class EventFragment : Fragment() {
                 }
                 adapter.submitList(state.eventsByDate)
                 binding.root.visibility = View.VISIBLE
-                state.toast?.let { toastData ->
-                    ObserveAsEvents(toast = toastData, activity = activity)
-                }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    private fun share(event: Event) {
+    private fun share(event: EventUi) {
         val intent = Intent.createChooser(
             Intent(Intent.ACTION_SEND)
                 .putExtra(Intent.EXTRA_TEXT, event.content)
@@ -157,7 +155,7 @@ class EventFragment : Fragment() {
             }
     }
 
-    private fun popupMenuLogic(event: Event, view: View) {
+    private fun popupMenuLogic(event: EventUi, view: View) {
         PopupMenu(view.context, view).apply {
             inflate(R.menu.post_menu)
             setOnMenuItemClickListener { menuItem ->

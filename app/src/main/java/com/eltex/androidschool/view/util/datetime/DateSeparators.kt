@@ -1,7 +1,7 @@
-package com.eltex.androidschool.utils.datetime
+package com.eltex.androidschool.view.util.datetime
 
 import com.eltex.androidschool.R
-import com.eltex.androidschool.utils.resourcemanager.ResourceManager
+import com.eltex.androidschool.view.util.resourcemanager.ResourceManager
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant

@@ -6,13 +6,12 @@ import coil.load
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.EventBinding
 import com.eltex.androidschool.domain.model.AttachmentType
-import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.EventType
-import com.eltex.androidschool.utils.datetime.DateTimeStringFormater
+import com.eltex.androidschool.view.model.EventUi
 import java.util.Locale
 
 class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.root) {
-    fun bind(event: Event) {
+    fun bind(event: EventUi) {
         val header = binding.header
 
         binding.contentImage.visibility = View.VISIBLE
@@ -61,11 +60,11 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
         }
 
         header.monogramText.text = event.author.first().toString()
-        header.datePublished.text = DateTimeStringFormater.dateTimeStringToString(event.published)
+        header.datePublished.text = event.published
         binding.contentText.text = event.content
         binding.onlineStatus.text =
             itemView.context.getString(if (event.type == EventType.ONLINE) R.string.online else R.string.offline)
-        binding.datetime.text = DateTimeStringFormater.dateTimeStringToString(event.datetime)
+        binding.datetime.text = event.datetime
 
         binding.link.apply {
             text = event.link
@@ -76,9 +75,9 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
 
         updateParticipateByMe(event.participatedByMe)
 
-        updateParticipantsIds(event.participantsIds)
+        updateParticipantsIds(event.participants)
 
-        updateLikeOwnerIds(event.likeOwnerIds)
+        updateLikeOwnerIds(event.likes)
     }
 
     fun bind(eventPayload: EventPayload) {
@@ -88,10 +87,10 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
         eventPayload.participatedByMe?.let {
             updateParticipateByMe(it)
         }
-        eventPayload.participantsIds?.let {
+        eventPayload.participants?.let {
             updateParticipantsIds(it)
         }
-        eventPayload.likeOwnerIds?.let {
+        eventPayload.likes?.let {
             updateLikeOwnerIds(it)
         }
     }
@@ -102,8 +101,8 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
         binding.likeButton.isSelected = likedBeMe
     }
 
-    private fun updateLikeOwnerIds(likeOwnerIds: Set<Long>) {
-        binding.likeButton.text = String.format(Locale.getDefault(), "%d", likeOwnerIds.size)
+    private fun updateLikeOwnerIds(likes: Int) {
+        binding.likeButton.text = String.format(Locale.getDefault(), "%d", likes)
     }
 
     private fun updateParticipateByMe(
@@ -113,8 +112,8 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
     }
 
     private fun updateParticipantsIds(
-        participantsIds: Set<Long>,
+        participants: Int,
     ) {
-        binding.participate.text = String.format(Locale.getDefault(), "%d", participantsIds.size)
+        binding.participate.text = String.format(Locale.getDefault(), "%d", participants)
     }
 }

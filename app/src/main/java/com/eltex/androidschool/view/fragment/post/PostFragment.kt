@@ -19,14 +19,15 @@ import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
-import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.utils.remote.getErrorText
-import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.util.toast.toast
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.postbydate.PostByDateAdapter
+import com.eltex.androidschool.view.mapper.PostGroupByDateMapper
+import com.eltex.androidschool.view.model.PostUi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlin.getValue
@@ -34,15 +35,15 @@ import kotlin.getValue
 class PostFragment : Fragment() {
     private val adapter = PostByDateAdapter(
         object : PostAdapter.PostListener {
-            override fun onLikeClicked(post: Post) {
+            override fun onLikeClicked(post: PostUi) {
                 viewModel.likeById(post.id, post.likedByMe)
             }
 
-            override fun onShareClicked(post: Post) {
+            override fun onShareClicked(post: PostUi) {
                 share(post)
             }
 
-            override fun onMoreClicked(post: Post, view: View) {
+            override fun onMoreClicked(post: PostUi, view: View) {
                 popupMenuLogic(post, view)
             }
         }
@@ -54,7 +55,8 @@ class PostFragment : Fragment() {
                 PostViewModel(
                     postRepository = RemotePostRepository(
                         (context?.applicationContext as App).postApi
-                    )
+                    ),
+                    mapper = PostGroupByDateMapper(),
                 )
             }
         }
@@ -130,7 +132,7 @@ class PostFragment : Fragment() {
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    private fun popupMenuLogic(post: Post, view: View) {
+    private fun popupMenuLogic(post: PostUi, view: View) {
         PopupMenu(view.context, view).apply {
             inflate(R.menu.post_menu)
             setOnMenuItemClickListener { menuItem ->
@@ -158,7 +160,7 @@ class PostFragment : Fragment() {
         }
     }
 
-    private fun share(post: Post) {
+    private fun share(post: PostUi) {
         val intent = Intent.createChooser(
             Intent(Intent.ACTION_SEND)
                 .putExtra(Intent.EXTRA_TEXT, post.content)

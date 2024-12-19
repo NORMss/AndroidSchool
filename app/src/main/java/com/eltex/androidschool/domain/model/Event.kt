@@ -1,6 +1,6 @@
 package com.eltex.androidschool.domain.model
 
-import com.eltex.androidschool.utils.datetime.DateSeparators
+import com.eltex.androidschool.view.util.datetime.DateSeparators
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

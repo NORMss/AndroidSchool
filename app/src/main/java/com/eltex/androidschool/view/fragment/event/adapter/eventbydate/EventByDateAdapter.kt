@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.eltex.androidschool.databinding.EventsByDateBinding
-import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.utils.datetime.DateSeparators
+import com.eltex.androidschool.view.util.datetime.DateSeparators
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
+import com.eltex.androidschool.view.model.EventUi
 
 class EventByDateAdapter(
     private val eventListener: EventAdapter.EventListener,
-) : ListAdapter<DateSeparators.GroupByDate<Event>, EventByDateViewHolder>(
+) : ListAdapter<DateSeparators.GroupByDate<EventUi>, EventByDateViewHolder>(
     EventByDateItemCallback()
 ) {
     override fun onCreateViewHolder(

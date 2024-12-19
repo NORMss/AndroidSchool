@@ -5,17 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.eltex.androidschool.databinding.PostBinding
-import com.eltex.androidschool.domain.model.Post
+import com.eltex.androidschool.view.model.PostUi
 
 class PostAdapter(
     private val postListener: PostListener,
-) : ListAdapter<Post, PostViewHolder>(
+) : ListAdapter<PostUi, PostViewHolder>(
     PostItemCallback()
 ) {
     interface PostListener {
-        fun onLikeClicked(post: Post)
-        fun onShareClicked(post: Post)
-        fun onMoreClicked(post: Post, view: View)
+        fun onLikeClicked(post: PostUi)
+        fun onShareClicked(post: PostUi)
+        fun onMoreClicked(post: PostUi, view: View)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
