@@ -5,11 +5,11 @@ import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.EventsByDateBinding
-import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.utils.datetime.DateSeparators
-import com.eltex.androidschool.utils.resourcemanager.AndroidResourceManager
+import com.eltex.androidschool.view.util.datetime.DateSeparators
+import com.eltex.androidschool.view.util.resourcemanager.AndroidResourceManager
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
+import com.eltex.androidschool.view.model.EventUi
 
 class EventByDateViewHolder(
     eventListener: EventAdapter.EventListener,
@@ -37,7 +37,7 @@ class EventByDateViewHolder(
         )
     }
 
-    fun bind(groupByDate: DateSeparators.GroupByDate<Event>) {
+    fun bind(groupByDate: DateSeparators.GroupByDate<EventUi>) {
         postAdapter.submitList(groupByDate.items)
         binding.separator.date.apply {
             text = DateSeparators.formatInstantToString(

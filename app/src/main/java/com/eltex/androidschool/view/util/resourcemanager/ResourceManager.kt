@@ -1,4 +1,4 @@
-package com.eltex.androidschool.utils.resourcemanager
+package com.eltex.androidschool.view.util.resourcemanager
 
 import androidx.annotation.StringRes
 

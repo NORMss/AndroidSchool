@@ -5,13 +5,12 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
-import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.datetime.DateTimeStringFormater
+import com.eltex.androidschool.view.model.PostUi
 import java.util.Locale
 
 class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root) {
 
-    fun bind(post: Post) {
+    fun bind(post: PostUi) {
         val header = binding.header
 
         binding.contentImage.visibility = View.VISIBLE
@@ -56,19 +55,19 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
         }
 
         header.monogramText.text = post.author.firstOrNull()?.toString() ?: ""
-        header.datePublished.text = DateTimeStringFormater.dateTimeStringToString(post.published)
+        header.datePublished.text = post.published
         binding.contentText.text = post.content
 
         updateLikedByMe(post.likedByMe)
 
-        updateLikeOwnerIds(post.likeOwnerIds)
+        updateLikeOwnerIds(post.likes)
     }
 
     fun bind(payload: PostPayload) {
         payload.likedByMe?.let { likedByMe ->
             updateLikedByMe(likedByMe)
         }
-        payload.likeOwnerIds?.let {
+        payload.likes?.let {
             updateLikeOwnerIds(it)
         }
     }
@@ -77,7 +76,7 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
         binding.likeButton.isSelected = likedByMe
     }
 
-    private fun updateLikeOwnerIds(likeOwnerIds: Set<Long>) {
-        binding.likeButton.text = String.format(Locale.getDefault(), "%d", likeOwnerIds.size)
+    private fun updateLikeOwnerIds(likes: Int) {
+        binding.likeButton.text = String.format(Locale.getDefault(), "%d", likes)
     }
 }

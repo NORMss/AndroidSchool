@@ -27,7 +27,7 @@ import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentNewEventBinding
 import com.eltex.androidschool.utils.remote.getErrorText
-import com.eltex.androidschool.utils.toast.toast
+import com.eltex.androidschool.view.util.toast.toast
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
 import kotlinx.coroutines.flow.launchIn

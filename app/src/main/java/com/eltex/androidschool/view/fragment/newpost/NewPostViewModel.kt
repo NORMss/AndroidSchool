@@ -102,5 +102,4 @@ class NewPostViewModel(
     override fun onCleared() {
         disposable.dispose()
     }
-
 }

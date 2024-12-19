@@ -5,19 +5,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.eltex.androidschool.databinding.EventBinding
-import com.eltex.androidschool.domain.model.Event
+import com.eltex.androidschool.view.model.EventUi
 
 class EventAdapter(
     private val eventListener: EventListener,
-) : ListAdapter<Event, EventViewHolder>(
+) : ListAdapter<EventUi, EventViewHolder>(
     EventItemCallback()
 ) {
     interface EventListener {
-        fun onLikeClicked(event: Event)
-        fun onShareClicked(event: Event)
-        fun onMoreClicked(event: Event, view: View)
-        fun onPlayClicked(event: Event)
-        fun onParticipateClicked(event: Event)
+        fun onLikeClicked(event: EventUi)
+        fun onShareClicked(event: EventUi)
+        fun onMoreClicked(event: EventUi, view: View)
+        fun onPlayClicked(event: EventUi)
+        fun onParticipateClicked(event: EventUi)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {

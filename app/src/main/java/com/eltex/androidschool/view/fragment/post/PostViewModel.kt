@@ -1,10 +1,11 @@
 package com.eltex.androidschool.view.fragment.post
 
 import androidx.lifecycle.ViewModel
+import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
-import com.eltex.androidschool.utils.datetime.DateSeparators
 import com.eltex.androidschool.view.common.Status
+import com.eltex.androidschool.view.model.PostUi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.update
 
 class PostViewModel(
     private val postRepository: PostRepository,
+    private val mapper: GroupByDateMapper<Post, PostUi>,
 ) : ViewModel() {
     val disposable = CompositeDisposable()
 
@@ -107,10 +109,10 @@ class PostViewModel(
 
     private fun createPostsByDate(updatedPosts: List<Post>) {
         state.update { state ->
-            val groupedPosts = DateSeparators.groupByDate(
-                items = updatedPosts,
-            )
-            state.copy(posts = updatedPosts, postsByDate = groupedPosts)
+//            val groupedPosts = DateSeparators.groupByDate(
+//                items = updatedPosts,
+//            )
+            state.copy(posts = updatedPosts, postsByDate = mapper.map(updatedPosts))
         }
     }
 

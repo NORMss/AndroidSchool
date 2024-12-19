@@ -1,17 +1,18 @@
 package com.eltex.androidschool.view.fragment.post.adapter.post
 
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
-import com.eltex.androidschool.domain.model.Post
+import com.eltex.androidschool.view.model.PostUi
 
-class PostItemCallback : ItemCallback<Post>() {
-    override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean = oldItem.id == newItem.id
+class PostItemCallback : ItemCallback<PostUi>() {
+    override fun areItemsTheSame(oldItem: PostUi, newItem: PostUi): Boolean =
+        oldItem.id == newItem.id
 
-    override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean = oldItem == newItem
+    override fun areContentsTheSame(oldItem: PostUi, newItem: PostUi): Boolean = oldItem == newItem
 
-    override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
+    override fun getChangePayload(oldItem: PostUi, newItem: PostUi): Any? {
         return PostPayload(
             likedByMe = newItem.likedByMe.takeIf { it != oldItem.likedByMe },
-            likeOwnerIds = newItem.likeOwnerIds.takeIf { it != oldItem.likeOwnerIds }
+            likes = newItem.likes.takeIf { it != oldItem.likes }
         )
             .takeIf {
                 it.isNotEmpty()

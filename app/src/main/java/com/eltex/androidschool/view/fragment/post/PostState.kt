@@ -1,12 +1,13 @@
 package com.eltex.androidschool.view.fragment.post
 
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.utils.datetime.DateSeparators.GroupByDate
 import com.eltex.androidschool.view.common.Status
+import com.eltex.androidschool.view.model.PostUi
+import com.eltex.androidschool.view.util.datetime.DateSeparators.GroupByDate
 
 data class PostState(
     val posts: List<Post> = emptyList(),
-    val postsByDate: List<GroupByDate<Post>> = emptyList(),
+    val postsByDate: List<GroupByDate<PostUi>> = emptyList(),
     val toast: Pair<Int, Boolean>? = null,
     val status: Status = Status.Idle,
 ) {

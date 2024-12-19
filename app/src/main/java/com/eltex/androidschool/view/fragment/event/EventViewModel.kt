@@ -1,10 +1,11 @@
 package com.eltex.androidschool.view.fragment.event
 
 import androidx.lifecycle.ViewModel
+import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
-import com.eltex.androidschool.utils.datetime.DateSeparators
 import com.eltex.androidschool.view.common.Status
+import com.eltex.androidschool.view.model.EventUi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.update
 
 class EventViewModel(
     private val eventRepository: EventRepository,
+    private val mapper: GroupByDateMapper<Event, EventUi>,
 ) : ViewModel() {
     val disposable = CompositeDisposable()
 
@@ -134,10 +136,10 @@ class EventViewModel(
 
     private fun createEventsByDate(updatedEvents: List<Event>) {
         state.update { state ->
-            val groupedEvents = DateSeparators.groupByDate(
-                items = updatedEvents,
-            )
-            state.copy(events = updatedEvents, eventsByDate = groupedEvents)
+//            val groupedEvents = DateSeparators.groupByDate(
+//                items = updatedEvents,
+//            )
+            state.copy(events = updatedEvents, eventsByDate = mapper.map(updatedEvents))
         }
     }
 
