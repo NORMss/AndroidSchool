@@ -106,7 +106,7 @@ class EventViewModel(
     fun loadEvents() {
         state.update { it.copy(status = Status.Loading) }
         eventRepository.getEvents().subscribeBy(
-            onSuccess = { events ->
+            onSuccess = { events     ->
                 state.update {
                     it.copy(
                         events = events,

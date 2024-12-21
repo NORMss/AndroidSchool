@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
+import com.eltex.androidschool.domain.rx.SchedulersProvider
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.model.PostUi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.update
 class PostViewModel(
     private val postRepository: PostRepository,
     private val mapper: GroupByDateMapper<Post, PostUi>,
+    private val schedulersProvider: SchedulersProvider = SchedulersProvider.DEFAULT,
 ) : ViewModel() {
     val disposable = CompositeDisposable()
 
