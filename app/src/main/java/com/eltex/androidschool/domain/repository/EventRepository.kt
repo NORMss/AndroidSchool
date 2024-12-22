@@ -1,7 +1,6 @@
 package com.eltex.androidschool.domain.repository
 
 import com.eltex.androidschool.domain.model.Event
-import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
 interface EventRepository {
@@ -9,5 +8,5 @@ interface EventRepository {
     fun likeById(id: Long, isLiked: Boolean): Single<Event>
     fun participateById(id: Long, isParticipated: Boolean): Single<Event>
     fun saveEvent(event: Event): Single<Event>
-    fun deleteById(id: Long): Completable
+    fun deleteById(id: Long): Single<Unit>
 }
