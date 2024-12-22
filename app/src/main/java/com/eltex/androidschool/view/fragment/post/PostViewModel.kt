@@ -30,22 +30,26 @@ class PostViewModel(
 
     fun likeById(id: Long, isLiked: Boolean) {
         postRepository.likeById(id = id, isLiked = isLiked)
+            .observeOn(schedulersProvider.io)
+            .map {
+                state.value.posts.map { post ->
+                    if (it.id == post.id) {
+                        post
+                    } else {
+                        it
+                    }
+                }
+            }
+            .observeOn(schedulersProvider.mainThread)
             .subscribeBy(
                 onSuccess = { posts ->
                     state.update {
                         it.copy(
-                            posts = state.value.posts.map {
-                                if (it.id == posts.id) {
-                                    posts
-                                } else {
-                                    it
-                                }
-                            },
+                            posts = posts,
+                            postsByDate = mapper.map(posts),
                             status = Status.Idle,
                         )
                     }
-                    createPostsByDate(state.value.posts)
-
                 },
                 onError = { throwable ->
                     state.update {
@@ -59,24 +63,28 @@ class PostViewModel(
     }
 
     fun deletePost(id: Long) {
-        postRepository.deleteById(id).subscribeBy(
-            onComplete = {
-                state.update {
-                    it.copy(
-                        posts = state.value.posts.filter { it.id != id },
-                        status = Status.Idle,
-                    )
+        postRepository.deleteById(id)
+            .subscribeBy(
+                onComplete = {
+                    state.value.posts.filter { it.id != id }.also { posts ->
+                        state.update {
+                            it.copy(
+                                posts = posts,
+                                postsByDate = mapper.map(posts),
+                                status = Status.Idle,
+                            )
+                        }
+                    }
+                },
+                onError =
+                { throwable ->
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
                 }
-                createPostsByDate(state.value.posts)
-            },
-            onError = { throwable ->
-                state.update {
-                    it.copy(
-                        status = Status.Error(throwable),
-                    )
-                }
-            }
-        ).addTo(disposable)
+            ).addTo(disposable)
     }
 
     fun loadPosts() {
@@ -86,10 +94,10 @@ class PostViewModel(
                 state.update {
                     it.copy(
                         posts = posts,
+                        postsByDate = mapper.map(posts),
                         status = Status.Idle,
                     )
                 }
-                createPostsByDate(state.value.posts)
             },
             onError = { throwable ->
                 state.update {
@@ -106,15 +114,6 @@ class PostViewModel(
             it.copy(
                 status = Status.Idle,
             )
-        }
-    }
-
-    private fun createPostsByDate(updatedPosts: List<Post>) {
-        state.update { state ->
-//            val groupedPosts = DateSeparators.groupByDate(
-//                items = updatedPosts,
-//            )
-            state.copy(posts = updatedPosts, postsByDate = mapper.map(updatedPosts))
         }
     }
 

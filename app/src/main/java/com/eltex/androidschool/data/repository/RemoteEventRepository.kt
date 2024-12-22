@@ -3,7 +3,6 @@ package com.eltex.androidschool.data.repository
 import com.eltex.androidschool.data.remote.api.EventApi
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
-import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
 class RemoteEventRepository(
@@ -15,7 +14,7 @@ class RemoteEventRepository(
 
     override fun likeById(
         id: Long,
-        isLiked: Boolean
+        isLiked: Boolean,
     ): Single<Event> {
         return when (isLiked) {
             true -> eventApi.unlikeById(id)
@@ -37,7 +36,7 @@ class RemoteEventRepository(
         return eventApi.save(event)
     }
 
-    override fun deleteById(id: Long): Completable {
+    override fun deleteById(id: Long): Single<Unit> {
         return eventApi.deleteById(id)
     }
 }
