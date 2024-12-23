@@ -1,5 +1,6 @@
 package com.eltex.androidschool.view.fragment.post
 
+import com.eltex.androidschool.TestSchedulersProvider
 import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
@@ -11,19 +12,21 @@ import org.junit.Test
 
 class PostViewModelTest {
     @Test
-    fun `delete error then error in state`() {
-        val error = RuntimeException("test")
+    fun `likeById error then state contains error`() {
+        val error = RuntimeException("Like failed")
+        val postRepository = object : PostRepository {
+            override fun likeById(id: Long, isLiked: Boolean): Single<Post> =
+                Single.error(error)
+        }
         val viewModel = PostViewModel(
-            postRepository = object : PostRepository {
-                override fun likeById(id: Long, isLiked: Boolean): Single<Post> =
-                    Single.error(error)
-            },
+            postRepository = postRepository,
             mapper = object : GroupByDateMapper<Post, PostUi> {
-                override fun map(from: List<Post>): List<DateSeparators.GroupByDate<PostUi>> {
-                    return emptyList()
-                }
-            }
+                override fun map(from: List<Post>): List<DateSeparators.GroupByDate<PostUi>> =
+                    emptyList()
+            },
+            schedulersProvider = TestSchedulersProvider
         )
+
         viewModel.likeById(1L, true)
 
         assertEquals(error, viewModel.state.value.status.throwableOtNull)

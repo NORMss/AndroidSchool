@@ -19,7 +19,7 @@ class EventViewModel(
     private val mapper: GroupByDateMapper<Event, EventUi>,
     private val schedulersProvider: SchedulersProvider = SchedulersProvider.DEFAULT,
 ) : ViewModel() {
-    val disposable = CompositeDisposable()
+    private val disposable = CompositeDisposable()
 
     val state: StateFlow<EventState>
         field = MutableStateFlow(EventState())
