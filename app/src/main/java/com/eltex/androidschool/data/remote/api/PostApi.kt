@@ -2,7 +2,6 @@ package com.eltex.androidschool.data.remote.api
 
 import com.eltex.androidschool.data.remote.RetrofitFactory
 import com.eltex.androidschool.domain.model.Post
-import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import retrofit2.create
 import retrofit2.http.Body
@@ -19,7 +18,7 @@ interface PostApi {
     fun save(@Body post: Post): Single<Post>
 
     @DELETE("api/posts/{id}")
-    fun deleteById(@Path("id") id: Long): Completable
+    fun deleteById(@Path("id") id: Long): Single<Unit>
 
     @POST("api/posts/{id}/likes")
     fun likeById(@Path("id") id: Long): Single<Post>

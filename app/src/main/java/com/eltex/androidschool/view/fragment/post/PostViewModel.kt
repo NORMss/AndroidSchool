@@ -19,7 +19,7 @@ class PostViewModel(
     private val mapper: GroupByDateMapper<Post, PostUi>,
     private val schedulersProvider: SchedulersProvider = SchedulersProvider.DEFAULT,
 ) : ViewModel() {
-    val disposable = CompositeDisposable()
+    private val disposable = CompositeDisposable()
 
     val state: StateFlow<PostState>
         field = MutableStateFlow(PostState())
@@ -31,22 +31,22 @@ class PostViewModel(
     fun likeById(id: Long, isLiked: Boolean) {
         postRepository.likeById(id = id, isLiked = isLiked)
             .observeOn(schedulersProvider.io)
-            .map {
-                state.value.posts.map { post ->
-                    if (it.id == post.id) {
-                        post
-                    } else {
-                        it
-                    }
+            .map { updatedPost ->
+                val updatedPosts = state.value.posts.map { post ->
+                    if (post.id == updatedPost.id) updatedPost else post
                 }
+                Pair(
+                    updatedPosts,
+                    mapper.map(updatedPosts),
+                )
             }
             .observeOn(schedulersProvider.mainThread)
             .subscribeBy(
-                onSuccess = { posts ->
+                onSuccess = { (updatedPosts, postsByDate) ->
                     state.update {
                         it.copy(
-                            posts = posts,
-                            postsByDate = mapper.map(posts),
+                            posts = updatedPosts,
+                            postsByDate = postsByDate,
                             status = Status.Idle,
                         )
                     }
@@ -64,13 +64,21 @@ class PostViewModel(
 
     fun deletePost(id: Long) {
         postRepository.deleteById(id)
+            .observeOn(schedulersProvider.io)
+            .map {
+                val updatedPosts = state.value.posts.filter { it.id != id }
+                Pair(
+                    updatedPosts,
+                    mapper.map(updatedPosts),
+                )
+            }
             .subscribeBy(
-                onComplete = {
+                onSuccess = { (updatedPosts, postsByDate) ->
                     state.value.posts.filter { it.id != id }.also { posts ->
                         state.update {
                             it.copy(
-                                posts = posts,
-                                postsByDate = mapper.map(posts),
+                                posts = updatedPosts,
+                                postsByDate = postsByDate,
                                 status = Status.Idle,
                             )
                         }
@@ -89,24 +97,32 @@ class PostViewModel(
 
     fun loadPosts() {
         state.update { it.copy(status = Status.Loading) }
-        postRepository.getPosts().subscribeBy(
-            onSuccess = { posts ->
-                state.update {
-                    it.copy(
-                        posts = posts,
-                        postsByDate = mapper.map(posts),
-                        status = Status.Idle,
-                    )
-                }
-            },
-            onError = { throwable ->
-                state.update {
-                    it.copy(
-                        status = Status.Error(throwable),
-                    )
-                }
+        postRepository.getPosts()
+            .observeOn(schedulersProvider.io)
+            .map { posts ->
+                Pair(
+                    posts,
+                    mapper.map(posts)
+                )
             }
-        ).addTo(disposable)
+            .subscribeBy(
+                onSuccess = { (posts, postsByDate) ->
+                    state.update {
+                        it.copy(
+                            posts = posts,
+                            postsByDate = postsByDate,
+                            status = Status.Idle,
+                        )
+                    }
+                },
+                onError = { throwable ->
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
+                }
+            ).addTo(disposable)
     }
 
     fun consumerError() {

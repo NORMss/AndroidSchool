@@ -3,7 +3,6 @@ package com.eltex.androidschool.data.repository
 import com.eltex.androidschool.data.remote.api.PostApi
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
-import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
 class RemotePostRepository(
@@ -27,7 +26,7 @@ class RemotePostRepository(
         return postApi.save(post)
     }
 
-    override fun deleteById(id: Long): Completable {
+    override fun deleteById(id: Long): Single<Unit> {
         return postApi.deleteById(id)
     }
 }
