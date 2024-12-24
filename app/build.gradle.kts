@@ -64,6 +64,10 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.kotlinx.coroutines.bom))
+
+    implementation(libs.kotlinx.coroutines.core)
+
     coreLibraryDesugaring(libs.desugarJdkLibs)
 
     implementation(libs.rxandroid)
