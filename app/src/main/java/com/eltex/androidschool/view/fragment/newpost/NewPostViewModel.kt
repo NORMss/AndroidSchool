@@ -7,6 +7,7 @@ import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
+import com.eltex.androidschool.domain.rx.SchedulersProvider
 import com.eltex.androidschool.view.common.Status
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -18,6 +19,7 @@ import kotlinx.datetime.Instant
 
 class NewPostViewModel(
     private val postRepository: PostRepository,
+    private val schedulersProvider: SchedulersProvider = SchedulersProvider.DEFAULT,
 ) : ViewModel() {
     val disposable = CompositeDisposable()
 
@@ -69,26 +71,28 @@ class NewPostViewModel(
                 attachment = null,
                 users = emptyMap(),
             )
-        ).subscribeBy(
-            onSuccess = { data ->
-                state.update {
-                    it.copy(
-                        textContent = data.content,
-                        attachment = data.attachment,
-                        status = Status.Idle,
-                    )
-                }
+        )
+            .observeOn(schedulersProvider.mainThread)
+            .subscribeBy(
+                onSuccess = { data ->
+                    state.update {
+                        it.copy(
+                            textContent = data.content,
+                            attachment = data.attachment,
+                            status = Status.Idle,
+                        )
+                    }
 
-            },
-            onError = { throwable ->
-                state.update {
-                    it.copy(
-                        status = Status.Error(throwable),
-                    )
-                }
+                },
+                onError = { throwable ->
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
 
-            }
-        ).addTo(disposable)
+                }
+            ).addTo(disposable)
     }
 
     fun consumerError() {

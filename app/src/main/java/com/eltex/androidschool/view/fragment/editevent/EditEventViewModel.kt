@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.repository.EventRepository
+import com.eltex.androidschool.domain.rx.SchedulersProvider
 import com.eltex.androidschool.view.common.Status
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.update
 class EditEventViewModel(
     private val eventRepository: EventRepository,
     eventId: Long,
+    private val schedulersProvider: SchedulersProvider = SchedulersProvider.DEFAULT,
 ) : ViewModel() {
     val disposable = CompositeDisposable()
 
@@ -60,47 +62,55 @@ class EditEventViewModel(
     }
 
     private fun getEvent(id: Long) {
-        eventRepository.getEvents().subscribeBy(
-            onSuccess = { event ->
-                state.update {
-                    it.copy(
-                        event = event.filter { it.id == id }.first(),
-                        status = Status.Idle,
-                    )
-                }
-
-            },
-            onError = { throwable ->
-                state.update {
-                    it.copy(
-                        status = Status.Error(throwable),
-                    )
-                }
-
+        eventRepository.getEvents()
+            .observeOn(schedulersProvider.io)
+            .map { events ->
+                events.filter { it.id == id }.first()
             }
-        ).addTo(disposable)
+            .observeOn(schedulersProvider.mainThread)
+            .subscribeBy(
+                onSuccess = { event ->
+                    state.update {
+                        it.copy(
+                            event = event,
+                            status = Status.Idle,
+                        )
+                    }
+
+                },
+                onError = { throwable ->
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
+
+                }
+            ).addTo(disposable)
     }
 
     fun editEvent() {
         eventRepository.saveEvent(
             event = state.value.event,
-        ).subscribeBy(
-            onSuccess = { event ->
-                state.update {
-                    it.copy(
-                        event = event,
-                        status = Status.Idle,
-                    )
-                }
-            },
-            onError = { throwable ->
-                state.update {
-                    it.copy(
-                        status = Status.Error(throwable),
-                    )
-                }
-            },
         )
+            .observeOn(schedulersProvider.mainThread)
+            .subscribeBy(
+                onSuccess = { event ->
+                    state.update {
+                        it.copy(
+                            event = event,
+                            status = Status.Idle,
+                        )
+                    }
+                },
+                onError = { throwable ->
+                    state.update {
+                        it.copy(
+                            status = Status.Error(throwable),
+                        )
+                    }
+                },
+            )
             .addTo(disposable)
     }
 
