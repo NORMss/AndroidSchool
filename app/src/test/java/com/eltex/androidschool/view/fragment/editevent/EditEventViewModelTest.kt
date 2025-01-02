@@ -44,4 +44,24 @@ class EditEventViewModelTest {
 
         assertEquals(equals, result)
     }
+
+    @Test
+    fun setLinkTest() {
+        val eventRepository = object : EventRepository {}
+        val viewModel = EditEventViewModel(
+            eventRepository = eventRepository,
+            schedulersProvider = TestSchedulersProvider,
+            eventId = 1L,
+        )
+        val testLink = "example.com"
+
+        viewModel.setLink(testLink)
+
+        viewModel.editEvent()
+
+        val equals = testLink
+        val result = viewModel.state.value.event.link
+
+        assertEquals(equals, result)
+    }
 }
