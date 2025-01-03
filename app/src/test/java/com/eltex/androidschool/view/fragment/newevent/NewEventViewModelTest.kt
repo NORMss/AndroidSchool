@@ -1,9 +1,6 @@
 package com.eltex.androidschool.view.fragment.newevent
 
-import android.net.Uri
 import com.eltex.androidschool.TestSchedulersProvider
-import com.eltex.androidschool.domain.model.Attachment
-import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.model.TestEvent
@@ -90,24 +87,4 @@ class NewEventViewModelTest {
 
         assertEquals(equals, result)
     }
-
-//    @Test
-//    fun setAttachmentTest() {
-//        val eventRepository = object : EventRepository {}
-//        val viewModel = NewEventViewModel(
-//            eventRepository = eventRepository,
-//            schedulersProvider = TestSchedulersProvider,
-//        )
-//        val testAttachment = Attachment(
-//            url = "file:///path/to/file",
-//            type = AttachmentType.IMAGE,
-//        )
-//
-//        viewModel.setAttachment(Uri.parse(testAttachment.url))
-//
-//        val equals = testAttachment
-//        val result = viewModel.state.value.attachment
-//
-//        assertEquals(equals, result)
-//    }
 }
