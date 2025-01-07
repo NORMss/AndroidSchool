@@ -3,40 +3,39 @@ package com.eltex.androidschool.data.repository
 import com.eltex.androidschool.data.remote.api.EventApi
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
-import io.reactivex.rxjava3.core.Single
 
 class RemoteEventRepository(
     private val eventApi: EventApi,
 ) : EventRepository {
-    override fun getEvents(): Single<List<Event>> {
+    override suspend fun getEvents(): List<Event> {
         return eventApi.getEvents()
     }
 
-    override fun likeById(
+    override suspend fun likeById(
         id: Long,
         isLiked: Boolean,
-    ): Single<Event> {
+    ): Event {
         return when (isLiked) {
             true -> eventApi.unlikeById(id)
             false -> eventApi.likeById(id)
         }
     }
 
-    override fun participateById(
+    override suspend fun participateById(
         id: Long,
         isParticipated: Boolean,
-    ): Single<Event> {
+    ): Event {
         return when (isParticipated) {
             true -> eventApi.unparticipantById(id)
             false -> eventApi.participantById(id)
         }
     }
 
-    override fun saveEvent(event: Event): Single<Event> {
+    override suspend fun saveEvent(event: Event): Event {
         return eventApi.save(event)
     }
 
-    override fun deleteById(id: Long): Single<Unit> {
+    override suspend fun deleteById(id: Long) {
         return eventApi.deleteById(id)
     }
 }
