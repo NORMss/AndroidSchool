@@ -3,30 +3,29 @@ package com.eltex.androidschool.data.repository
 import com.eltex.androidschool.data.remote.api.PostApi
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
-import io.reactivex.rxjava3.core.Single
 
 class RemotePostRepository(
     private val postApi: PostApi
 ) : PostRepository {
-    override fun getPosts(): Single<List<Post>> {
+    override suspend fun getPosts(): List<Post> {
         return postApi.getPosts()
     }
 
-    override fun likeById(
+    override suspend fun likeById(
         id: Long,
         isLiked: Boolean
-    ): Single<Post> {
+    ): Post {
         return when (isLiked) {
             true -> postApi.unlikeById(id)
             false -> postApi.likeById(id)
         }
     }
 
-    override fun savePost(post: Post): Single<Post> {
+    override suspend fun savePost(post: Post): Post {
         return postApi.save(post)
     }
 
-    override fun deleteById(id: Long): Single<Unit> {
+    override suspend fun deleteById(id: Long) {
         return postApi.deleteById(id)
     }
 }

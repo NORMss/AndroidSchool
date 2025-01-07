@@ -12,19 +12,19 @@ import retrofit2.http.Path
 
 interface PostApi {
     @GET("api/posts")
-    fun getPosts(): Single<List<Post>>
+    suspend fun getPosts(): List<Post>
 
     @POST("api/posts")
-    fun save(@Body post: Post): Single<Post>
+    suspend fun save(@Body post: Post): Post
 
     @DELETE("api/posts/{id}")
-    fun deleteById(@Path("id") id: Long): Single<Unit>
+    suspend fun deleteById(@Path("id") id: Long)
 
     @POST("api/posts/{id}/likes")
-    fun likeById(@Path("id") id: Long): Single<Post>
+    suspend fun likeById(@Path("id") id: Long): Post
 
     @DELETE("api/posts/{id}/likes")
-    fun unlikeById(@Path("id") id: Long): Single<Post>
+    suspend fun unlikeById(@Path("id") id: Long): Post
 
     companion object {
         val INSTANCE: PostApi by lazy {

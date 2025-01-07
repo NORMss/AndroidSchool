@@ -1,15 +1,18 @@
 package com.eltex.androidschool.view.fragment.editpost
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.repository.PostRepository
 import com.eltex.androidschool.domain.rx.SchedulersProvider
 import com.eltex.androidschool.view.common.Status
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class EditPostViewModel(
     private val postRepository: PostRepository,
@@ -36,51 +39,48 @@ class EditPostViewModel(
     }
 
     fun editPost() {
-        postRepository.savePost(state.value.post)
-            .subscribeBy(
-                onSuccess = { post ->
-                    state.update {
-                        it.copy(
-                            post = post,
-                            status = Status.Idle,
-                        )
+        viewModelScope.launch(Dispatchers.IO) {
+            postRepository.savePost(state.value.post)
+                .subscribeBy(
+                    onSuccess = { post ->
+                        state.update {
+                            it.copy(
+                                post = post,
+                                status = Status.Idle,
+                            )
+                        }
+                    },
+                    onError = { throwable ->
+                        state.update {
+                            it.copy(
+                                status = Status.Error(throwable),
+                            )
+                        }
                     }
-                },
-                onError = { throwable ->
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
-                }
-            ).addTo(disposable)
+                ).addTo(disposable)
+
+        }
     }
 
     private fun getPost(id: Long) {
         state.update { it.copy(status = Status.Loading) }
-        postRepository.getPosts()
-            .observeOn(schedulersProvider.io)
-            .map { posts ->
-                posts.filter { it.id == id }.first()
-            }
-            .observeOn(schedulersProvider.mainThread)
-            .subscribeBy(
-                onSuccess = { post ->
-                    state.update {
-                        it.copy(
-                            post = post,
-                            status = Status.Idle,
-                        )
-                    }
-                },
-                onError = { throwable ->
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val post = postRepository.getPosts().filter { it.id == id }.first()
+                state.update {
+                    it.copy(
+                        post = post,
+                        status = Status.Idle,
+                    )
                 }
-            ).addTo(disposable)
+            } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        status = Status.Error(e)
+                    )
+                }
+            }
+        }
     }
 
     override fun onCleared() {

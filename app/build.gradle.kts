@@ -64,6 +64,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.kotlinx.coroutines.android)
+
     implementation(platform(libs.kotlinx.coroutines.bom))
 
     implementation(libs.kotlinx.coroutines.core)
