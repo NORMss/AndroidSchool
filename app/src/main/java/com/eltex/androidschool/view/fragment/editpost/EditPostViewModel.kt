@@ -3,11 +3,7 @@ package com.eltex.androidschool.view.fragment.editpost
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.repository.PostRepository
-import com.eltex.androidschool.domain.rx.SchedulersProvider
 import com.eltex.androidschool.view.common.Status
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,10 +13,7 @@ import kotlinx.coroutines.launch
 class EditPostViewModel(
     private val postRepository: PostRepository,
     postId: Long,
-    private val schedulersProvider: SchedulersProvider = SchedulersProvider.DEFAULT,
 ) : ViewModel() {
-    val disposable = CompositeDisposable()
-
     val state: StateFlow<EditPostState>
         field = MutableStateFlow(EditPostState())
 
@@ -40,25 +33,21 @@ class EditPostViewModel(
 
     fun editPost() {
         viewModelScope.launch(Dispatchers.IO) {
-            postRepository.savePost(state.value.post)
-                .subscribeBy(
-                    onSuccess = { post ->
-                        state.update {
-                            it.copy(
-                                post = post,
-                                status = Status.Idle,
-                            )
-                        }
-                    },
-                    onError = { throwable ->
-                        state.update {
-                            it.copy(
-                                status = Status.Error(throwable),
-                            )
-                        }
-                    }
-                ).addTo(disposable)
-
+            try {
+                val updatedPost = postRepository.savePost(state.value.post)
+                state.update {
+                    it.copy(
+                        post = updatedPost,
+                        status = Status.Idle,
+                    )
+                }
+            } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        status = Status.Error(e)
+                    )
+                }
+            }
         }
     }
 
@@ -81,10 +70,6 @@ class EditPostViewModel(
                 }
             }
         }
-    }
-
-    override fun onCleared() {
-        disposable.dispose()
     }
 
 }

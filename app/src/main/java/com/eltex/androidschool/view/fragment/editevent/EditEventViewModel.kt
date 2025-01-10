@@ -2,25 +2,21 @@ package com.eltex.androidschool.view.fragment.editevent
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.repository.EventRepository
-import com.eltex.androidschool.domain.rx.SchedulersProvider
 import com.eltex.androidschool.view.common.Status
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class EditEventViewModel(
     private val eventRepository: EventRepository,
     eventId: Long,
-    private val schedulersProvider: SchedulersProvider = SchedulersProvider.DEFAULT,
 ) : ViewModel() {
-    val disposable = CompositeDisposable()
-
     val state: StateFlow<EditEventState>
         field = MutableStateFlow(EditEventState())
 
@@ -61,60 +57,43 @@ class EditEventViewModel(
         }
     }
 
-    private fun getEvent(id: Long) {
-        eventRepository.getEvents()
-            .observeOn(schedulersProvider.io)
-            .map { events ->
-                events.filter { it.id == id }.first()
-            }
-            .observeOn(schedulersProvider.mainThread)
-            .subscribeBy(
-                onSuccess = { event ->
-                    state.update {
-                        it.copy(
-                            event = event,
-                            status = Status.Idle,
-                        )
-                    }
-
-                },
-                onError = { throwable ->
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
-
-                }
-            ).addTo(disposable)
-    }
-
     fun editEvent() {
-        eventRepository.saveEvent(
-            event = state.value.event,
-        )
-            .observeOn(schedulersProvider.mainThread)
-            .subscribeBy(
-                onSuccess = { event ->
-                    state.update {
-                        it.copy(
-                            event = event,
-                            status = Status.Idle,
-                        )
-                    }
-                },
-                onError = { throwable ->
-                    state.update {
-                        it.copy(
-                            status = Status.Error(throwable),
-                        )
-                    }
-                },
-            )
-            .addTo(disposable)
+        try {
+            viewModelScope.launch(Dispatchers.IO) {
+                val event = eventRepository.saveEvent(state.value.event)
+                state.update {
+                    it.copy(
+                        event = event,
+                        status = Status.Idle,
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            state.update {
+                it.copy(
+                    status = Status.Error(e),
+                )
+            }
+        }
     }
 
-    override fun onCleared() {
-        disposable.dispose()
+    private fun getEvent(id: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val event = eventRepository.getEvents().filter { it.id == id }.first()
+                state.update {
+                    it.copy(
+                        event = event,
+                        status = Status.Idle,
+                    )
+                }
+            } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        status = Status.Error(e),
+                    )
+                }
+            }
+        }
     }
 }
