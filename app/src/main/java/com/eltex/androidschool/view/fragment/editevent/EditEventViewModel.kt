@@ -59,7 +59,7 @@ class EditEventViewModel(
 
     fun editEvent() {
         try {
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch {
                 val event = eventRepository.saveEvent(state.value.event)
                 state.update {
                     it.copy(
@@ -78,7 +78,7 @@ class EditEventViewModel(
     }
 
     private fun getEvent(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val event = eventRepository.getEvents().filter { it.id == id }.first()
                 state.update {

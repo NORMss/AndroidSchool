@@ -64,7 +64,7 @@ class NewEventViewModel(
         if (textContent.isEmpty() && state.value.attachment == null) {
             return
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 eventRepository.saveEvent(
                     event = Event(

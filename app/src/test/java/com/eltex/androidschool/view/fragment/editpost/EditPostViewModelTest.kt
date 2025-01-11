@@ -1,20 +1,23 @@
 package com.eltex.androidschool.view.fragment.editpost
 
-import com.eltex.androidschool.TestSchedulersProvider
+import com.eltex.androidschool.TestCoroutineRule
 import com.eltex.androidschool.domain.model.Post
-import com.eltex.androidschool.domain.repository.PostRepository
 import com.eltex.androidschool.model.TestPost
-import io.reactivex.rxjava3.core.Single
+import com.eltex.androidschool.repository.TestErrorPostRepository
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 
 class EditPostViewModelTest {
+
+    @get:Rule
+    val coroutineRule = TestCoroutineRule()
+
     @Test
     fun setTextTest() {
-        val postRepository = object : PostRepository {}
+        val postRepository = object : TestErrorPostRepository {}
         val viewModel = EditPostViewModel(
             postRepository = postRepository,
-            schedulersProvider = TestSchedulersProvider,
             postId = 1L,
         )
 
@@ -31,13 +34,11 @@ class EditPostViewModelTest {
     @Test
     fun `editPost error then state contains error`() {
         val error = RuntimeException("Edit failed")
-        val postRepository = object : PostRepository {
-            override fun savePost(post: Post): Single<Post> =
-                Single.error(error)
+        val postRepository = object : TestErrorPostRepository {
+            override suspend fun savePost(post: Post): Post = throw error
         }
         val viewModel = EditPostViewModel(
             postRepository = postRepository,
-            schedulersProvider = TestSchedulersProvider,
             postId = 1L,
         )
 
@@ -54,13 +55,12 @@ class EditPostViewModelTest {
 
     @Test
     fun `editPostTest success`() {
-        val postRepository = object : PostRepository {
-            override fun savePost(event: Post): Single<Post> =
-                Single.fromCallable { TestPost(id = 1L, content = event.content).toDomainPost() }
+        val postRepository = object : TestErrorPostRepository {
+            override suspend fun savePost(event: Post): Post =
+                TestPost(id = 1L, content = event.content).toDomainPost()
         }
         val viewModel = EditPostViewModel(
             postRepository = postRepository,
-            schedulersProvider = TestSchedulersProvider,
             postId = 1L,
         )
         val testText = "testText"
