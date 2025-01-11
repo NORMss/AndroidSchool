@@ -32,7 +32,7 @@ class EditPostViewModel(
     }
 
     fun editPost() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val updatedPost = postRepository.savePost(state.value.post)
                 state.update {

@@ -27,7 +27,7 @@ class EventViewModel(
     }
 
     fun likeById(id: Long, isLiked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val updatedEvent = eventRepository.likeById(id = id, isLiked = isLiked)
                 val updatedEvents = withContext(Dispatchers.Default) {
@@ -57,7 +57,7 @@ class EventViewModel(
     }
 
     fun participateById(id: Long, isParticipated: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val updatedEvent =
                     eventRepository.participateById(id = id, isParticipated = isParticipated)
@@ -87,7 +87,7 @@ class EventViewModel(
     }
 
     fun deleteEvent(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 eventRepository.deleteById(id)
                 val updatedEvents = withContext(Dispatchers.Default) {
@@ -115,7 +115,7 @@ class EventViewModel(
 
     fun loadEvents() {
         state.update { it.copy(status = Status.Loading) }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val loadedEvents = eventRepository.getEvents()
                 val eventsUi = withContext(Dispatchers.Default) {

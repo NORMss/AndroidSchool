@@ -1,11 +1,9 @@
 package com.eltex.androidschool.view.fragment.newevent
 
-import com.eltex.androidschool.TestSchedulersProvider
 import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.model.TestEvent
+import com.eltex.androidschool.repository.TestErrorEventRepository
 import com.eltex.androidschool.view.common.Status
-import io.reactivex.rxjava3.core.Single
 import kotlinx.datetime.Instant
 import org.junit.Assert.*
 import org.junit.Test
@@ -14,13 +12,11 @@ class NewEventViewModelTest {
     @Test
     fun `addEvent error then state contains error`() {
         val error = RuntimeException("Save failed")
-        val eventRepository = object : EventRepository {
-            override fun saveEvent(event: Event): Single<Event> =
-                Single.error(error)
+        val eventRepository = object : TestErrorEventRepository {
+            override suspend fun saveEvent(event: Event): Event = throw error
         }
         val viewModel = NewEventViewModel(
             eventRepository = eventRepository,
-            schedulersProvider = TestSchedulersProvider,
         )
 
         viewModel.setText("test")
@@ -34,13 +30,12 @@ class NewEventViewModelTest {
 
     @Test
     fun `addEvent success`() {
-        val eventRepository = object : EventRepository {
-            override fun saveEvent(event: Event): Single<Event> =
-                Single.fromCallable { TestEvent(id = 1L, content = "test").toDomainEvent() }
+        val eventRepository = object : TestErrorEventRepository {
+            override suspend fun saveEvent(event: Event): Event =
+                TestEvent(id = 1L, content = "test").toDomainEvent()
         }
         val viewModel = NewEventViewModel(
             eventRepository = eventRepository,
-            schedulersProvider = TestSchedulersProvider,
         )
 
         viewModel.setDateTime(Instant.fromEpochSeconds(0).toString())
@@ -55,10 +50,9 @@ class NewEventViewModelTest {
 
     @Test
     fun setTextTest() {
-        val eventRepository = object : EventRepository {}
+        val eventRepository = object : TestErrorEventRepository {}
         val viewModel = NewEventViewModel(
             eventRepository = eventRepository,
-            schedulersProvider = TestSchedulersProvider,
         )
 
         val testText = "test"
@@ -73,10 +67,9 @@ class NewEventViewModelTest {
 
     @Test
     fun setLinkTest() {
-        val eventRepository = object : EventRepository {}
+        val eventRepository = object : TestErrorEventRepository {}
         val viewModel = NewEventViewModel(
             eventRepository = eventRepository,
-            schedulersProvider = TestSchedulersProvider,
         )
         val testLink = "example.com"
 

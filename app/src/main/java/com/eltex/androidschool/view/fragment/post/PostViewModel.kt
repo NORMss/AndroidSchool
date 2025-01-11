@@ -56,7 +56,7 @@ class PostViewModel(
     }
 
     fun deletePost(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 postRepository.deleteById(id)
                 val updatedPosts = withContext(Dispatchers.Default) {
@@ -84,7 +84,7 @@ class PostViewModel(
 
     fun loadPosts() {
         state.update { it.copy(status = Status.Loading) }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val loadedPosts = postRepository.getPosts()
                 val postsUi = withContext(Dispatchers.IO) {

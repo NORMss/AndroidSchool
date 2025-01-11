@@ -47,7 +47,7 @@ class NewPostViewModel(
         if (textContent.isEmpty() && state.value.attachment == null) {
             return
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 postRepository.savePost(
                     post = Post(
