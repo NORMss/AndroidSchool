@@ -27,15 +27,15 @@ class PostViewModel(
     }
 
     fun likeById(id: Long, isLiked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val updatedPost = postRepository.likeById(id = id, isLiked = isLiked)
-                val updatedPosts = withContext(Dispatchers.IO) {
+                val updatedPosts = withContext(Dispatchers.Default) {
                     state.value.posts.map { post ->
                         if (post.id == updatedPost.id) updatedPost else post
                     }
                 }
-                val postsUi = withContext(Dispatchers.IO) {
+                val postsUi = withContext(Dispatchers.Default) {
                     mapper.map(updatedPosts)
                 }
                 state.update {
@@ -62,7 +62,7 @@ class PostViewModel(
                 val updatedPosts = withContext(Dispatchers.Default) {
                     state.value.posts.filter { it.id != id }
                 }
-                val postsUi = withContext(Dispatchers.IO) {
+                val postsUi = withContext(Dispatchers.Default) {
                     mapper.map(updatedPosts)
                 }
                 state.update {
@@ -87,7 +87,7 @@ class PostViewModel(
         viewModelScope.launch {
             try {
                 val loadedPosts = postRepository.getPosts()
-                val postsUi = withContext(Dispatchers.IO) {
+                val postsUi = withContext(Dispatchers.Default) {
                     mapper.map(loadedPosts)
                 }
                 state.update {

@@ -3,7 +3,7 @@ package com.eltex.androidschool.repository
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.repository.EventRepository
 
-interface TestErrorEventRepository : EventRepository {
+interface TestEventRepository : EventRepository {
     override suspend fun getEvents(): List<Event> = error("Not mocked")
 
     override suspend fun likeById(

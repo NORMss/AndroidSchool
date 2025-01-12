@@ -4,7 +4,7 @@ import com.eltex.androidschool.TestCoroutineRule
 import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.model.TestEvent
-import com.eltex.androidschool.repository.TestErrorEventRepository
+import com.eltex.androidschool.repository.TestEventRepository
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.model.EventUi
 import com.eltex.androidschool.view.util.datetime.DateSeparators
@@ -20,7 +20,7 @@ class EventViewModelTest {
     @Test
     fun `likeById error then state contains error`() {
         val error = RuntimeException("Like failed")
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun likeById(id: Long, isLiked: Boolean): Event = throw error
         }
         val viewModel = EventViewModel(
@@ -41,7 +41,7 @@ class EventViewModelTest {
     @Test
     fun `participateById error then state contains error`() {
         val error = RuntimeException("Like failed")
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun participateById(id: Long, isParticipate: Boolean): Event =
                 throw error
         }
@@ -63,7 +63,7 @@ class EventViewModelTest {
     @Test
     fun `deleteById error then state contains error`() {
         val error = RuntimeException("Delete failed")
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun deleteById(id: Long) = throw error
         }
         val mapper = object : GroupByDateMapper<Event, EventUi> {
@@ -86,7 +86,7 @@ class EventViewModelTest {
     @Test
     fun `loadEvents error then state contains error`() {
         val error = RuntimeException("get posts failed")
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun getEvents(): List<Event> = throw error
         }
         val mapper = object : GroupByDateMapper<Event, EventUi> {
@@ -108,15 +108,15 @@ class EventViewModelTest {
 
     @Test
     fun `participateById success`() {
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun getEvents(): List<Event> =
                 listOf(
-                    TestEvent(1).toDomainEvent(),
-                    TestEvent(2).toDomainEvent()
+                    TestEvent(1L).toDomainEvent(),
+                    TestEvent(2L).toDomainEvent()
                 )
 
             override suspend fun participateById(id: Long, isParticipate: Boolean): Event =
-                TestEvent(1).toDomainEvent()
+                TestEvent(1L).toDomainEvent()
         }
         val viewModel = EventViewModel(
             eventRepository = eventRepository,
@@ -136,7 +136,7 @@ class EventViewModelTest {
 
     @Test
     fun `likeById success`() {
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun getEvents(): List<Event> =
                 listOf(
                     TestEvent(1).toDomainEvent(),
@@ -164,7 +164,7 @@ class EventViewModelTest {
 
     @Test
     fun `deleteById success`() {
-        val eventRepository = object : TestErrorEventRepository {}
+        val eventRepository = object : TestEventRepository {}
         val viewModel = EventViewModel(
             eventRepository = eventRepository,
             mapper = object : GroupByDateMapper<Event, EventUi> {
@@ -183,7 +183,7 @@ class EventViewModelTest {
 
     @Test
     fun `loadEvents success`() {
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun getEvents(): List<Event> =
                 listOf(TestEvent(1L).toDomainEvent())
         }
@@ -205,7 +205,7 @@ class EventViewModelTest {
     @Test
     fun `consumerError clear status`() {
         val error = RuntimeException("Like failed")
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun likeById(id: Long, isLiked: Boolean): Event = throw error
         }
         val viewModel = EventViewModel(
