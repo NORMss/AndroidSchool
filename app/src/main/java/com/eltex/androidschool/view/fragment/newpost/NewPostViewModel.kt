@@ -9,7 +9,6 @@ import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
 import com.eltex.androidschool.view.common.Status
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

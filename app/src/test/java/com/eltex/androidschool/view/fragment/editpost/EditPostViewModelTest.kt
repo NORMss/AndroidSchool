@@ -3,7 +3,7 @@ package com.eltex.androidschool.view.fragment.editpost
 import com.eltex.androidschool.TestCoroutineRule
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.model.TestPost
-import com.eltex.androidschool.repository.TestErrorPostRepository
+import com.eltex.androidschool.repository.TestPostRepository
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -15,7 +15,7 @@ class EditPostViewModelTest {
 
     @Test
     fun setTextTest() {
-        val postRepository = object : TestErrorPostRepository {}
+        val postRepository = object : TestPostRepository {}
         val viewModel = EditPostViewModel(
             postRepository = postRepository,
             postId = 1L,
@@ -34,7 +34,7 @@ class EditPostViewModelTest {
     @Test
     fun `editPost error then state contains error`() {
         val error = RuntimeException("Edit failed")
-        val postRepository = object : TestErrorPostRepository {
+        val postRepository = object : TestPostRepository {
             override suspend fun savePost(post: Post): Post = throw error
         }
         val viewModel = EditPostViewModel(
@@ -55,7 +55,7 @@ class EditPostViewModelTest {
 
     @Test
     fun `editPostTest success`() {
-        val postRepository = object : TestErrorPostRepository {
+        val postRepository = object : TestPostRepository {
             override suspend fun savePost(event: Post): Post =
                 TestPost(id = 1L, content = event.content).toDomainPost()
         }

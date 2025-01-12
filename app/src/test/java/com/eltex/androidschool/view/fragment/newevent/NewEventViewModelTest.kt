@@ -1,18 +1,24 @@
 package com.eltex.androidschool.view.fragment.newevent
 
+import com.eltex.androidschool.TestCoroutineRule
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.model.TestEvent
-import com.eltex.androidschool.repository.TestErrorEventRepository
+import com.eltex.androidschool.repository.TestEventRepository
 import com.eltex.androidschool.view.common.Status
 import kotlinx.datetime.Instant
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 
 class NewEventViewModelTest {
+
+    @get:Rule
+    val coroutineRule = TestCoroutineRule()
+
     @Test
     fun `addEvent error then state contains error`() {
         val error = RuntimeException("Save failed")
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun saveEvent(event: Event): Event = throw error
         }
         val viewModel = NewEventViewModel(
@@ -30,7 +36,7 @@ class NewEventViewModelTest {
 
     @Test
     fun `addEvent success`() {
-        val eventRepository = object : TestErrorEventRepository {
+        val eventRepository = object : TestEventRepository {
             override suspend fun saveEvent(event: Event): Event =
                 TestEvent(id = 1L, content = "test").toDomainEvent()
         }
@@ -50,7 +56,7 @@ class NewEventViewModelTest {
 
     @Test
     fun setTextTest() {
-        val eventRepository = object : TestErrorEventRepository {}
+        val eventRepository = object : TestEventRepository {}
         val viewModel = NewEventViewModel(
             eventRepository = eventRepository,
         )
@@ -67,7 +73,7 @@ class NewEventViewModelTest {
 
     @Test
     fun setLinkTest() {
-        val eventRepository = object : TestErrorEventRepository {}
+        val eventRepository = object : TestEventRepository {}
         val viewModel = NewEventViewModel(
             eventRepository = eventRepository,
         )

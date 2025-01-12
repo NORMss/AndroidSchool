@@ -7,7 +7,6 @@ import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.view.common.Status
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -58,8 +57,8 @@ class EditEventViewModel(
     }
 
     fun editEvent() {
-        try {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            try {
                 val event = eventRepository.saveEvent(state.value.event)
                 state.update {
                     it.copy(
@@ -67,12 +66,12 @@ class EditEventViewModel(
                         status = Status.Idle,
                     )
                 }
-            }
-        } catch (e: Exception) {
-            state.update {
-                it.copy(
-                    status = Status.Error(e),
-                )
+            } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        status = Status.Error(e),
+                    )
+                }
             }
         }
     }

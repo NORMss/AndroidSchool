@@ -1,20 +1,26 @@
 package com.eltex.androidschool.view.fragment.post
 
+import com.eltex.androidschool.TestCoroutineRule
 import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.model.TestPost
-import com.eltex.androidschool.repository.TestErrorPostRepository
+import com.eltex.androidschool.repository.TestPostRepository
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.model.PostUi
 import com.eltex.androidschool.view.util.datetime.DateSeparators
 import junit.framework.TestCase.assertEquals
+import org.junit.Rule
 import org.junit.Test
 
 class PostViewModelTest {
+
+    @get:Rule
+    val coroutineRule = TestCoroutineRule()
+
     @Test
     fun `likeById error then state contains error`() {
         val error = RuntimeException("Like failed")
-        val postRepository = object : TestErrorPostRepository {
+        val postRepository = object : TestPostRepository {
             override suspend fun likeById(id: Long, isLiked: Boolean): Post =
                 throw error
         }
@@ -36,7 +42,7 @@ class PostViewModelTest {
     @Test
     fun `deleteById error then state contains error`() {
         val error = RuntimeException("Delete failed")
-        val postRepository = object : TestErrorPostRepository {
+        val postRepository = object : TestPostRepository {
             override suspend fun deleteById(id: Long) =
                 throw error
         }
@@ -60,7 +66,7 @@ class PostViewModelTest {
     @Test
     fun `loadPosts error then state contains error`() {
         val error = RuntimeException("get posts failed")
-        val postRepository = object : TestErrorPostRepository {
+        val postRepository = object : TestPostRepository {
             override suspend fun getPosts(): List<Post> =
                 throw error
         }
@@ -83,15 +89,15 @@ class PostViewModelTest {
 
     @Test
     fun `likeById success`() {
-        val postRepository = object : TestErrorPostRepository {
+        val postRepository = object : TestPostRepository {
             override suspend fun getPosts(): List<Post> =
                 listOf(
-                    TestPost(1).toDomainPost(),
-                    TestPost(2).toDomainPost()
+                    TestPost(1L).toDomainPost(),
+                    TestPost(2L).toDomainPost()
                 )
 
             override suspend fun likeById(id: Long, isLiked: Boolean): Post =
-                TestPost(1).toDomainPost()
+                TestPost(id).toDomainPost()
         }
         val viewModel = PostViewModel(
             postRepository = postRepository,
@@ -110,7 +116,10 @@ class PostViewModelTest {
 
     @Test
     fun `deleteById success`() {
-        val postRepository = object : TestErrorPostRepository {}
+        val postRepository = object : TestPostRepository {
+            override suspend fun deleteById(id: Long) {
+            }
+        }
         val viewModel = PostViewModel(
             postRepository = postRepository,
             mapper = object : GroupByDateMapper<Post, PostUi> {
@@ -128,7 +137,7 @@ class PostViewModelTest {
 
     @Test
     fun `loadPosts success`() {
-        val postRepository = object : TestErrorPostRepository {
+        val postRepository = object : TestPostRepository {
             override suspend fun getPosts(): List<Post> =
                 listOf(TestPost(1L).toDomainPost())
         }
@@ -150,7 +159,7 @@ class PostViewModelTest {
     @Test
     fun `consumerError clear status`() {
         val error = RuntimeException("Like failed")
-        val postRepository = object : TestErrorPostRepository {
+        val postRepository = object : TestPostRepository {
             override suspend fun likeById(id: Long, isLiked: Boolean): Post =
                 throw error
         }
