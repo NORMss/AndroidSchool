@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+arrowCore = "1.2.4"
 coil = "2.7.0"
 kotlinxCoroutinesAndroid = "1.10.1"
 retrofit = "2.11.0"
@@ -35,6 +36,7 @@ androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-view
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-runtime-ktx = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationRuntimeKtx" }
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrowCore" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
