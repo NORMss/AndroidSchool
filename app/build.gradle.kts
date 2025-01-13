@@ -64,6 +64,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.arrow.core)
+
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(platform(libs.kotlinx.coroutines.bom))
