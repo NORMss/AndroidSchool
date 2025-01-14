@@ -8,8 +8,8 @@ import com.eltex.androidschool.view.util.datetime.DateSeparators.GroupByDate
 data class PostState(
     val posts: List<Post> = emptyList(),
     val postsByDate: List<GroupByDate<PostUi>> = emptyList(),
-    val toast: Pair<Int, Boolean>? = null,
     val status: Status = Status.Idle,
+    val singleError: Throwable? = null,
 ) {
     val isRefreshing: Boolean
         get() = status == Status.Loading && posts.isNotEmpty()

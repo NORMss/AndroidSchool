@@ -11,6 +11,28 @@ class RemotePostRepository(
         return postApi.getPosts()
     }
 
+    override suspend fun getPostsNewer(id: Long): List<Post> {
+        return postApi.getPostsNewer(id)
+    }
+
+    override suspend fun getPostsBefore(
+        id: Long,
+        count: Int
+    ): List<Post> {
+        return postApi.getPostsBefore(id, count)
+    }
+
+    override suspend fun getPostsAfter(
+        id: Long,
+        count: Int
+    ): List<Post> {
+        return postApi.getPostsAfter(id, count)
+    }
+
+    override suspend fun getPostsLatest(count: Int): List<Post> {
+        return postApi.getPostsLatest(count)
+    }
+
     override suspend fun likeById(
         id: Long,
         isLiked: Boolean

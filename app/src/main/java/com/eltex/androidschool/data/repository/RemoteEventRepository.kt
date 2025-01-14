@@ -11,6 +11,28 @@ class RemoteEventRepository(
         return eventApi.getEvents()
     }
 
+    override suspend fun getEventsNewer(id: Long): List<Event> {
+        return eventApi.getEventsNewer(id)
+    }
+
+    override suspend fun getEventsBefore(
+        id: Long,
+        count: Int
+    ): List<Event> {
+        return eventApi.getEventsBefore(id, count)
+    }
+
+    override suspend fun getEventsAfter(
+        id: Long,
+        count: Int
+    ): List<Event> {
+        return eventApi.getEventsAfter(id, count)
+    }
+
+    override suspend fun getEventsLatest(count: Int): List<Event> {
+        return eventApi.getEventsLatest(count)
+    }
+
     override suspend fun likeById(
         id: Long,
         isLiked: Boolean,
