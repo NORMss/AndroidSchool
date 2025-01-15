@@ -1,5 +1,6 @@
 package com.eltex.androidschool.data.repository
 
+import android.util.Log
 import com.eltex.androidschool.data.remote.api.PostApi
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository

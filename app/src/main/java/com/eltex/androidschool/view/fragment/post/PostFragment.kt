@@ -16,7 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.eltex.androidschool.App
 import com.eltex.androidschool.R
+import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.mvi.PostStore
 import com.eltex.androidschool.utils.remote.getErrorText
@@ -25,7 +27,9 @@ import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.postbydate.PostByDateAdapter
+import com.eltex.androidschool.view.fragment.post.effecthendler.PostEffectHandler
 import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
+import com.eltex.androidschool.view.mapper.PostUiMapper
 import com.eltex.androidschool.view.model.PostUi
 import com.eltex.androidschool.view.util.toast.toast
 import kotlinx.coroutines.flow.launchIn
@@ -55,16 +59,17 @@ class PostFragment : Fragment() {
                 PostViewModel(
                     store = PostStore(
                         reducer = PostReducer(),
-                        effectHandler = PostEffectHandler(),
+                        effectHandler = PostEffectHandler(
+                            repository = RemotePostRepository(
+                                postApi = (context?.applicationContext as App).postApi,
+                            ),
+                            mapper = PostUiMapper(),
+                        ),
                         initMessages = setOf(
                             PostMessage.Refresh
                         ),
                         initState = PostState(),
                     )
-//                    postRepository = RemotePostRepository(
-//                        (context?.applicationContext as App).postApi
-//                    ),
-//                    mapper = PostGroupByDateMapper(),
                 )
             }
         }
@@ -134,7 +139,7 @@ class PostFragment : Fragment() {
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach { state ->
                 binding.errorGroup.isVisible = state.isEmptyError
-                val errorText = state.status.throwableOtNull?.getErrorText(requireContext())
+                val errorText = state.emptyError?.getErrorText(requireContext())
                 binding.errorText.text = errorText
                 binding.progress.isVisible = state.isEmptyLoading
                 binding.swipeRefresh.isRefreshing = state.isRefreshing
