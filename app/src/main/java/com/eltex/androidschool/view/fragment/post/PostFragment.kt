@@ -15,19 +15,19 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
-import com.eltex.androidschool.App
+import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
+import com.eltex.androidschool.mvi.PostStore
 import com.eltex.androidschool.utils.remote.getErrorText
-import com.eltex.androidschool.view.util.toast.toast
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.postbydate.PostByDateAdapter
-import com.eltex.androidschool.view.mapper.PostGroupByDateMapper
+import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
 import com.eltex.androidschool.view.model.PostUi
+import com.eltex.androidschool.view.util.toast.toast
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlin.getValue
@@ -36,7 +36,7 @@ class PostFragment : Fragment() {
     private val adapter = PostByDateAdapter(
         object : PostAdapter.PostListener {
             override fun onLikeClicked(post: PostUi) {
-                viewModel.likeById(post.id, post.likedByMe)
+                viewModel.accept(PostMessage.Like(post))
             }
 
             override fun onShareClicked(post: PostUi) {
@@ -53,10 +53,18 @@ class PostFragment : Fragment() {
         viewModelFactory {
             addInitializer(PostViewModel::class) {
                 PostViewModel(
-                    postRepository = RemotePostRepository(
-                        (context?.applicationContext as App).postApi
-                    ),
-                    mapper = PostGroupByDateMapper(),
+                    store = PostStore(
+                        reducer = PostReducer(),
+                        effectHandler = PostEffectHandler(),
+                        initMessages = setOf(
+                            PostMessage.Refresh
+                        ),
+                        initState = PostState(),
+                    )
+//                    postRepository = RemotePostRepository(
+//                        (context?.applicationContext as App).postApi
+//                    ),
+//                    mapper = PostGroupByDateMapper(),
                 )
             }
         }
@@ -73,14 +81,14 @@ class PostFragment : Fragment() {
             NewPostFragment.POST_SAVED,
             viewLifecycleOwner
         ) { _, _ ->
-            viewModel.loadPosts()
+            viewModel.accept(PostMessage.Refresh)
         }
 
         requireActivity().supportFragmentManager.setFragmentResultListener(
             EditPostFragment.POST_EDITED,
             viewLifecycleOwner
         ) { _, _ ->
-            viewModel.loadPosts()
+            viewModel.accept(PostMessage.Refresh)
         }
 
         binding.postsByDate.posts.adapter = adapter
@@ -93,12 +101,27 @@ class PostFragment : Fragment() {
         )
 
         binding.retryButton.setOnClickListener {
-            viewModel.loadPosts()
+            viewModel.accept(PostMessage.Refresh)
         }
 
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.loadPosts()
+            viewModel.accept(PostMessage.Refresh)
         }
+
+        binding.postsByDate.posts.addOnChildAttachStateChangeListener(
+            object : RecyclerView.OnChildAttachStateChangeListener {
+                override fun onChildViewAttachedToWindow(view: View) {
+                    val itemCount = adapter.itemCount
+                    val adapterPosition = binding.postsByDate.posts.getChildAdapterPosition(view)
+
+                    if (itemCount - 1 == adapterPosition) {
+                        viewModel.accept(PostMessage.LoadNextPage)
+                    }
+                }
+
+                override fun onChildViewDetachedFromWindow(view: View) = Unit
+            }
+        )
 
 
         observeViewModelState(binding)
@@ -116,15 +139,14 @@ class PostFragment : Fragment() {
                 binding.progress.isVisible = state.isEmptyLoading
                 binding.swipeRefresh.isRefreshing = state.isRefreshing
                 binding.swipeRefresh.isVisible = state.posts.isNotEmpty()
-                errorText?.let { it ->
-                    if (state.isRefreshError) {
-                        Toast.makeText(
-                            requireContext(),
-                            it,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        viewModel.consumerError()
-                    }
+                if (state.singleError != null) {
+                    val singleErrorText = state.singleError.getErrorText(requireContext())
+                    Toast.makeText(
+                        requireContext(),
+                        singleErrorText,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    viewModel.accept(PostMessage.HandleError)
                 }
                 adapter.submitList(state.postsByDate)
                 binding.root.visibility = View.VISIBLE
@@ -138,7 +160,7 @@ class PostFragment : Fragment() {
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.delete -> {
-                        viewModel.deletePost(post.id)
+                        viewModel.accept(PostMessage.Delete(post))
                         true
                     }
 
