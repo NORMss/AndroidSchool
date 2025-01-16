@@ -29,6 +29,7 @@ import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.postbydate.PostByDateAdapter
 import com.eltex.androidschool.view.fragment.post.effecthendler.PostEffectHandler
 import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
+import com.eltex.androidschool.view.mapper.PostGroupByDateMapper
 import com.eltex.androidschool.view.mapper.PostUiMapper
 import com.eltex.androidschool.view.model.PostUi
 import com.eltex.androidschool.view.util.toast.toast
@@ -58,12 +59,14 @@ class PostFragment : Fragment() {
             addInitializer(PostViewModel::class) {
                 PostViewModel(
                     store = PostStore(
-                        reducer = PostReducer(),
+                        reducer = PostReducer(
+                            mapper = PostUiMapper(),
+                            mapperByDate = PostGroupByDateMapper(),
+                        ),
                         effectHandler = PostEffectHandler(
                             repository = RemotePostRepository(
                                 postApi = (context?.applicationContext as App).postApi,
                             ),
-                            mapper = PostUiMapper(),
                         ),
                         initMessages = setOf(
                             PostMessage.Refresh

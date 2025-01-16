@@ -2,14 +2,12 @@
 
 package com.eltex.androidschool.view.fragment.post.effecthendler
 
-import android.util.Log
 import arrow.core.left
 import arrow.core.right
 import com.eltex.androidschool.domain.repository.PostRepository
 import com.eltex.androidschool.mvi.EffectHandler
 import com.eltex.androidschool.view.fragment.post.PostEffect
 import com.eltex.androidschool.view.fragment.post.PostMessage
-import com.eltex.androidschool.view.mapper.PostUiMapper
 import com.eltex.androidschool.view.model.PostWithError
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +18,6 @@ import kotlinx.coroutines.flow.merge
 
 class PostEffectHandler(
     private val repository: PostRepository,
-    private val mapper: PostUiMapper,
 ) : EffectHandler<PostEffect, PostMessage> {
     override fun connect(effects: Flow<PostEffect>): Flow<PostMessage> {
         return listOf(
@@ -50,7 +47,6 @@ class PostEffectHandler(
                 PostMessage.LikeResult(
                     try {
                         repository.likeById(it.post.id, it.post.likedByMe)
-                            .let(mapper::map)
                             .right()
                     } catch (e: Exception) {
                         if (e is CancellationException) throw e
@@ -66,7 +62,6 @@ class PostEffectHandler(
                 PostMessage.NextPageLoaded(
                     try {
                         repository.getPostsBefore(it.id, it.count)
-                            .map(mapper::map)
                             .right()
                     } catch (e: Exception) {
                         if (e is CancellationException) throw e
@@ -81,7 +76,6 @@ class PostEffectHandler(
                 PostMessage.InitialLoaded(
                     try {
                         repository.getPostsLatest(it.count)
-                            .map(mapper::map)
                             .right()
                     } catch (e: Exception) {
                         if (e is CancellationException) throw e
