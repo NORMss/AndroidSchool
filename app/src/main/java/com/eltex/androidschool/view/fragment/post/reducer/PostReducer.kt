@@ -1,33 +1,48 @@
 package com.eltex.androidschool.view.fragment.post.reducer
 
 import arrow.core.Either
+import com.eltex.androidschool.domain.mapper.GroupByDateMapper
+import com.eltex.androidschool.domain.mapper.Mapper
+import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.mvi.Reducer
 import com.eltex.androidschool.mvi.ReducerResult
 import com.eltex.androidschool.view.fragment.post.PostEffect
 import com.eltex.androidschool.view.fragment.post.PostMessage
 import com.eltex.androidschool.view.fragment.post.PostState
 import com.eltex.androidschool.view.fragment.post.PostStatus
+import com.eltex.androidschool.view.model.PostUi
 
-class PostReducer : Reducer<PostState, PostMessage, PostEffect> {
+class PostReducer(
+    private val mapper: Mapper<Post, PostUi>,
+    private val mapperByDate: GroupByDateMapper<PostUi, PostUi>,
+) : Reducer<PostState, PostMessage, PostEffect> {
     override fun reduce(
         old: PostState,
         message: PostMessage
     ): ReducerResult<PostState, PostEffect> {
         return when (message) {
             is PostMessage.Delete -> ReducerResult(
-                old.copy(posts = old.posts.filter { it.id != message.post.id }),
+                old.posts.filter { it.id != message.post.id }.let { updatedPosts ->
+                    old.copy(
+                        posts = updatedPosts,
+                        postsByDate = mapperByDate.map(updatedPosts),
+                    )
+                },
                 PostEffect.Delete(message.post),
             )
 
             is PostMessage.DeleteError -> ReducerResult(
-                old.copy(
-                    posts = buildList(old.posts.size + 1) {
-                        val post = message.error.post
-                        addAll(old.posts.filter { it.id > post.id })
-                        add(post)
-                        addAll(old.posts.filter { it.id < post.id })
-                    }
-                )
+                buildList(old.posts.size + 1) {
+                    val post = message.error.post
+                    addAll(old.posts.filter { it.id > post.id })
+                    add(post)
+                    addAll(old.posts.filter { it.id < post.id })
+                }.let { updatedPosts ->
+                    old.copy(
+                        posts = updatedPosts,
+                        postsByDate = mapperByDate.map(updatedPosts)
+                    )
+                }
             )
 
             PostMessage.HandleError -> ReducerResult(
@@ -47,50 +62,69 @@ class PostReducer : Reducer<PostState, PostMessage, PostEffect> {
                         }
                     }
 
-                    is Either.Right -> old.copy(
-                        posts = messageResult.value,
-                        status = PostStatus.Idle,
-                    )
+                    is Either.Right -> {
+                        messageResult.value.map(mapper::map).let { updatedPosts ->
+                            old.copy(
+                                posts = updatedPosts,
+                                postsByDate = mapperByDate.map(updatedPosts),
+                                status = PostStatus.Idle,
+                            )
+                        }
+                    }
                 }
             )
 
-            is PostMessage.Like -> ReducerResult(
-                old.copy(
-                    posts = old.posts.map { post ->
-                        if (post.id == message.post.id) {
-                            post.copy(
-                                likedByMe = !post.likedByMe,
-                                likes = if (post.likedByMe) post.likes - 1 else post.likes + 1
-                            )
-                        } else {
-                            post
-                        }
+            is PostMessage.Like -> {
+                val updatedPosts = old.posts.map { post ->
+                    if (post.id == message.post.id) {
+                        post.copy(
+                            likedByMe = !post.likedByMe,
+                            likes = if (post.likedByMe) post.likes - 1 else post.likes + 1
+                        )
+                    } else {
+                        post
                     }
-                ),
-                PostEffect.Like(message.post)
-            )
+                }
+                ReducerResult(
+                    old.copy(
+                        posts = updatedPosts,
+                        postsByDate = mapperByDate.map(updatedPosts),
+                    ),
+                    PostEffect.Like(message.post)
+                )
+            }
 
             is PostMessage.LikeResult -> ReducerResult(
                 when (val messageResult = message.result) {
                     is Either.Left -> {
                         val resultValue = messageResult.value
                         val post = resultValue.post
+                        val updatedPosts = old.posts.map {
+                            if (it.id == post.id) {
+                                post
+                            } else {
+                                it
+                            }
+                        }
                         old.copy(
-                            posts = old.posts.map {
-                                if (it.id == post.id) {
-                                    post
-                                } else {
-                                    it
-                                }
-                            },
+                            posts = updatedPosts,
+                            postsByDate = mapperByDate.map(updatedPosts),
                             singleError = resultValue.error,
                         )
                     }
 
                     is Either.Right -> {
+                        val post = mapper.map(messageResult.value)
+                        val updatedPosts = old.posts.map {
+                            if (it.id == post.id) {
+                                post
+                            } else {
+                                it
+                            }
+                        }
                         old.copy(
-                            posts = old.posts + messageResult.value,
-                            status = PostStatus.Idle,
+                            posts = updatedPosts,
+                            postsByDate = mapperByDate.map(updatedPosts),
                         )
                     }
                 }
@@ -104,9 +138,14 @@ class PostReducer : Reducer<PostState, PostMessage, PostEffect> {
                         )
                     }
 
-                    is Either.Right -> old.copy(
-                        status = PostStatus.Idle,
-                    )
+                    is Either.Right -> {
+                        val updatedPosts = old.posts + messageResult.value.map(mapper::map)
+                        old.copy(
+                            posts = updatedPosts,
+                            postsByDate = mapperByDate.map(updatedPosts),
+                            status = PostStatus.Idle,
+                        )
+                    }
                 }
             )
 

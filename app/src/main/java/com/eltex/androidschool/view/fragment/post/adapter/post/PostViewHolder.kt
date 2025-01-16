@@ -6,6 +6,7 @@ import coil.load
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.view.model.PostUi
+import com.eltex.androidschool.view.util.datetime.DateTimeStringFormater
 import java.util.Locale
 
 class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root) {
@@ -55,7 +56,7 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
         }
 
         header.monogramText.text = post.author.firstOrNull()?.toString() ?: ""
-        header.datePublished.text = post.published
+        header.datePublished.text = DateTimeStringFormater.dateTimeToString(post.published)
         binding.contentText.text = post.content
 
         updateLikedByMe(post.likedByMe)

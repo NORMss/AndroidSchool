@@ -8,6 +8,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PostApi {
     @GET("api/posts")
@@ -17,13 +18,13 @@ interface PostApi {
     suspend fun getPostsNewer(@Path("id") id: Long): List<Post>
 
     @GET("api/posts/{id}/before")
-    suspend fun getPostsBefore(@Path("id") id: Long, @Path("count") count: Int): List<Post>
+    suspend fun getPostsBefore(@Path("id") id: Long, @Query("count") count: Int): List<Post>
 
     @GET("api/posts/{id}/after")
-    suspend fun getPostsAfter(@Path("id") id: Long, @Path("count") count: Int): List<Post>
+    suspend fun getPostsAfter(@Path("id") id: Long, @Query("count") count: Int): List<Post>
 
-    @GET("api/posts/{id}/latest")
-    suspend fun getPostsLatest(@Path("count") count: Int): List<Post>
+    @GET("api/posts/latest")
+    suspend fun getPostsLatest(@Query("count") count: Int): List<Post>
 
     @POST("api/posts")
     suspend fun save(@Body post: Post): Post
