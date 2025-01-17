@@ -36,7 +36,7 @@ class EventReducer(
                     if (event.id == message.event.id) {
                         event.copy(
                             participatedByMe = !event.participatedByMe,
-                            likes = if (event.participatedByMe) event.participants - 1 else event.participants + 1
+                            participants = if (event.participatedByMe) event.participants - 1 else event.participants + 1
                         )
                     } else {
                         event

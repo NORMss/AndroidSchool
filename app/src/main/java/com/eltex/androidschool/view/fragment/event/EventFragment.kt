@@ -121,7 +121,7 @@ class EventFragment : Fragment() {
                     val itemCount = adapter.itemCount
                     val adapterPosition = binding.eventsByDate.events.getChildAdapterPosition(view)
 
-                    if (itemCount - 1 == adapterPosition) {
+                    if (itemCount - 6 == adapterPosition) {
                         viewModel.accept(EventMessage.LoadNextPage)
                     }
                 }
