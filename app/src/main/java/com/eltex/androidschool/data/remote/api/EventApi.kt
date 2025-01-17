@@ -2,13 +2,13 @@ package com.eltex.androidschool.data.remote.api
 
 import com.eltex.androidschool.data.remote.RetrofitFactory
 import com.eltex.androidschool.domain.model.Event
-import io.reactivex.rxjava3.core.Single
 import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface EventApi {
     @GET("api/events")
@@ -18,13 +18,13 @@ interface EventApi {
     suspend fun getEventsNewer(@Path("id") id: Long): List<Event>
 
     @GET("api/posts/{id}/before")
-    suspend fun getEventsBefore(@Path("id") id: Long, @Path("count") count: Int): List<Event>
+    suspend fun getEventsBefore(@Path("id") id: Long, @Query("count") count: Int): List<Event>
 
     @GET("api/posts/{id}/after")
-    suspend fun getEventsAfter(@Path("id") id: Long, @Path("count") count: Int): List<Event>
+    suspend fun getEventsAfter(@Path("id") id: Long, @Query("count") count: Int): List<Event>
 
-    @GET("api/posts/{id}/latest")
-    suspend fun getEventsLatest(@Path("count") count: Int): List<Event>
+    @GET("api/posts/latest")
+    suspend fun getEventsLatest(@Query("count") count: Int): List<Event>
 
     @POST("api/events")
     suspend fun save(@Body event: Event): Event

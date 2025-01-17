@@ -2,7 +2,6 @@ package com.eltex.androidschool.view.fragment.post
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eltex.androidschool.mvi.PostStore
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 

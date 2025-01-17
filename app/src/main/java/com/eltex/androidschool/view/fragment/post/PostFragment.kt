@@ -20,7 +20,6 @@ import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
-import com.eltex.androidschool.mvi.PostStore
 import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
