@@ -1,6 +1,5 @@
 package com.eltex.androidschool.view.fragment.post
 
-import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.view.model.PostUi
 
 sealed interface PostEffect {

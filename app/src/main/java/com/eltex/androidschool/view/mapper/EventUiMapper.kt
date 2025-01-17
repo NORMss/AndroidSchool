@@ -11,7 +11,7 @@ class EventUiMapper : Mapper<Event, EventUi> {
             id = id,
             content = content,
             author = author,
-            published = DateTimeStringFormater.dateTimeToString(published),
+            published = published,
             datetime = DateTimeStringFormater.dateTimeToString(datetime),
             likedByMe = likedByMe,
             participatedByMe = participatedByMe,
