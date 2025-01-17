@@ -14,16 +14,16 @@ interface EventApi {
     @GET("api/events")
     suspend fun getEvents(): List<Event>
 
-    @GET("api/posts/{id}/newer")
+    @GET("api/events/{id}/newer")
     suspend fun getEventsNewer(@Path("id") id: Long): List<Event>
 
-    @GET("api/posts/{id}/before")
+    @GET("api/events/{id}/before")
     suspend fun getEventsBefore(@Path("id") id: Long, @Query("count") count: Int): List<Event>
 
-    @GET("api/posts/{id}/after")
+    @GET("api/events/{id}/after")
     suspend fun getEventsAfter(@Path("id") id: Long, @Query("count") count: Int): List<Event>
 
-    @GET("api/posts/latest")
+    @GET("api/events/latest")
     suspend fun getEventsLatest(@Query("count") count: Int): List<Event>
 
     @POST("api/events")
