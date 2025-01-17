@@ -120,8 +120,7 @@ class PostFragment : Fragment() {
                 override fun onChildViewAttachedToWindow(view: View) {
                     val itemCount = adapter.itemCount
                     val adapterPosition = binding.postsByDate.posts.getChildAdapterPosition(view)
-
-                    if (itemCount - 1 == adapterPosition) {
+                    if (itemCount - 6 < adapterPosition) {
                         viewModel.accept(PostMessage.LoadNextPage)
                     }
                 }
