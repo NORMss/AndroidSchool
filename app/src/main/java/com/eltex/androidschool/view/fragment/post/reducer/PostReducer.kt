@@ -1,7 +1,6 @@
 package com.eltex.androidschool.view.fragment.post.reducer
 
 import arrow.core.Either
-import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.mapper.Mapper
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.mvi.Reducer
@@ -14,7 +13,6 @@ import com.eltex.androidschool.view.model.PostUi
 
 class PostReducer(
     private val mapper: Mapper<Post, PostUi>,
-    private val mapperByDate: GroupByDateMapper<PostUi, PostUi>,
 ) : Reducer<PostState, PostMessage, PostEffect> {
     override fun reduce(
         old: PostState,
@@ -25,7 +23,6 @@ class PostReducer(
                 old.posts.filter { it.id != message.post.id }.let { updatedPosts ->
                     old.copy(
                         posts = updatedPosts,
-                        postsByDate = mapperByDate.map(updatedPosts),
                     )
                 },
                 PostEffect.Delete(message.post),
@@ -40,7 +37,6 @@ class PostReducer(
                 }.let { updatedPosts ->
                     old.copy(
                         posts = updatedPosts,
-                        postsByDate = mapperByDate.map(updatedPosts)
                     )
                 }
             )
@@ -66,7 +62,6 @@ class PostReducer(
                         messageResult.value.map(mapper::map).let { updatedPosts ->
                             old.copy(
                                 posts = updatedPosts,
-                                postsByDate = mapperByDate.map(updatedPosts),
                                 status = PostStatus.Idle,
                             )
                         }
@@ -88,7 +83,6 @@ class PostReducer(
                 ReducerResult(
                     old.copy(
                         posts = updatedPosts,
-                        postsByDate = mapperByDate.map(updatedPosts),
                     ),
                     PostEffect.Like(message.post)
                 )
@@ -108,7 +102,6 @@ class PostReducer(
                         }
                         old.copy(
                             posts = updatedPosts,
-                            postsByDate = mapperByDate.map(updatedPosts),
                             singleError = resultValue.error,
                         )
                     }
@@ -124,7 +117,6 @@ class PostReducer(
                         }
                         old.copy(
                             posts = updatedPosts,
-                            postsByDate = mapperByDate.map(updatedPosts),
                         )
                     }
                 }
@@ -142,7 +134,6 @@ class PostReducer(
                         val updatedPosts = old.posts + messageResult.value.map(mapper::map)
                         old.copy(
                             posts = updatedPosts,
-                            postsByDate = mapperByDate.map(updatedPosts),
                             status = PostStatus.Idle,
                         )
                     }
