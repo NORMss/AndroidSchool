@@ -1,6 +1,6 @@
 # Project AndroidSchool 
 
-**Part 23-backend**
+**Part 28-mvi**
 
 ## **Warning**
 
