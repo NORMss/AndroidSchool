@@ -64,6 +64,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.shimmer)
+
     implementation(libs.arrow.core)
 
     implementation(libs.kotlinx.coroutines.android)

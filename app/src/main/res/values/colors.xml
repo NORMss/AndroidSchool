@@ -6,4 +6,5 @@
     <color name="post_content_text">#49454F</color>
     <color name="more_button">#79747E</color>
     <color name="play_button">#000000</color>
+    <color name="skeleton_placeholder">#26C8C8C8</color>
 </resources>
