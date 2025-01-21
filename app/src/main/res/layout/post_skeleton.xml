@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/post_container"
+    tools:context=".view.activity.MainActivity">
+
+    <!-- Monogram Placeholder -->
+    <View
+        android:id="@+id/monogram_placeholder"
+        android:layout_width="@dimen/monogram_size"
+        android:layout_height="@dimen/monogram_size"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/skeleton_circle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Username Placeholder -->
+    <View
+        android:id="@+id/username_placeholder"
+        android:layout_width="150dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/skeleton_rectangle"
+        app:layout_constraintStart_toEndOf="@id/monogram_placeholder"
+        app:layout_constraintTop_toTopOf="@id/monogram_placeholder" />
+
+    <!-- Date Placeholder -->
+    <View
+        android:id="@+id/date_placeholder"
+        android:layout_width="100dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/skeleton_rectangle"
+        app:layout_constraintStart_toEndOf="@id/monogram_placeholder"
+        app:layout_constraintTop_toBottomOf="@id/username_placeholder" />
+
+    <!-- Content Image Placeholder -->
+    <View
+        android:id="@+id/content_image_placeholder"
+        android:layout_width="0dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:background="@drawable/skeleton_rectangle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/monogram_placeholder" />
+
+    <!-- Content Text Placeholder -->
+    <View
+        android:id="@+id/content_text_placeholder"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/skeleton_rectangle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content_image_placeholder" />
+
+    <View
+        android:id="@+id/content_text_placeholder_2"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/skeleton_rectangle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content_text_placeholder" />
+
+    <View
+        android:id="@+id/content_text_placeholder_3"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/skeleton_rectangle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content_text_placeholder_2" />
+
+    <View
+        android:id="@+id/content_image_placeholder_4"
+        android:layout_width="120dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/skeleton_rectangle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content_text_placeholder_3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

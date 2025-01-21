@@ -1,6 +1,6 @@
 # Project AndroidSchool 
 
-**Part 24-okhttp**
+**Part 28-mvi**
 
 ## **Warning**
 
