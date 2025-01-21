@@ -24,11 +24,12 @@ import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editevent.EditEventFragment
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
-import com.eltex.androidschool.view.fragment.event.adapter.eventbydate.EventByDateAdapter
+import com.eltex.androidschool.view.fragment.event.adapter.grouped.EventGroupedAdapter
 import com.eltex.androidschool.view.fragment.event.effecthendler.EventEffectHandler
 import com.eltex.androidschool.view.fragment.event.reducer.EventReducer
+import com.eltex.androidschool.view.fragment.event.reducer.EventReducer.Companion.PAGE_SIZE
 import com.eltex.androidschool.view.fragment.newevent.NewEventFragment
-import com.eltex.androidschool.view.mapper.EventGroupByDateMapper
+import com.eltex.androidschool.view.mapper.EventGroupedMapper
 import com.eltex.androidschool.view.mapper.EventUiMapper
 import com.eltex.androidschool.view.model.EventUi
 import com.eltex.androidschool.view.util.toast.toast
@@ -36,7 +37,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class EventFragment : Fragment() {
-    private var adapter = EventByDateAdapter(
+    private var adapter = EventGroupedAdapter(
         object : EventAdapter.EventListener {
             override fun onLikeClicked(event: EventUi) {
                 viewModel.accept(EventMessage.Like(event))
@@ -60,6 +61,8 @@ class EventFragment : Fragment() {
         }
     )
 
+    private val mapper = EventGroupedMapper()
+
     private val viewModel by viewModels<EventViewModel> {
         viewModelFactory {
             addInitializer(EventViewModel::class) {
@@ -67,7 +70,6 @@ class EventFragment : Fragment() {
                     store = EventStore(
                         reducer = EventReducer(
                             mapper = EventUiMapper(),
-                            mapperByDate = EventGroupByDateMapper(),
                         ),
                         effectHandler = EventEffectHandler(
                             repository = RemoteEventRepository(
@@ -115,13 +117,13 @@ class EventFragment : Fragment() {
             viewModel.accept(EventMessage.Refresh)
         }
 
-        binding.eventsByDate.events.addOnChildAttachStateChangeListener(
+        binding.events.addOnChildAttachStateChangeListener(
             object : RecyclerView.OnChildAttachStateChangeListener {
                 override fun onChildViewAttachedToWindow(view: View) {
                     val itemCount = adapter.itemCount
-                    val adapterPosition = binding.eventsByDate.events.getChildAdapterPosition(view)
+                    val adapterPosition = binding.events.getChildAdapterPosition(view)
 
-                    if (itemCount - 6 == adapterPosition) {
+                    if (itemCount - PAGE_SIZE / 2 == adapterPosition) {
                         viewModel.accept(EventMessage.LoadNextPage)
                     }
                 }
@@ -130,9 +132,9 @@ class EventFragment : Fragment() {
             }
         )
 
-        binding.eventsByDate.events.adapter = adapter
+        binding.events.adapter = adapter
 
-        binding.eventsByDate.events.addItemDecoration(
+        binding.events.addItemDecoration(
             OffsetDecoration(
                 horizontalOffset = binding.root.resources.getDimensionPixelSize(R.dimen.list_offset),
                 verticalOffset = binding.root.resources.getDimensionPixelSize(R.dimen.list_offset),
@@ -166,7 +168,7 @@ class EventFragment : Fragment() {
                         viewModel.accept(EventMessage.HandleError)
                     }
                 }
-                adapter.submitList(state.eventsByDate)
+                adapter.submitList(mapper.map(state.events))
                 binding.root.visibility = View.VISIBLE
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

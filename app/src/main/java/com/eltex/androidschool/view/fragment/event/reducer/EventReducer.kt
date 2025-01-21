@@ -1,7 +1,6 @@
 package com.eltex.androidschool.view.fragment.event.reducer
 
 import arrow.core.Either
-import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.mapper.Mapper
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.mvi.Reducer
@@ -14,7 +13,6 @@ import com.eltex.androidschool.view.model.EventUi
 
 class EventReducer(
     private val mapper: Mapper<Event, EventUi>,
-    private val mapperByDate: GroupByDateMapper<EventUi, EventUi>,
 ) : Reducer<EventState, EventMessage, EventEffect> {
     override fun reduce(
         old: EventState,
@@ -25,7 +23,6 @@ class EventReducer(
                 old.events.filter { it.id != message.event.id }.let { updatedPosts ->
                     old.copy(
                         events = updatedPosts,
-                        eventsByDate = mapperByDate.map(updatedPosts),
                     )
                 },
                 EventEffect.Delete(message.event),
@@ -45,7 +42,6 @@ class EventReducer(
                 ReducerResult(
                     old.copy(
                         events = updatedPosts,
-                        eventsByDate = mapperByDate.map(updatedPosts),
                     ),
                     EventEffect.Participant(message.event)
                 )
@@ -65,7 +61,6 @@ class EventReducer(
                         }
                         old.copy(
                             events = updatedPosts,
-                            eventsByDate = mapperByDate.map(updatedPosts),
                             singleError = resultValue.error,
                         )
                     }
@@ -81,7 +76,6 @@ class EventReducer(
                         }
                         old.copy(
                             events = updatedPosts,
-                            eventsByDate = mapperByDate.map(updatedPosts),
                         )
                     }
                 }
@@ -96,7 +90,6 @@ class EventReducer(
                 }.let { updatedPosts ->
                     old.copy(
                         events = updatedPosts,
-                        eventsByDate = mapperByDate.map(updatedPosts)
                     )
                 }
             )
@@ -122,7 +115,6 @@ class EventReducer(
                         messageResult.value.map(mapper::map).let { updatedPosts ->
                             old.copy(
                                 events = updatedPosts,
-                                eventsByDate = mapperByDate.map(updatedPosts),
                                 status = EventStatus.Idle,
                             )
                         }
@@ -144,7 +136,6 @@ class EventReducer(
                 ReducerResult(
                     old.copy(
                         events = updatedPosts,
-                        eventsByDate = mapperByDate.map(updatedPosts),
                     ),
                     EventEffect.Like(message.event)
                 )
@@ -164,7 +155,6 @@ class EventReducer(
                         }
                         old.copy(
                             events = updatedPosts,
-                            eventsByDate = mapperByDate.map(updatedPosts),
                             singleError = resultValue.error,
                         )
                     }
@@ -180,7 +170,6 @@ class EventReducer(
                         }
                         old.copy(
                             events = updatedPosts,
-                            eventsByDate = mapperByDate.map(updatedPosts),
                         )
                     }
                 }
@@ -198,7 +187,6 @@ class EventReducer(
                         val updatedPosts = old.events + messageResult.value.map(mapper::map)
                         old.copy(
                             events = updatedPosts,
-                            eventsByDate = mapperByDate.map(updatedPosts),
                             status = EventStatus.Idle,
                         )
                     }

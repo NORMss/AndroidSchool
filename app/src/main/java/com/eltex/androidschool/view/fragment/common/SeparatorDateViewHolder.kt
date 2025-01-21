@@ -1,4 +1,4 @@
-package com.eltex.androidschool.view.fragment.post.adapter.grouped
+package com.eltex.androidschool.view.fragment.common
 
 import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.databinding.SeparatorDateBinding

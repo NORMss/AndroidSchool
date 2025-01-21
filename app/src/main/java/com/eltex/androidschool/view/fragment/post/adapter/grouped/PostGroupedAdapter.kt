@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.databinding.SeparatorDateBinding
+import com.eltex.androidschool.view.fragment.common.SeparatorDateViewHolder
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostPayload
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostViewHolder
