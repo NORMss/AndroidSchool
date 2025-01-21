@@ -1,7 +1,6 @@
 package com.eltex.androidschool.view.fragment.event
 
 import com.eltex.androidschool.TestCoroutineRule
-import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.model.TestEvent
 import com.eltex.androidschool.repository.TestEventRepository

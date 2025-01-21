@@ -24,11 +24,12 @@ import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
+import com.eltex.androidschool.view.fragment.post.adapter.grouped.PostGroupedAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
-import com.eltex.androidschool.view.fragment.post.adapter.postbydate.PostByDateAdapter
 import com.eltex.androidschool.view.fragment.post.effecthendler.PostEffectHandler
 import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
-import com.eltex.androidschool.view.mapper.PostGroupByDateMapper
+import com.eltex.androidschool.view.fragment.post.reducer.PostReducer.Companion.PAGE_SIZE
+import com.eltex.androidschool.view.mapper.PostGroupedMapper
 import com.eltex.androidschool.view.mapper.PostUiMapper
 import com.eltex.androidschool.view.model.PostUi
 import com.eltex.androidschool.view.util.toast.toast
@@ -37,8 +38,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.getValue
 
 class PostFragment : Fragment() {
-    private val adapter = PostByDateAdapter(
-        object : PostAdapter.PostListener {
+    private val adapter = PostGroupedAdapter(
+        postListener = object : PostAdapter.PostListener {
             override fun onLikeClicked(post: PostUi) {
                 viewModel.accept(PostMessage.Like(post))
             }
@@ -51,7 +52,10 @@ class PostFragment : Fragment() {
                 popupMenuLogic(post, view)
             }
         }
+
     )
+
+    private val mapper = PostGroupedMapper()
 
     private val viewModel by viewModels<PostViewModel> {
         viewModelFactory {
@@ -60,7 +64,6 @@ class PostFragment : Fragment() {
                     store = PostStore(
                         reducer = PostReducer(
                             mapper = PostUiMapper(),
-                            mapperByDate = PostGroupByDateMapper(),
                         ),
                         effectHandler = PostEffectHandler(
                             repository = RemotePostRepository(
@@ -98,9 +101,9 @@ class PostFragment : Fragment() {
             viewModel.accept(PostMessage.Refresh)
         }
 
-        binding.postsByDate.posts.adapter = adapter
+        binding.posts.adapter = adapter
 
-        binding.postsByDate.posts.addItemDecoration(
+        binding.posts.addItemDecoration(
             OffsetDecoration(
                 horizontalOffset = resources.getDimensionPixelSize(R.dimen.list_offset),
                 verticalOffset = resources.getDimensionPixelSize(R.dimen.list_offset),
@@ -115,12 +118,12 @@ class PostFragment : Fragment() {
             viewModel.accept(PostMessage.Refresh)
         }
 
-        binding.postsByDate.posts.addOnChildAttachStateChangeListener(
+        binding.posts.addOnChildAttachStateChangeListener(
             object : RecyclerView.OnChildAttachStateChangeListener {
                 override fun onChildViewAttachedToWindow(view: View) {
                     val itemCount = adapter.itemCount
-                    val adapterPosition = binding.postsByDate.posts.getChildAdapterPosition(view)
-                    if (itemCount - 6 < adapterPosition) {
+                    val adapterPosition = binding.posts.getChildAdapterPosition(view)
+                    if (itemCount - PAGE_SIZE / 2 == adapterPosition) {
                         viewModel.accept(PostMessage.LoadNextPage)
                     }
                 }
@@ -154,7 +157,7 @@ class PostFragment : Fragment() {
                     ).show()
                     viewModel.accept(PostMessage.HandleError)
                 }
-                adapter.submitList(state.postsByDate)
+                adapter.submitList(mapper.map(state.posts))
                 binding.root.visibility = View.VISIBLE
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

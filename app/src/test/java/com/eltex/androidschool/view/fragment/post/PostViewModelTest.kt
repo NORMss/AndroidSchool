@@ -1,7 +1,6 @@
 package com.eltex.androidschool.view.fragment.post
 
 import com.eltex.androidschool.TestCoroutineRule
-import com.eltex.androidschool.domain.mapper.GroupByDateMapper
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.model.TestPost
 import com.eltex.androidschool.repository.TestPostRepository

@@ -1,6 +1,5 @@
 package com.eltex.androidschool.domain.model
 
-import com.eltex.androidschool.view.util.datetime.DateSeparators
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -20,7 +19,7 @@ data class Post(
     @SerialName("content")
     val content: String,
     @SerialName("published")
-    override val published: Instant,
+    val published: Instant,
     @SerialName("coords")
     val coords: Coordinates?,
     @SerialName("link")
@@ -37,4 +36,4 @@ data class Post(
     val attachment: Attachment?,
     @SerialName("users")
     val users: Map<String, UserPreview>,
-) : DateSeparators.Publishable
+)

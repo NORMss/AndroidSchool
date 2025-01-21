@@ -62,7 +62,7 @@ class EventEffectHandler(
             .mapLatest {
                 EventMessage.ParticipantResult(
                     try {
-                        repository.participateById(it.event.id, it.event.likedByMe)
+                        repository.participateById(it.event.id, it.event.participatedByMe)
                             .right()
                     } catch (e: Exception) {
                         if (e is CancellationException) throw e
