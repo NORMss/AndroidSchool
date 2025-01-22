@@ -24,7 +24,7 @@ import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
-import com.eltex.androidschool.view.fragment.post.adapter.grouped.PostGroupedAdapter
+import com.eltex.androidschool.view.fragment.post.adapter.paging.PostGroupedAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.effecthendler.PostEffectHandler
 import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
