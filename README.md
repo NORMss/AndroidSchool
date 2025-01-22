@@ -9,6 +9,14 @@ Before building the project, add the secret key for accessing the API to [secret
 ```kotlin
 API_KEY = "your-key"
 ```
+
+## Optimization Demo
+
+
+https://github.com/user-attachments/assets/6cc81de2-41ed-4ab4-abbf-415494053ef7
+
+
+
 ## MVI (Model-View-Intent)
 This project is an Android application implementing the MVI (Model-View-Intent) architectural pattern using the following main components:
 * State: Current screen/feature state
