@@ -24,12 +24,12 @@ import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
-import com.eltex.androidschool.view.fragment.post.adapter.paging.PostGroupedAdapter
+import com.eltex.androidschool.view.fragment.post.adapter.paging.PostPagingAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.effecthendler.PostEffectHandler
 import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
 import com.eltex.androidschool.view.fragment.post.reducer.PostReducer.Companion.PAGE_SIZE
-import com.eltex.androidschool.view.mapper.PostGroupedMapper
+import com.eltex.androidschool.view.mapper.PostPagingMapper
 import com.eltex.androidschool.view.mapper.PostUiMapper
 import com.eltex.androidschool.view.model.PostUi
 import com.eltex.androidschool.view.util.toast.toast
@@ -38,10 +38,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.getValue
 
 class PostFragment : Fragment() {
-    private val adapter = PostGroupedAdapter(
+    private val adapter = PostPagingAdapter(
         postListener = object : PostAdapter.PostListener {
             override fun onLikeClicked(post: PostUi) {
                 viewModel.accept(PostMessage.Like(post))
+            }
+
+            override fun onLoadNextPage() {
+                viewModel.accept(PostMessage.LoadNextPage)
             }
 
             override fun onShareClicked(post: PostUi) {
@@ -55,7 +59,7 @@ class PostFragment : Fragment() {
 
     )
 
-    private val mapper = PostGroupedMapper()
+    private val mapper = PostPagingMapper()
 
     private val viewModel by viewModels<PostViewModel> {
         viewModelFactory {
@@ -145,7 +149,8 @@ class PostFragment : Fragment() {
                 binding.errorGroup.isVisible = state.isEmptyError
                 val errorText = state.emptyError?.getErrorText(requireContext())
                 binding.errorText.text = errorText
-                binding.progress.isVisible = state.isEmptyLoading
+//                if (state.isEmptyLoading) adapter.submitList(mapper.map(state))
+//                binding.progress.isVisible = state.isEmptyLoading
                 binding.swipeRefresh.isRefreshing = state.isRefreshing
                 binding.swipeRefresh.isVisible = state.posts.isNotEmpty()
                 if (state.singleError != null) {
@@ -157,7 +162,7 @@ class PostFragment : Fragment() {
                     ).show()
                     viewModel.accept(PostMessage.HandleError)
                 }
-                adapter.submitList(mapper.map(state.posts))
+                adapter.submitList(mapper.map(state))
                 binding.root.visibility = View.VISIBLE
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

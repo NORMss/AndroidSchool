@@ -3,17 +3,17 @@ package com.eltex.androidschool.view.fragment.post.adapter.paging
 import androidx.recyclerview.widget.DiffUtil
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostItemCallback
 
-class PostGroupedICallback : DiffUtil.ItemCallback<PostPagingModel>() {
+class PostPagingICallback : DiffUtil.ItemCallback<PagingModel>() {
     private val delegate = PostItemCallback()
 
     override fun areItemsTheSame(
-        oldItem: PostPagingModel,
-        newItem: PostPagingModel
+        oldItem: PagingModel,
+        newItem: PagingModel
     ): Boolean {
         if (oldItem::class != newItem::class) {
             return false
         }
-        return if (oldItem is PostPagingModel.ItemPost && newItem is PostPagingModel.ItemPost) {
+        return if (oldItem is PagingModel.Item && newItem is PagingModel.Item) {
             delegate.areItemsTheSame(oldItem.data, newItem.data)
         } else {
             oldItem == newItem
@@ -21,17 +21,20 @@ class PostGroupedICallback : DiffUtil.ItemCallback<PostPagingModel>() {
     }
 
     override fun areContentsTheSame(
-        oldItem: PostPagingModel,
-        newItem: PostPagingModel
+        oldItem: PagingModel,
+        newItem: PagingModel
     ): Boolean {
         return oldItem == newItem
     }
 
-    override fun getChangePayload(oldItem: PostPagingModel, newItem: PostPagingModel): Any? {
+    override fun getChangePayload(
+        oldItem: PagingModel,
+        newItem: PagingModel
+    ): Any? {
         if (oldItem::class != newItem::class) {
             return null
         }
-        return if (oldItem is PostPagingModel.ItemPost && newItem is PostPagingModel.ItemPost) {
+        return if (oldItem is PagingModel.Item && newItem is PagingModel.Item) {
             delegate.getChangePayload(oldItem.data, newItem.data)
 
         } else {
