@@ -14,6 +14,7 @@ class PostAdapter(
 ) {
     interface PostListener {
         fun onLikeClicked(post: PostUi)
+        fun onLoadNextPage()
         fun onShareClicked(post: PostUi)
         fun onMoreClicked(post: PostUi, view: View)
     }

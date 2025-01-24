@@ -1,25 +1,31 @@
-package com.eltex.androidschool.view.fragment.post.adapter.grouped
+package com.eltex.androidschool.view.fragment.post.adapter.paging
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.eltex.androidschool.R
+import com.eltex.androidschool.databinding.ItemErrorBinding
 import com.eltex.androidschool.databinding.PostBinding
+import com.eltex.androidschool.databinding.PostSkeletonBinding
 import com.eltex.androidschool.databinding.SeparatorDateBinding
+import com.eltex.androidschool.view.fragment.common.ErrorViewHolder
+import com.eltex.androidschool.view.fragment.common.ProgressViewHolder
 import com.eltex.androidschool.view.fragment.common.SeparatorDateViewHolder
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostPayload
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostViewHolder
 
-class PostGroupedAdapter(
+class PostPagingAdapter(
     private val postListener: PostAdapter.PostListener,
-) : ListAdapter<PostListItem, RecyclerView.ViewHolder>(PostGroupedICallback()) {
+) : ListAdapter<PagingModel, RecyclerView.ViewHolder>(PostPagingICallback()) {
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is PostListItem.Header -> R.layout.separator_date
-            is PostListItem.ItemPost -> R.layout.post
+            is PagingModel.Header -> R.layout.separator_date
+            is PagingModel.Item -> R.layout.post
+            is PagingModel.Error -> R.layout.item_error
+            PagingModel.Loading -> R.layout.post_skeleton
         }
     }
 
@@ -30,6 +36,8 @@ class PostGroupedAdapter(
         val layoutInflater = LayoutInflater.from(parent.context)
         val postBinding = PostBinding.inflate(layoutInflater, parent, false)
         val separatorDateBinding = SeparatorDateBinding.inflate(layoutInflater, parent, false)
+        val itemErrorBinding = ItemErrorBinding.inflate(layoutInflater, parent, false)
+        val progressBinding = PostSkeletonBinding.inflate(layoutInflater, parent, false)
 
         return when (viewType) {
             R.layout.separator_date -> {
@@ -40,6 +48,18 @@ class PostGroupedAdapter(
                 val postViewHolder = PostViewHolder(postBinding)
                 setupClickListenersByPost(postBinding, postViewHolder)
                 postViewHolder
+            }
+
+            R.layout.item_error -> {
+                val errorViewHolder = ErrorViewHolder(itemErrorBinding)
+                itemErrorBinding.retry.setOnClickListener {
+                    postListener.onLoadNextPage()
+                }
+                errorViewHolder
+            }
+
+            R.layout.post_skeleton -> {
+                ProgressViewHolder(progressBinding)
             }
 
             else -> error("Unknown viewType: $viewType")
@@ -66,27 +86,33 @@ class PostGroupedAdapter(
         position: Int,
     ) {
         when (val item = getItem(position)) {
-            is PostListItem.Header -> {
+            is PagingModel.Header -> {
                 (holder as SeparatorDateViewHolder).bind(item.date)
             }
 
-            is PostListItem.ItemPost -> {
+            is PagingModel.Item -> {
                 (holder as PostViewHolder).bind(item.data)
             }
+
+            is PagingModel.Error -> {
+                (holder as ErrorViewHolder).bind(item.reason)
+            }
+
+            PagingModel.Loading -> Unit
         }
     }
 
     private fun setupClickListenersByPost(binding: PostBinding, viewHolder: PostViewHolder) {
         binding.likeButton.setOnClickListener {
-            val item = getItem(viewHolder.adapterPosition) as? PostListItem.ItemPost
+            val item = getItem(viewHolder.adapterPosition) as? PagingModel.Item
             item?.data?.let(postListener::onLikeClicked)
         }
         binding.shareButton.setOnClickListener {
-            val item = getItem(viewHolder.adapterPosition) as? PostListItem.ItemPost
+            val item = getItem(viewHolder.adapterPosition) as? PagingModel.Item
             item?.data?.let(postListener::onShareClicked)
         }
         binding.header.moreButton.setOnClickListener { view ->
-            val item = getItem(viewHolder.adapterPosition) as? PostListItem.ItemPost
+            val item = getItem(viewHolder.adapterPosition) as? PagingModel.Item
             item?.let { item ->
                 postListener.onMoreClicked(
                     item.data,
