@@ -24,6 +24,7 @@ import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
+import com.eltex.androidschool.view.fragment.post.adapter.paging.PagingModel
 import com.eltex.androidschool.view.fragment.post.adapter.paging.PostPagingAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.effecthendler.PostEffectHandler
@@ -77,7 +78,9 @@ class PostFragment : Fragment() {
                         initMessages = setOf(
                             PostMessage.Refresh
                         ),
-                        initState = PostState(),
+                        initState = PostState(
+                            status = PostStatus.EmptyLoading
+                        )
                     )
                 )
             }
@@ -162,8 +165,8 @@ class PostFragment : Fragment() {
                     ).show()
                     viewModel.accept(PostMessage.HandleError)
                 }
-                adapter.submitList(mapper.map(state))
                 binding.root.visibility = View.VISIBLE
+                adapter.submitList(mapper.map(state))
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
