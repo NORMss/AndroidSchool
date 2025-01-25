@@ -1,5 +1,6 @@
 package com.eltex.androidschool.view.fragment.post.reducer
 
+import android.util.Log
 import arrow.core.Either
 import com.eltex.androidschool.domain.mapper.Mapper
 import com.eltex.androidschool.domain.model.Post
