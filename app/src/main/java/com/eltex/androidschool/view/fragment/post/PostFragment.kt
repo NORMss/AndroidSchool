@@ -24,7 +24,6 @@ import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
-import com.eltex.androidschool.view.fragment.post.adapter.paging.PagingModel
 import com.eltex.androidschool.view.fragment.post.adapter.paging.PostPagingAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
 import com.eltex.androidschool.view.fragment.post.effecthendler.PostEffectHandler
@@ -155,7 +154,7 @@ class PostFragment : Fragment() {
 //                if (state.isEmptyLoading) adapter.submitList(mapper.map(state))
 //                binding.progress.isVisible = state.isEmptyLoading
                 binding.swipeRefresh.isRefreshing = state.isRefreshing
-                binding.swipeRefresh.isVisible = state.posts.isNotEmpty()
+                binding.swipeRefresh.isVisible = state.posts.isNotEmpty() || state.isEmptyLoading
                 if (state.singleError != null) {
                     val singleErrorText = state.singleError.getErrorText(requireContext())
                     Toast.makeText(

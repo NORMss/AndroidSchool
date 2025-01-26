@@ -53,4 +53,5 @@
     <string name="retry">Retry</string>
     <string name="content">Content</string>
     <string name="link">Link</string>
+    <string name="participant">participant</string>
 </resources>

@@ -18,6 +18,7 @@ class EventAdapter(
         fun onMoreClicked(event: EventUi, view: View)
         fun onPlayClicked(event: EventUi)
         fun onParticipateClicked(event: EventUi)
+        fun onLoadNextPage()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {

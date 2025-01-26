@@ -48,4 +48,5 @@
     <string name="retry">Ещё раз</string>
     <string name="content">Контент</string>
     <string name="link">Ссылка</string>
+    <string name="participant">Участник</string>
 </resources>

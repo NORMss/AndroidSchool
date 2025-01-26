@@ -24,12 +24,12 @@ import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editevent.EditEventFragment
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
-import com.eltex.androidschool.view.fragment.event.adapter.grouped.EventGroupedAdapter
+import com.eltex.androidschool.view.fragment.event.adapter.paging.EventPagingAdapter
 import com.eltex.androidschool.view.fragment.event.effecthendler.EventEffectHandler
 import com.eltex.androidschool.view.fragment.event.reducer.EventReducer
 import com.eltex.androidschool.view.fragment.event.reducer.EventReducer.Companion.PAGE_SIZE
 import com.eltex.androidschool.view.fragment.newevent.NewEventFragment
-import com.eltex.androidschool.view.mapper.EventGroupedMapper
+import com.eltex.androidschool.view.mapper.EventPagingMapper
 import com.eltex.androidschool.view.mapper.EventUiMapper
 import com.eltex.androidschool.view.model.EventUi
 import com.eltex.androidschool.view.util.toast.toast
@@ -37,7 +37,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class EventFragment : Fragment() {
-    private var adapter = EventGroupedAdapter(
+    private var adapter = EventPagingAdapter(
         object : EventAdapter.EventListener {
             override fun onLikeClicked(event: EventUi) {
                 viewModel.accept(EventMessage.Like(event))
@@ -58,10 +58,13 @@ class EventFragment : Fragment() {
                 viewModel.accept(EventMessage.Participant(event))
             }
 
+            override fun onLoadNextPage() {
+                viewModel.accept(EventMessage.LoadNextPage)
+            }
         }
     )
 
-    private val mapper = EventGroupedMapper()
+    private val mapper = EventPagingMapper()
 
     private val viewModel by viewModels<EventViewModel> {
         viewModelFactory {
@@ -154,9 +157,9 @@ class EventFragment : Fragment() {
                 binding.errorGroup.isVisible = state.isEmptyError
                 val errorText = state.emptyError?.getErrorText(requireContext())
                 binding.errorText.text = errorText
-                binding.progress.isVisible = state.isEmptyLoading
+//                binding.progress.isVisible = state.isEmptyLoading
                 binding.swipeRefresh.isRefreshing = state.isRefreshing
-                binding.swipeRefresh.isVisible = state.events.isNotEmpty()
+                binding.swipeRefresh.isVisible = state.events.isNotEmpty() || state.isEmptyLoading
                 errorText?.let { it ->
                     if (state.singleError != null) {
                         val singleErrorText = state.singleError.getErrorText(requireContext())
@@ -168,7 +171,7 @@ class EventFragment : Fragment() {
                         viewModel.accept(EventMessage.HandleError)
                     }
                 }
-                adapter.submitList(mapper.map(state.events))
+                adapter.submitList(mapper.map(state))
                 binding.root.visibility = View.VISIBLE
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
