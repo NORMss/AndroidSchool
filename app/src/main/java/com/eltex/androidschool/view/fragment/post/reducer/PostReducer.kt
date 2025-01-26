@@ -1,6 +1,5 @@
 package com.eltex.androidschool.view.fragment.post.reducer
 
-import android.util.Log
 import arrow.core.Either
 import com.eltex.androidschool.domain.mapper.Mapper
 import com.eltex.androidschool.domain.model.Post
@@ -52,7 +51,7 @@ class PostReducer(
                         if (old.posts.isNotEmpty()) {
                             old.copy(
                                 singleError = messageResult.value,
-                                status = PostStatus.Idle,
+                                status = PostStatus.Idle(),
                             )
                         } else {
                             old.copy(status = PostStatus.EmptyError(messageResult.value))
@@ -63,7 +62,7 @@ class PostReducer(
                         messageResult.value.map(mapper::map).let { updatedPosts ->
                             old.copy(
                                 posts = updatedPosts,
-                                status = PostStatus.Idle,
+                                status = PostStatus.Idle(),
                             )
                         }
                     }
@@ -133,22 +132,31 @@ class PostReducer(
 
                     is Either.Right -> {
                         val updatedPosts = old.posts + messageResult.value.map(mapper::map)
+                        val isLoadingFinished = message.result.value.size < PAGE_SIZE
                         old.copy(
                             posts = updatedPosts,
-                            status = PostStatus.Idle,
+                            status = PostStatus.Idle(isLoadingFinished),
                         )
                     }
                 }
             )
 
-            PostMessage.LoadNextPage -> ReducerResult(
-                old.copy(
-                    status = PostStatus.NextPageLoading
-                ),
-                PostEffect.LoadNextPage(old.posts.last().id, PAGE_SIZE),
-            )
+            PostMessage.LoadNextPage -> {
+                val isLoadingFinished = (old.status as? PostStatus.Idle)?.isLoadingFinished == true
+                val effect = if (isLoadingFinished) {
+                    null
+                } else
+                    PostEffect.LoadNextPage(old.posts.last().id, PAGE_SIZE)
+
+                val status = if (isLoadingFinished) old.status else PostStatus.NextPageLoading
+                ReducerResult(
+                    old.copy(status = status),
+                    effect,
+                )
+            }
 
             PostMessage.Refresh -> ReducerResult(
+
                 old.copy(
                     status = if (old.posts.isNotEmpty()) {
                         PostStatus.Refreshing

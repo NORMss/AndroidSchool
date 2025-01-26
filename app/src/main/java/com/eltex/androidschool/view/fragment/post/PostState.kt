@@ -4,7 +4,7 @@ import com.eltex.androidschool.view.model.PostUi
 
 data class PostState(
     val posts: List<PostUi> = emptyList(),
-    val status: PostStatus = PostStatus.Idle,
+    val status: PostStatus = PostStatus.Idle(),
     val singleError: Throwable? = null,
 ) {
     val isRefreshing: Boolean

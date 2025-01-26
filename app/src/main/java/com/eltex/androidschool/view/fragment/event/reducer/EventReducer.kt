@@ -9,6 +9,7 @@ import com.eltex.androidschool.view.fragment.event.EventEffect
 import com.eltex.androidschool.view.fragment.event.EventMessage
 import com.eltex.androidschool.view.fragment.event.EventState
 import com.eltex.androidschool.view.fragment.event.EventStatus
+import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
 import com.eltex.androidschool.view.model.EventUi
 
 class EventReducer(
@@ -104,7 +105,7 @@ class EventReducer(
                         if (old.events.isNotEmpty()) {
                             old.copy(
                                 singleError = messageResult.value,
-                                status = EventStatus.Idle,
+                                status = EventStatus.Idle(),
                             )
                         } else {
                             old.copy(status = EventStatus.EmptyError(messageResult.value))
@@ -115,7 +116,7 @@ class EventReducer(
                         messageResult.value.map(mapper::map).let { updatedPosts ->
                             old.copy(
                                 events = updatedPosts,
-                                status = EventStatus.Idle,
+                                status = EventStatus.Idle(),
                             )
                         }
                     }
@@ -185,20 +186,30 @@ class EventReducer(
 
                     is Either.Right -> {
                         val updatedPosts = old.events + messageResult.value.map(mapper::map)
+                        val isLoadingFinished = message.result.value.size < PAGE_SIZE
                         old.copy(
                             events = updatedPosts,
-                            status = EventStatus.Idle,
+                            status = EventStatus.Idle(isLoadingFinished),
                         )
                     }
                 }
             )
 
-            EventMessage.LoadNextPage -> ReducerResult(
-                old.copy(
-                    status = EventStatus.NextPageLoading
-                ),
-                EventEffect.LoadNextPage(old.events.last().id, PAGE_SIZE),
-            )
+            EventMessage.LoadNextPage -> {
+                val isLoadingFinished = (old.status as? EventStatus.Idle)?.isLoadingFinished == true
+                val effect = if (isLoadingFinished) {
+                    null
+                } else
+                    EventEffect.LoadNextPage(old.events.last().id, PostReducer.Companion.PAGE_SIZE)
+
+                val status = if (isLoadingFinished) old.status else EventStatus.NextPageLoading
+                ReducerResult(
+                    old.copy(
+                        status = status
+                    ),
+                    effect,
+                )
+            }
 
             EventMessage.Refresh -> ReducerResult(
                 old.copy(

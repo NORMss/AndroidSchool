@@ -20,7 +20,7 @@ class EventPagingMapper : Mapper<EventState, List<EventPagingModel>> {
             EventStatus.NextPageLoading -> groupedEvent + List(PAGE_SIZE) { EventPagingModel.Loading }
             is EventStatus.NextPageError -> groupedEvent + EventPagingModel.Error(statusValue.reason)
             is EventStatus.EmptyError,
-            EventStatus.Idle -> groupedEvent
+            is EventStatus.Idle -> groupedEvent
 
             EventStatus.EmptyLoading -> List(PAGE_SIZE) { EventPagingModel.Loading }
 
