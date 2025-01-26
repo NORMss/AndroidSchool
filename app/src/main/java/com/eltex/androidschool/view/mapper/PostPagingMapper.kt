@@ -19,7 +19,9 @@ class PostPagingMapper : Mapper<PostState, List<PagingModel>> {
             is PostStatus.NextPageError -> groupedPosts + PagingModel.Error(statusValue.reason)
             is PostStatus.EmptyError,
             PostStatus.Idle -> groupedPosts
+
             PostStatus.EmptyLoading -> List(PAGE_SIZE) { PagingModel.Loading }
+
             PostStatus.Refreshing -> groupedPosts
         }
     }
