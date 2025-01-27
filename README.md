@@ -1,6 +1,6 @@
 # Project AndroidSchool 
 
-**Part 28-mvi**
+**Part 29**
 
 ## **Warning**
 
@@ -14,6 +14,27 @@ USER_TOKEN = "your-token-authorization"
 <details>
   <summary>Video</summary>
 
-  [Uploading video_2024-12-11_10-16-57.mp4…](https://github.com/user-attachments/assets/a548aed8-08c5-4396-a691-e404d1f4f6a0)
+
+
+https://github.com/user-attachments/assets/80bce726-b2c9-49c3-bf7a-635006e2fa5c
+
+
+
+</details>
+
+## Demo Shimmer Effect on Skeleton
+Skeleton and shimmer effect are needed during the first data load to improve user experience.
+<details>
+  <summary>Video</summary>
+
+
+
+
+
+https://github.com/user-attachments/assets/4e552d2f-8ba6-4b8c-8122-ba5fca0dd8b6
+
+
+
+
 
 </details>
