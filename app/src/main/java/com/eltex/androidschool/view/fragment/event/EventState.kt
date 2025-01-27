@@ -4,7 +4,7 @@ import com.eltex.androidschool.view.model.EventUi
 
 data class EventState(
     val events: List<EventUi> = emptyList(),
-    val status: EventStatus = EventStatus.Idle,
+    val status: EventStatus = EventStatus.Idle(),
     val singleError: Throwable? = null,
 ) {
     val isRefreshing: Boolean
