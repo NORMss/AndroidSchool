@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.dokka)
 }
 
 room {
@@ -64,6 +65,8 @@ android {
 }
 
 dependencies {
+    dokkaPlugin(libs.android.documentation.plugin)
+
     implementation(libs.shimmer)
 
     implementation(libs.arrow.core)
