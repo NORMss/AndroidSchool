@@ -49,4 +49,6 @@
     <string name="content">Контент</string>
     <string name="link">Ссылка</string>
     <string name="participant">Участник</string>
+    <string name="remove">Удалить</string>
+    <string name="date_picker">выбор даты</string>
 </resources>

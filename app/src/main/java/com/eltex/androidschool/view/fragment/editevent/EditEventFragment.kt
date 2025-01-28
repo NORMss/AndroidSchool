@@ -43,7 +43,9 @@ class EditEventFragment : Fragment() {
                     addInitializer(EditEventViewModel::class) {
                         EditEventViewModel(
                             eventRepository = RemoteEventRepository(
-                                (requireContext().applicationContext as App).eventApi
+                                contentResolver = requireContext().contentResolver,
+                                eventApi = (requireContext().applicationContext as App).eventApi,
+                                mediaApi = (requireContext().applicationContext as App).mediaApi,
                             ),
                             eventId = eventId,
                         )

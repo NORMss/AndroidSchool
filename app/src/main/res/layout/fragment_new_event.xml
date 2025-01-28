@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,111 +7,157 @@
     android:layout_height="match_parent"
     tools:context=".view.fragment.newevent.NewEventFragment">
 
-    <TextView
-        android:id="@+id/titleContent"
-        style="?textAppearanceTitleMedium"
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="?actionBarSize">
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:autofillHints="no"
+                android:background="@color/transparent"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:maxLines="10"
+                android:minLines="5"
+                android:padding="@dimen/common_spacing"
+                tools:ignore="LabelFor"
+                tools:text="@tools:sample/lorem[10]" />
+
+            <TextView
+                android:id="@+id/titleLink"
+                style="?textAppearanceTitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:text="@string/link"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editText" />
+
+            <EditText
+                android:id="@+id/editLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="no"
+                android:background="@color/transparent"
+                android:gravity="top"
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:padding="@dimen/common_spacing"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/titleLink"
+                tools:ignore="LabelFor"
+                tools:text="@tools:sample/lorem[10]" />
+
+            <TextView
+                android:id="@+id/dateTime"
+                style="?textAppearanceTitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editLink"
+                tools:text="01.01.1970"
+                tools:visibility="visible" />
+
+            <FrameLayout
+                android:id="@+id/attachment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/contentImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/content_image"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintDimensionRatio="H,16:9"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/editText"
+                    tools:src="@tools:sample/avatars[2]" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/remove_file"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/remove" />
+            </FrameLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:text="@string/content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="bottom">
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:autofillHints="no"
-        android:background="@color/transparent"
-        android:gravity="top"
-        android:inputType="textMultiLine"
-        android:maxLines="10"
-        android:minLines="5"
-        android:padding="@dimen/common_spacing"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleContent"
-        tools:ignore="LabelFor"
-        tools:text="@tools:sample/lorem[10]" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/takePhoto"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:fontFamily="@font/roboto_medium"
+            app:icon="@drawable/camera"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentImage" />
 
-    <TextView
-        android:id="@+id/titleLink"
-        style="?textAppearanceTitleMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:text="@string/link"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editText" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/attachButton"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:fontFamily="@font/roboto_medium"
+            app:icon="@drawable/attach"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentImage" />
 
-    <EditText
-        android:id="@+id/editLink"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:autofillHints="no"
-        android:background="@color/transparent"
-        android:gravity="top"
-        android:inputType="textUri"
-        android:maxLines="1"
-        android:padding="@dimen/common_spacing"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleLink"
-        tools:ignore="LabelFor"
-        tools:text="@tools:sample/lorem[10]" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/participate"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:fontFamily="@font/roboto_medium"
+            app:icon="@drawable/people_selected"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentImage" />
 
-    <TextView
-        android:id="@+id/dateTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16.dp"
-        android:layout_marginVertical="8dp"
-        android:visibility="gone"
-        style="?textAppearanceTitleLarge"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editLink"
-        tools:text="01.01.1970" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/setPlace"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:fontFamily="@font/roboto_medium"
+            app:icon="@drawable/pin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentImage" />
 
-    <ImageView
-        android:id="@+id/contentImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/content_image"
-        android:scaleType="centerCrop"
-        android:visibility="gone"
-        app:layout_constraintDimensionRatio="H,16:9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dateTime"
-        tools:src="@drawable/vertical_image"
-        tools:visibility="gone" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/datePikerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/date_picker"
+            android:src="@drawable/add" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/attachButton"
-        style="@style/Widget.Material3.Button.IconButton"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="16dp"
-        android:fontFamily="@font/roboto_medium"
-        android:stateListAnimator="@drawable/scale"
-        android:textSize="14sp"
-        app:icon="@drawable/attach"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateTime" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/datePikerButton"
-        style="@style/Widget.Material3.Button.IconButton"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginHorizontal="16dp"
-        android:fontFamily="@font/roboto_medium"
-        android:stateListAnimator="@drawable/scale"
-        android:textSize="14sp"
-        app:icon="@drawable/event"
-        app:layout_constraintStart_toEndOf="@id/attachButton"
-        app:layout_constraintTop_toTopOf="@id/attachButton" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.bottomappbar.BottomAppBar>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

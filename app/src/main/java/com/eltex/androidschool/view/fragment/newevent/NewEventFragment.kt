@@ -2,6 +2,7 @@ package com.eltex.androidschool.view.fragment.newevent
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -18,6 +20,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
@@ -26,12 +29,15 @@ import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentNewEventBinding
+import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.utils.remote.getErrorText
-import com.eltex.androidschool.view.util.toast.toast
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
+import com.eltex.androidschool.view.model.FileModel
+import com.eltex.androidschool.view.util.toast.toast
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -65,12 +71,12 @@ class NewEventFragment : Fragment() {
             if (uri != null) {
                 binding.contentImage.load(uri) {
                     listener(
-                        onStart = { binding.contentImage.visibility = View.VISIBLE },
+                        onStart = { binding.attachment.isVisible = true },
                         onSuccess = { _, _ ->
-                            binding.contentImage.visibility = View.VISIBLE
-                            viewModel.setAttachment(uri)
+                            binding.attachment.isVisible = true
+                            viewModel.setFile(FileModel(uri, AttachmentType.IMAGE))
                         },
-                        onError = { _, _ -> binding.contentImage.visibility = View.GONE }
+                        onError = { _, _ -> binding.attachment.isVisible = false }
                     )
                 }
             } else {
@@ -104,18 +110,6 @@ class NewEventFragment : Fragment() {
                             }
                         }
 
-                        Status.Idle -> {
-                            requireContext().applicationContext.toast(
-                                R.string.event_created,
-                                false
-                            )
-                            requireActivity().supportFragmentManager.setFragmentResult(
-                                EVENT_SAVED,
-                                bundleOf()
-                            )
-                            findNavController().navigateUp()
-                        }
-
                         else -> {
                             Unit
                         }
@@ -127,8 +121,60 @@ class NewEventFragment : Fragment() {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        var photoUri: Uri? = null
+        val takePhoto =
+            registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+                if (success) {
+                    photoUri?.let {
+                        viewModel.setFile(FileModel(it, AttachmentType.IMAGE))
+                    }
+                }
+            }
+
+        binding.takePhoto.setOnClickListener {
+            photoUri = getPhotoUri()
+            takePhoto.launch(photoUri)
+        }
+
+        binding.removeFile.setOnClickListener {
+            binding.attachment.isVisible = false
+            viewModel.removeFile()
+        }
+
+        viewModel.state
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                it.status.throwableOtNull?.getErrorText(requireContext())?.let { errorText ->
+                    if (it.isRefreshError) {
+                        Toast.makeText(
+                            requireContext(),
+                            errorText,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        viewModel.consumerError()
+                    }
+                }
+                it.result?.let {
+                    requireContext().applicationContext.toast(
+                        R.string.event_created,
+                        false
+                    )
+                    requireActivity().supportFragmentManager.setFragmentResult(
+                        EVENT_SAVED,
+                        bundleOf()
+                    )
+                    findNavController().navigateUp()
+                }
+
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         binding.attachButton.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
+        binding.removeFile.setOnClickListener {
+            viewModel.removeFile()
+            binding.attachment.isVisible = false
         }
 
 
@@ -156,7 +202,9 @@ class NewEventFragment : Fragment() {
             addInitializer(NewEventViewModel::class) {
                 NewEventViewModel(
                     eventRepository = RemoteEventRepository(
-                        (requireContext().applicationContext as App).eventApi
+                        contentResolver = requireContext().contentResolver,
+                        eventApi = (requireContext().applicationContext as App).eventApi,
+                        mediaApi = (requireContext().applicationContext as App).mediaApi,
                     ),
                 )
             }
@@ -200,6 +248,19 @@ class NewEventFragment : Fragment() {
             calendar.get(Calendar.DAY_OF_MONTH)
         )
         datePickerDialog.show()
+    }
+
+    private fun getPhotoUri(): Uri {
+        val directory = requireContext().cacheDir.resolve("file_picker")
+            .apply {
+                mkdirs()
+            }
+        val file = File(directory, "tmp_image_${System.currentTimeMillis()}.png")
+        return FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.fileprovider",
+            file
+        )
     }
 
     companion object {

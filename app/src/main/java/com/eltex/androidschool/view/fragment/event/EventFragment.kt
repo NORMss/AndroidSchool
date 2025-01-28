@@ -76,7 +76,9 @@ class EventFragment : Fragment() {
                         ),
                         effectHandler = EventEffectHandler(
                             repository = RemoteEventRepository(
+                                contentResolver = requireContext().contentResolver,
                                 eventApi = (context?.applicationContext as App).eventApi,
+                                mediaApi = (context?.applicationContext as App).mediaApi,
                             ),
                         ),
                         initMessages = setOf(

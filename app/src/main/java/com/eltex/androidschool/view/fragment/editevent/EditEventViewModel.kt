@@ -7,6 +7,7 @@ import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.view.common.Status
+import com.eltex.androidschool.view.model.FileModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -59,7 +60,18 @@ class EditEventViewModel(
     fun editEvent() {
         viewModelScope.launch {
             try {
-                val event = eventRepository.saveEvent(state.value.event)
+                val event = eventRepository.saveEvent(
+                    id = 0,
+                    content = state.value.event.content,
+                    link = state.value.event.link,
+                    date = state.value.event.datetime,
+                    fileModel = state.value.event.attachment?.let {
+                        FileModel(
+                            Uri.parse(it.url),
+                            it.type,
+                        )
+                    },
+                )
                 state.update {
                     it.copy(
                         event = event,

@@ -1,8 +1,19 @@
 package com.eltex.androidschool.data.repository
 
+import android.content.ContentResolver
+import com.eltex.androidschool.data.remote.api.MediaApi
 import com.eltex.androidschool.data.remote.api.PostApi
+import com.eltex.androidschool.data.remote.dto.Media
+import com.eltex.androidschool.domain.model.Attachment
+import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
+import com.eltex.androidschool.view.model.FileModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 /**
  * [RemotePostRepository] is an implementation of [PostRepository] that fetches post data from a remote source
@@ -13,7 +24,9 @@ import com.eltex.androidschool.domain.repository.PostRepository
  * @property postApi The API service used to make network requests related to posts.
  */
 class RemotePostRepository(
-    private val postApi: PostApi
+    private val contentResolver: ContentResolver,
+    private val postApi: PostApi,
+    private val mediaApi: MediaApi,
 ) : PostRepository {
     override suspend fun getPosts(): List<Post> {
         return postApi.getPosts()
@@ -122,7 +135,49 @@ class RemotePostRepository(
      *         like a server-generated ID or timestamp.
      * @throws Exception if any error occurs during the network operation. (This is implicit due to the nature of network calls and the use of `postApi`)
      */
-    override suspend fun savePost(post: Post): Post {
+    override suspend fun savePost(id: Long, content: String, fileModel: FileModel?): Post {
+        val post = fileModel?.let {
+            val media = upload(it)
+            Post(
+                id = id,
+                authorId = 0,
+                author = "",
+                authorJob = "",
+                authorAvatar = "",
+                content = content,
+                published = Instant.fromEpochSeconds(0),
+                coords = Coordinates(
+                    lat = 54.9833,
+                    long = 82.8964,
+                ),
+                link = null,
+                mentionIds = emptySet(),
+                mentionedMe = false,
+                likeOwnerIds = emptySet(),
+                likedByMe = false,
+                attachment = Attachment(media.url, it.type),
+                users = emptyMap(),
+            )
+        } ?: Post(
+            id = id,
+            authorId = 0,
+            author = "",
+            authorJob = "",
+            authorAvatar = "",
+            content = content,
+            published = Instant.fromEpochSeconds(0),
+            coords = Coordinates(
+                lat = 54.9833,
+                long = 82.8964,
+            ),
+            link = null,
+            mentionIds = emptySet(),
+            mentionedMe = false,
+            likeOwnerIds = emptySet(),
+            likedByMe = false,
+            attachment = null,
+            users = emptyMap(),
+        )
         return postApi.save(post)
     }
 
@@ -137,5 +192,20 @@ class RemotePostRepository(
      */
     override suspend fun deleteById(id: Long) {
         return postApi.deleteById(id)
+    }
+
+    private suspend fun upload(fileModel: FileModel): Media {
+        return mediaApi.upload(
+            MultipartBody.Part.createFormData(
+                "file",
+                "file",
+                withContext(Dispatchers.IO) {
+                    requireNotNull(contentResolver.openInputStream(fileModel.uri)).use {
+                        it.readBytes()
+                    }
+                        .toRequestBody()
+                },
+            )
+        )
     }
 }

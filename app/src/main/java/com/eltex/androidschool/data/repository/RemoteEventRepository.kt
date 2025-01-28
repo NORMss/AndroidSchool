@@ -1,8 +1,20 @@
 package com.eltex.androidschool.data.repository
 
+import android.content.ContentResolver
 import com.eltex.androidschool.data.remote.api.EventApi
+import com.eltex.androidschool.data.remote.api.MediaApi
+import com.eltex.androidschool.data.remote.dto.Media
+import com.eltex.androidschool.domain.model.Attachment
+import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Event
+import com.eltex.androidschool.domain.model.EventType
 import com.eltex.androidschool.domain.repository.EventRepository
+import com.eltex.androidschool.view.model.FileModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 /**
  * [RemoteEventRepository] is a concrete implementation of [EventRepository] that fetches event data from a remote source.
@@ -11,7 +23,9 @@ import com.eltex.androidschool.domain.repository.EventRepository
  * @property eventApi The [EventApi] instance used to communicate with the remote event data source.
  */
 class RemoteEventRepository(
+    private val contentResolver: ContentResolver,
     private val eventApi: EventApi,
+    private val mediaApi: MediaApi,
 ) : EventRepository {
     /**
      * Retrieves a list of events from the remote data source.
@@ -155,7 +169,61 @@ class RemoteEventRepository(
      * @return The [Event] object as returned by the server after successful saving.
      * @throws Exception if any error occurs during the saving process, such as network issues or server errors.
      */
-    override suspend fun saveEvent(event: Event): Event {
+    override suspend fun saveEvent(
+        id: Long,
+        content: String,
+        link: String?,
+        datetime: Instant,
+        fileModel: FileModel?
+    ): Event {
+        val event = fileModel?.let {
+            val media = upload(it)
+            Event(
+                id = 0,
+                authorId = 0,
+                author = "",
+                authorJob = "",
+                authorAvatar = "",
+                content = content,
+                datetime = datetime,
+                published = Instant.fromEpochSeconds(0),
+                coords = Coordinates(
+                    lat = 54.9833,
+                    long = 82.8964,
+                ),
+                type = EventType.OFFLINE,
+                likeOwnerIds = emptySet(),
+                likedByMe = false,
+                speakerIds = emptySet(),
+                participantsIds = emptySet(),
+                participatedByMe = false,
+                attachment = Attachment(media.url, it.type),
+                link = link,
+                users = emptyMap(),
+            )
+        } ?: Event(
+            id = 0,
+            authorId = 0,
+            author = "",
+            authorJob = "",
+            authorAvatar = "",
+            content = content,
+            datetime = datetime,
+            published = Instant.fromEpochSeconds(0),
+            coords = Coordinates(
+                lat = 54.9833,
+                long = 82.8964,
+            ),
+            type = EventType.OFFLINE,
+            likeOwnerIds = emptySet(),
+            likedByMe = false,
+            speakerIds = emptySet(),
+            participantsIds = emptySet(),
+            participatedByMe = false,
+            attachment = null,
+            link = link,
+            users = emptyMap(),
+        )
         return eventApi.save(event)
     }
 
@@ -172,5 +240,20 @@ class RemoteEventRepository(
      */
     override suspend fun deleteById(id: Long) {
         return eventApi.deleteById(id)
+    }
+
+    private suspend fun upload(fileModel: FileModel): Media {
+        return mediaApi.upload(
+            MultipartBody.Part.createFormData(
+                "file",
+                "file",
+                withContext(Dispatchers.IO) {
+                    requireNotNull(contentResolver.openInputStream(fileModel.uri)).use {
+                        it.readBytes()
+                    }
+                        .toRequestBody()
+                },
+            )
+        )
     }
 }

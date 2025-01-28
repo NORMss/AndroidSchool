@@ -71,7 +71,9 @@ class PostFragment : Fragment() {
                         ),
                         effectHandler = PostEffectHandler(
                             repository = RemotePostRepository(
+                                contentResolver = requireContext().contentResolver,
                                 postApi = (context?.applicationContext as App).postApi,
+                                mediaApi = (context?.applicationContext as App).mediaApi,
                             ),
                         ),
                         initMessages = setOf(
@@ -151,8 +153,6 @@ class PostFragment : Fragment() {
                 binding.errorGroup.isVisible = state.isEmptyError
                 val errorText = state.emptyError?.getErrorText(requireContext())
                 binding.errorText.text = errorText
-//                if (state.isEmptyLoading) adapter.submitList(mapper.map(state))
-//                binding.progress.isVisible = state.isEmptyLoading
                 binding.swipeRefresh.isRefreshing = state.isRefreshing
                 binding.swipeRefresh.isVisible = state.posts.isNotEmpty() || state.isEmptyLoading
                 if (state.singleError != null) {

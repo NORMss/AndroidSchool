@@ -1,12 +1,14 @@
 package com.eltex.androidschool.view.fragment.newpost
 
-import com.eltex.androidschool.domain.model.Attachment
+import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.view.common.Status
+import com.eltex.androidschool.view.model.FileModel
 
 data class NewPostState(
+    val result: Post? = null,
     val textContent: String = "",
-    val attachment: Attachment? = null,
     val status: Status = Status.Idle,
+    val file: FileModel? = null,
 ) {
     val isRefreshing: Boolean
         get() = status == Status.Loading && textContent.isNotBlank()

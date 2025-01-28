@@ -3,6 +3,7 @@ package com.eltex.androidschool.view.fragment.post.adapter.post
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
+import com.eltex.androidschool.R
 import com.eltex.androidschool.databinding.PostBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.view.model.PostUi
@@ -14,7 +15,6 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
     fun bind(post: PostUi) {
         val header = binding.header
 
-        binding.contentImage.visibility = View.VISIBLE
         header.username.text = post.author
 
         header.monogram.load(post.authorAvatar) {
@@ -25,27 +25,19 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
             AttachmentType.IMAGE -> {
                 binding.contentImage.load(post.attachment.url) {
                     crossfade(true)
-                    listener(
-                        onSuccess = { _, _ ->
-                            binding.contentImage.visibility = View.VISIBLE
-                            binding.contentVideo.visibility = View.GONE
-                        },
-                        onError = { _, _ ->
-                            binding.contentImage.visibility = View.GONE
-                            binding.contentVideo.visibility = View.GONE
-                        }
-                    )
+                    placeholder(R.drawable.image_loading)
+                    error(R.drawable.image_error)
                 }
                 binding.contentVideo.visibility = View.GONE
             }
 
             AttachmentType.VIDEO -> {
                 binding.contentVideo.visibility = View.VISIBLE
-                binding.contentImage.visibility = View.GONE
+//                binding.contentImage.visibility = View.GONE
             }
 
             AttachmentType.AUDIO -> {
-                binding.contentImage.visibility = View.GONE
+//                binding.contentImage.visibility = View.GONE
                 binding.contentVideo.visibility = View.GONE
             }
 

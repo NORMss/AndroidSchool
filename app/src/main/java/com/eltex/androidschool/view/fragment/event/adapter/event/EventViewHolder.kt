@@ -25,19 +25,9 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
 
         when (event.attachment?.type) {
             AttachmentType.IMAGE -> binding.contentImage.load(event.attachment.url) {
-                listener(
-                    onSuccess = { _, _ ->
-                        binding.contentImage.visibility = View.VISIBLE
-                        binding.contentVideo.visibility = View.GONE
-                        binding.play.visibility = View.GONE
-                    },
-                    onError = { _, _ ->
-                        binding.contentImage.visibility = View.GONE
-                        binding.contentVideo.visibility = View.GONE
-                        binding.play.visibility = View.GONE
-                    }
-                )
-
+                crossfade(true)
+                placeholder(R.drawable.image_loading)
+                error(R.drawable.image_error)
             }
 
             AttachmentType.AUDIO -> {
