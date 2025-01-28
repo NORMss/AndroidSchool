@@ -2,6 +2,7 @@ package com.eltex.androidschool.view.fragment.post.reducer
 
 import arrow.core.Either
 import com.eltex.androidschool.domain.mapper.Mapper
+import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.mvi.Reducer
 import com.eltex.androidschool.mvi.ReducerResult
@@ -9,8 +10,29 @@ import com.eltex.androidschool.view.fragment.post.PostEffect
 import com.eltex.androidschool.view.fragment.post.PostMessage
 import com.eltex.androidschool.view.fragment.post.PostState
 import com.eltex.androidschool.view.fragment.post.PostStatus
+import com.eltex.androidschool.view.model.EventUi
 import com.eltex.androidschool.view.model.PostUi
 
+/**
+ * `PostReducer` is a crucial component in managing the state of events within the application.
+ * It acts as a pure function that takes the current `EventState` and an incoming `EventMessage`,
+ * and then produces a new [PostState] along with any associated side-effects [PostEffect].
+ *
+ * The [PostReducer] is responsible for handling various actions related to events, such as:
+ * - Deleting events
+ * - Managing user participation in events
+ * - Handling errors during event deletion or participation
+ * - Loading the initial list of events
+ * - Handling user likes on events
+ * - Loading the next page of events (pagination)
+ * - Refreshing the list of events
+ * - Handle errors in the state.
+ *
+ * It utilizes a [Mapper] to transform data from the domain layer ([Event]) to the UI layer ([PostUi]).
+ *
+ * @property mapper A [Mapper] instance used to transform [Post] objects to [PostUi] objects.
+ *   This is essential for adapting data from the domain layer to the presentation layer.
+ */
 class PostReducer(
     private val mapper: Mapper<Post, PostUi>,
 ) : Reducer<PostState, PostMessage, PostEffect> {

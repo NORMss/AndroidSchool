@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+androidDocumentationPlugin = "2.0.0"
 arrowCore = "1.2.4"
 coil = "2.7.0"
 kotlinxCoroutinesAndroid = "1.10.1"
@@ -28,9 +29,11 @@ rxkotlin = "3.0.1"
 shimmer = "0.5.0"
 swiperefreshlayout = "1.1.0"
 coroutines = "1.10.1"
+dokka = "2.0.0"
 
 [libraries]
 adapter-rxjava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "retrofit" }
+android-documentation-plugin = { module = "org.jetbrains.dokka:android-documentation-plugin", version.ref = "androidDocumentationPlugin" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
@@ -75,4 +78,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
-
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

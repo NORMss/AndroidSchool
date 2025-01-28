@@ -12,6 +12,26 @@ import com.eltex.androidschool.view.fragment.event.EventStatus
 import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
 import com.eltex.androidschool.view.model.EventUi
 
+/**
+ * `EventReducer` is a crucial component in managing the state of events within the application.
+ * It acts as a pure function that takes the current `EventState` and an incoming [EventMessage],
+ * and then produces a new [EventState] along with any associated side-effects ([EventEffect]).
+ *
+ * The [EventReducer] is responsible for handling various actions related to events, such as:
+ * - Deleting events
+ * - Managing user participation in events
+ * - Handling errors during event deletion or participation
+ * - Loading the initial list of events
+ * - Handling user likes on events
+ * - Loading the next page of events (pagination)
+ * - Refreshing the list of events
+ * - Handle errors in the state.
+ *
+ * It utilizes a [Mapper] to transform data from the domain layer ([Event]) to the UI layer ([EventUi]).
+ *
+ * @property mapper A [Mapper] instance used to transform [Event] objects to [EventUi] objects.
+ *   This is essential for adapting data from the domain layer to the presentation layer.
+ */
 class EventReducer(
     private val mapper: Mapper<Event, EventUi>,
 ) : Reducer<EventState, EventMessage, EventEffect> {
