@@ -1,6 +1,6 @@
 # Project AndroidSchool 
 
-**Part 29-paging**
+**Part 30-photo**
 
 ## **Warning**
 
@@ -13,28 +13,86 @@ USER_TOKEN = "your-token-authorization"
 ## Demo Program
 <details>
   <summary>Video</summary>
+  
 
-
-
-https://github.com/user-attachments/assets/80bce726-b2c9-49c3-bf7a-635006e2fa5c
-
+https://github.com/user-attachments/assets/e3615828-6104-4c68-9638-7f6285a65d4f
 
 
 </details>
 
-## Demo Shimmer Effect on Skeleton
-Skeleton and shimmer effect are needed during the first data load to improve user experience.
+## Logic of photo creation and display
+The [multipart/form-data](https://en.wikipedia.org/wiki/MIME#form-data) content type was used to upload the photo to the server.
+
+Created an interface for uploading a file with the `@Multipart` annotation. After successful upload, the file `URL` is returned
 <details>
-  <summary>Video</summary>
+  <summary>api code example</summary>
+  
+```kotlin
+@Multipart
+@POST("api/media")
+suspend fun upload(@Part file: MultipartBody.Part): Media
+```
 
+</details>
 
+Adapt the repository to upload a file to the server and receive a link to the source for further retrieval of the uploaded image
 
+<details>
+  <summary>repository code example</summary>
+  
+```kotlin
+override suspend fun saveEvent(
+        id: Long,
+        content: String,
+        link: String?,
+        datetime: Instant,
+        fileModel: FileModel?
+    ): Event {
+        val attachment = fileModel?.let {
+            val media = upload(it)
+            Attachment(media.url, it.type)
+        }
 
+        val event = Event(
+            id = id,
+            content = content,
+            datetime = datetime,
+            attachment = attachment,
+            link = link,
+        )
 
-https://github.com/user-attachments/assets/4e552d2f-8ba6-4b8c-8122-ba5fca0dd8b6
+        return eventApi.save(event)
+    }
 
+private suspend fun upload(fileModel: FileModel): Media {
+        return mediaApi.upload(
+            MultipartBody.Part.createFormData(
+                "file",
+                "file",
+                withContext(Dispatchers.IO) {
+                    requireNotNull(contentResolver.openInputStream(fileModel.uri)).use {
+                        it.readBytes()
+                    }
+                        .toRequestBody()
+                },
+            )
+        )
+    }
+```
 
+</details>
 
+To load an image from the server, we use the [Coil](https://coil-kt.github.io/coil/) library.
 
+<details>
+  <summary>viewholder code example</summary>
+
+```kotlin
+binding.contentImage.load(event.attachment.url) {
+                    crossfade(true)
+                    placeholder(R.drawable.image_loading)
+                    error(R.drawable.image_error)
+                }
+```
 
 </details>
