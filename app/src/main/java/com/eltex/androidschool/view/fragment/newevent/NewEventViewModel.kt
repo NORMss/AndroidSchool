@@ -5,12 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.model.Attachment
 import com.eltex.androidschool.domain.model.AttachmentType
-import com.eltex.androidschool.domain.model.Coordinates
-import com.eltex.androidschool.domain.model.Event
-import com.eltex.androidschool.domain.model.EventType
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.view.common.Status
-import kotlinx.coroutines.Dispatchers
+import com.eltex.androidschool.view.model.FileModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -23,17 +20,6 @@ class NewEventViewModel(
 ) : ViewModel() {
     val state: StateFlow<NewEventState>
         field = MutableStateFlow(NewEventState())
-
-    fun setAttachment(uri: Uri) {
-        state.update {
-            it.copy(
-                attachment = Attachment(
-                    url = uri.toString(),
-                    type = AttachmentType.IMAGE,
-                ),
-            )
-        }
-    }
 
     fun setText(text: String) {
         state.update {
@@ -61,44 +47,29 @@ class NewEventViewModel(
 
     fun addEvent() {
         val textContent = state.value.textContent.trim()
-        if (textContent.isEmpty() && state.value.attachment == null) {
+        if (textContent.isEmpty() && state.value.file == null) {
             return
         }
         viewModelScope.launch {
             try {
-                eventRepository.saveEvent(
-                    event = Event(
-                        id = 0,
-                        authorId = 0,
-                        author = "",
-                        authorJob = "",
-                        authorAvatar = "",
-                        content = state.value.textContent,
-                        datetime = state.value.dateTime,
-                        published = Instant.fromEpochSeconds(0),
-                        coords = Coordinates(
-                            lat = 54.9833,
-                            long = 82.8964,
-                        ),
-                        type = EventType.OFFLINE,
-                        likeOwnerIds = emptySet(),
-                        likedByMe = false,
-                        speakerIds = emptySet(),
-                        participantsIds = emptySet(),
-                        participatedByMe = false,
-                        attachment = state.value.attachment,
-                        link = state.value.link,
-                        users = emptyMap(),
-                    ),
-                ).let { data ->
-                    state.update {
-                        it.copy(
-                            textContent = data.content,
-                            attachment = data.attachment,
-                            dateTime = data.datetime,
-                            status = Status.Idle,
-                        )
-                    }
+                state.update {
+                    it.copy(
+                        result = eventRepository.saveEvent(
+                            id = 0,
+                            content = state.value.textContent,
+                            link = state.value.link,
+                            date = state.value.dateTime,
+                            fileModel = state.value.file,
+                        ).also { data ->
+                            state.update {
+                                it.copy(
+                                    textContent = data.content,
+                                    dateTime = data.datetime,
+                                    status = Status.Idle,
+                                )
+                            }
+                        }
+                    )
                 }
             } catch (e: Exception) {
                 state.update {
@@ -107,6 +78,39 @@ class NewEventViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private fun getAttachment(): Attachment? {
+        return state.value.file?.let {
+            Attachment(
+                url = it.uri.toString(),
+                type = AttachmentType.IMAGE
+            )
+        }
+    }
+
+    fun setFile(fileModel: FileModel?) {
+        state.update {
+            it.copy(
+                file = fileModel
+            )
+        }
+    }
+
+    fun removeFile() {
+        state.update {
+            it.copy(
+                file = null
+            )
+        }
+    }
+
+    fun consumerError() {
+        state.update {
+            it.copy(
+                status = Status.Idle,
+            )
         }
     }
 }

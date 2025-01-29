@@ -43,7 +43,9 @@ class EditPostFragment : Fragment() {
                     addInitializer(EditPostViewModel::class) {
                         EditPostViewModel(
                             postRepository = RemotePostRepository(
-                                (requireContext().applicationContext as App).postApi
+                                contentResolver = requireContext().contentResolver,
+                                postApi = (requireContext().applicationContext as App).postApi,
+                                mediaApi = (requireContext().applicationContext as App).mediaApi,
                             ),
                             postId = postId,
                         )

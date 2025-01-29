@@ -1,8 +1,19 @@
 package com.eltex.androidschool.data.repository
 
+import android.content.ContentResolver
+import com.eltex.androidschool.data.remote.api.MediaApi
 import com.eltex.androidschool.data.remote.api.PostApi
+import com.eltex.androidschool.data.remote.dto.Media
+import com.eltex.androidschool.domain.model.Attachment
+import com.eltex.androidschool.domain.model.Coordinates
 import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
+import com.eltex.androidschool.view.model.FileModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 /**
  * [RemotePostRepository] is an implementation of [PostRepository] that fetches post data from a remote source
@@ -13,7 +24,9 @@ import com.eltex.androidschool.domain.repository.PostRepository
  * @property postApi The API service used to make network requests related to posts.
  */
 class RemotePostRepository(
-    private val postApi: PostApi
+    private val contentResolver: ContentResolver,
+    private val postApi: PostApi,
+    private val mediaApi: MediaApi,
 ) : PostRepository {
     override suspend fun getPosts(): List<Post> {
         return postApi.getPosts()
@@ -113,16 +126,44 @@ class RemotePostRepository(
     /**
      * Saves a post to the remote data source.
      *
-     * This function interacts with the `postApi` to persist a given [Post] object.
-     * It's a suspending function, meaning it can be called from a coroutine and
-     * will pause execution until the network operation is complete.
+     * This function creates a [Post] object based on the provided parameters and sends it to the server
+     * via the [postApi] for persistence. If a file is provided, it is uploaded first, and its URL is attached
+     * to the post. The server may modify the post (e.g., assigning an ID), and the updated post is returned.
      *
-     * @param post The [Post] object to be saved.
-     * @return The saved [Post] object, potentially with updated information
-     *         like a server-generated ID or timestamp.
-     * @throws Exception if any error occurs during the network operation. (This is implicit due to the nature of network calls and the use of `postApi`)
+     * @param id The ID of the post (if updating an existing post, otherwise 0 for a new post).
+     * @param content The textual content of the post.
+     * @param fileModel An optional file to be uploaded and attached to the post.
+     * @return The updated [Post] object as returned by the server.
+     * @throws Exception If an error occurs during network communication or file upload.
      */
-    override suspend fun savePost(post: Post): Post {
+    override suspend fun savePost(
+        id: Long,
+        content: String,
+        fileModel: FileModel?
+    ): Post {
+        val attachment = fileModel?.let {
+            val media = upload(it)
+            Attachment(media.url, it.type)
+        }
+
+        val post = Post(
+            id = id,
+            authorId = 0,
+            author = "",
+            authorJob = "",
+            authorAvatar = "",
+            content = content,
+            published = Instant.fromEpochSeconds(0),
+            coords = Coordinates(lat = 54.9833, long = 82.8964),
+            link = null,
+            mentionIds = emptySet(),
+            mentionedMe = false,
+            likeOwnerIds = emptySet(),
+            likedByMe = false,
+            attachment = attachment,
+            users = emptyMap(),
+        )
+
         return postApi.save(post)
     }
 
@@ -137,5 +178,20 @@ class RemotePostRepository(
      */
     override suspend fun deleteById(id: Long) {
         return postApi.deleteById(id)
+    }
+
+    private suspend fun upload(fileModel: FileModel): Media {
+        return mediaApi.upload(
+            MultipartBody.Part.createFormData(
+                "file",
+                "file",
+                withContext(Dispatchers.IO) {
+                    requireNotNull(contentResolver.openInputStream(fileModel.uri)).use {
+                        it.readBytes()
+                    }
+                        .toRequestBody()
+                },
+            )
+        )
     }
 }

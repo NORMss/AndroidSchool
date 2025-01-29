@@ -1,19 +1,14 @@
 package com.eltex.androidschool.view.fragment.newpost
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eltex.androidschool.domain.model.Attachment
-import com.eltex.androidschool.domain.model.AttachmentType
-import com.eltex.androidschool.domain.model.Coordinates
-import com.eltex.androidschool.domain.model.Post
 import com.eltex.androidschool.domain.repository.PostRepository
 import com.eltex.androidschool.view.common.Status
+import com.eltex.androidschool.view.model.FileModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 
 class NewPostViewModel(
     private val postRepository: PostRepository,
@@ -21,17 +16,6 @@ class NewPostViewModel(
 
     val state: StateFlow<NewPostState>
         field = MutableStateFlow(NewPostState())
-
-    fun setAttachment(uri: Uri) {
-        state.update {
-            it.copy(
-                attachment = Attachment(
-                    url = uri.toString(),
-                    type = AttachmentType.IMAGE,
-                ),
-            )
-        }
-    }
 
     fun setText(text: String) {
         state.update {
@@ -43,40 +27,26 @@ class NewPostViewModel(
 
     fun addPost() {
         val textContent = state.value.textContent.trim()
-        if (textContent.isEmpty() && state.value.attachment == null) {
+        if (textContent.isEmpty()) {
             return
         }
         viewModelScope.launch {
             try {
-                postRepository.savePost(
-                    post = Post(
-                        id = 0,
-                        authorId = 0,
-                        author = "",
-                        authorJob = "",
-                        authorAvatar = "",
-                        content = state.value.textContent,
-                        published = Instant.fromEpochSeconds(0),
-                        coords = Coordinates(
-                            lat = 54.9833,
-                            long = 82.8964,
-                        ),
-                        link = null,
-                        mentionIds = emptySet(),
-                        mentionedMe = false,
-                        likeOwnerIds = emptySet(),
-                        likedByMe = false,
-                        attachment = null,
-                        users = emptyMap(),
+                state.update {
+                    it.copy(
+                        result = postRepository.savePost(
+                            id = 0,
+                            content = state.value.textContent,
+                            fileModel = state.value.file,
+                        ).also { data ->
+                            state.update {
+                                it.copy(
+                                    textContent = data.content,
+                                    status = Status.Idle,
+                                )
+                            }
+                        }
                     )
-                ).let { data ->
-                    state.update {
-                        it.copy(
-                            textContent = data.content,
-                            attachment = data.attachment,
-                            status = Status.Idle,
-                        )
-                    }
                 }
             } catch (e: Exception) {
                 state.update {
@@ -88,6 +58,22 @@ class NewPostViewModel(
         }
     }
 
+    fun setFile(fileModel: FileModel?) {
+        state.update {
+            it.copy(
+                file = fileModel
+            )
+        }
+    }
+
+    fun removeFile() {
+        state.update {
+            it.copy(
+                file = null
+            )
+        }
+    }
+
     fun consumerError() {
         state.update {
             it.copy(
@@ -95,5 +81,4 @@ class NewPostViewModel(
             )
         }
     }
-
 }

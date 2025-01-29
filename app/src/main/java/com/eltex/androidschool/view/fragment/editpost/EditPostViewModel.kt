@@ -1,9 +1,11 @@
 package com.eltex.androidschool.view.fragment.editpost
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.repository.PostRepository
 import com.eltex.androidschool.view.common.Status
+import com.eltex.androidschool.view.model.FileModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +36,16 @@ class EditPostViewModel(
     fun editPost() {
         viewModelScope.launch {
             try {
-                val updatedPost = postRepository.savePost(state.value.post)
+                val updatedPost = postRepository.savePost(
+                    id = state.value.post.id,
+                    content = state.value.post.content,
+                    fileModel = state.value.post.attachment?.let {
+                        FileModel(
+                            Uri.parse(it.url),
+                            it.type
+                        )
+                    },
+                )
                 state.update {
                     it.copy(
                         post = updatedPost,

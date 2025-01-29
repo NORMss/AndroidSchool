@@ -76,7 +76,9 @@ class EventFragment : Fragment() {
                         ),
                         effectHandler = EventEffectHandler(
                             repository = RemoteEventRepository(
+                                contentResolver = requireContext().contentResolver,
                                 eventApi = (context?.applicationContext as App).eventApi,
+                                mediaApi = (context?.applicationContext as App).mediaApi,
                             ),
                         ),
                         initMessages = setOf(
@@ -157,7 +159,6 @@ class EventFragment : Fragment() {
                 binding.errorGroup.isVisible = state.isEmptyError
                 val errorText = state.emptyError?.getErrorText(requireContext())
                 binding.errorText.text = errorText
-//                binding.progress.isVisible = state.isEmptyLoading
                 binding.swipeRefresh.isRefreshing = state.isRefreshing
                 binding.swipeRefresh.isVisible = state.events.isNotEmpty() || state.isEmptyLoading
                 errorText?.let { it ->

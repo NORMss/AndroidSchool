@@ -54,4 +54,6 @@
     <string name="content">Content</string>
     <string name="link">Link</string>
     <string name="participant">participant</string>
+    <string name="remove">Remove</string>
+    <string name="date_picker">date picker</string>
 </resources>

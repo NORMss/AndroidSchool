@@ -1,15 +1,17 @@
 package com.eltex.androidschool.view.fragment.newevent
 
-import com.eltex.androidschool.domain.model.Attachment
+import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.view.common.Status
+import com.eltex.androidschool.view.model.FileModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 data class NewEventState(
+    val result: Event? = null,
     val textContent: String = "",
     val link: String? = null,
     val dateTime: Instant = Clock.System.now(),
-    val attachment: Attachment? = null,
+    val file: FileModel? = null,
     val status: Status = Status.Idle,
 ) {
     val isRefreshing: Boolean
