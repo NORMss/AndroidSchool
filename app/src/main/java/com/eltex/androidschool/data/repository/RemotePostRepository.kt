@@ -126,39 +126,27 @@ class RemotePostRepository(
     /**
      * Saves a post to the remote data source.
      *
-     * This function interacts with the `postApi` to persist a given [Post] object.
-     * It's a suspending function, meaning it can be called from a coroutine and
-     * will pause execution until the network operation is complete.
+     * This function creates a [Post] object based on the provided parameters and sends it to the server
+     * via the [postApi] for persistence. If a file is provided, it is uploaded first, and its URL is attached
+     * to the post. The server may modify the post (e.g., assigning an ID), and the updated post is returned.
      *
-     * @param post The [Post] object to be saved.
-     * @return The saved [Post] object, potentially with updated information
-     *         like a server-generated ID or timestamp.
-     * @throws Exception if any error occurs during the network operation. (This is implicit due to the nature of network calls and the use of `postApi`)
+     * @param id The ID of the post (if updating an existing post, otherwise 0 for a new post).
+     * @param content The textual content of the post.
+     * @param fileModel An optional file to be uploaded and attached to the post.
+     * @return The updated [Post] object as returned by the server.
+     * @throws Exception If an error occurs during network communication or file upload.
      */
-    override suspend fun savePost(id: Long, content: String, fileModel: FileModel?): Post {
-        val post = fileModel?.let {
+    override suspend fun savePost(
+        id: Long,
+        content: String,
+        fileModel: FileModel?
+    ): Post {
+        val attachment = fileModel?.let {
             val media = upload(it)
-            Post(
-                id = id,
-                authorId = 0,
-                author = "",
-                authorJob = "",
-                authorAvatar = "",
-                content = content,
-                published = Instant.fromEpochSeconds(0),
-                coords = Coordinates(
-                    lat = 54.9833,
-                    long = 82.8964,
-                ),
-                link = null,
-                mentionIds = emptySet(),
-                mentionedMe = false,
-                likeOwnerIds = emptySet(),
-                likedByMe = false,
-                attachment = Attachment(media.url, it.type),
-                users = emptyMap(),
-            )
-        } ?: Post(
+            Attachment(media.url, it.type)
+        }
+
+        val post = Post(
             id = id,
             authorId = 0,
             author = "",
@@ -166,18 +154,16 @@ class RemotePostRepository(
             authorAvatar = "",
             content = content,
             published = Instant.fromEpochSeconds(0),
-            coords = Coordinates(
-                lat = 54.9833,
-                long = 82.8964,
-            ),
+            coords = Coordinates(lat = 54.9833, long = 82.8964),
             link = null,
             mentionIds = emptySet(),
             mentionedMe = false,
             likeOwnerIds = emptySet(),
             likedByMe = false,
-            attachment = null,
+            attachment = attachment,
             users = emptyMap(),
         )
+
         return postApi.save(post)
     }
 

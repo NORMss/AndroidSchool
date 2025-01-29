@@ -24,7 +24,6 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
-import coil.load
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RemoteEventRepository
@@ -69,23 +68,48 @@ class NewEventFragment : Fragment() {
 
         pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                binding.contentImage.load(uri) {
-                    listener(
-                        onStart = { binding.attachment.isVisible = true },
-                        onSuccess = { _, _ ->
-                            binding.attachment.isVisible = true
-                            viewModel.setFile(FileModel(uri, AttachmentType.IMAGE))
-                        },
-                        onError = { _, _ -> binding.attachment.isVisible = false }
-                    )
-                }
+                viewModel.setFile(FileModel(uri, AttachmentType.IMAGE))
             } else {
                 requireContext().applicationContext.toast(R.string.no_media_selected)
             }
         }
 
+        var photoUri: Uri? = null
+        val takePhoto =
+            registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+                if (success) {
+                    photoUri?.let {
+                        viewModel.setFile(FileModel(it, AttachmentType.IMAGE))
+                    }
+                } else {
+                    requireContext().applicationContext.toast(R.string.no_media_selected)
+                }
+            }
+
         binding.datePikerButton.setOnClickListener {
             showDateTimePicker(binding)
+        }
+
+        binding.takePhoto.setOnClickListener {
+            photoUri = getPhotoUri()
+            takePhoto.launch(photoUri)
+        }
+
+        binding.attachButton.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
+        binding.removeFile.setOnClickListener {
+            viewModel.removeFile()
+        }
+
+
+        binding.setPlace.setOnClickListener {
+            context?.applicationContext?.toast(R.string.not_implemented)
+        }
+
+        binding.participate.setOnClickListener {
+            context?.applicationContext?.toast(R.string.not_implemented)
         }
 
         toolbarViewModel.state.onEach {
@@ -121,26 +145,28 @@ class NewEventFragment : Fragment() {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        var photoUri: Uri? = null
-        val takePhoto =
-            registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-                if (success) {
-                    photoUri?.let {
-                        viewModel.setFile(FileModel(it, AttachmentType.IMAGE))
+        observeViewModelState(binding)
+
+        viewLifecycleOwner.lifecycle.addObserver(
+            object : LifecycleEventObserver {
+                override fun onStateChanged(
+                    source: LifecycleOwner,
+                    event: Lifecycle.Event
+                ) {
+                    when (event) {
+                        Lifecycle.Event.ON_START -> toolbarViewModel.setSaveVisible(true)
+                        Lifecycle.Event.ON_STOP -> toolbarViewModel.setSaveVisible(false)
+                        Lifecycle.Event.ON_DESTROY -> source.lifecycle.removeObserver(this)
+                        else -> Unit
                     }
                 }
             }
+        )
 
-        binding.takePhoto.setOnClickListener {
-            photoUri = getPhotoUri()
-            takePhoto.launch(photoUri)
-        }
+        return binding.root
+    }
 
-        binding.removeFile.setOnClickListener {
-            binding.attachment.isVisible = false
-            viewModel.removeFile()
-        }
-
+    private fun observeViewModelState(binding: FragmentNewEventBinding) {
         viewModel.state
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
@@ -165,36 +191,18 @@ class NewEventFragment : Fragment() {
                     )
                     findNavController().navigateUp()
                 }
+                when (it.file?.type) {
+                    AttachmentType.IMAGE -> {
+                        binding.attachment.isVisible = true
+                        binding.contentImage.setImageURI(it.file.uri)
+                    }
+
+                    AttachmentType.VIDEO,
+                    AttachmentType.AUDIO,
+                    null -> binding.attachment.isVisible = false
+                }
 
             }.launchIn(viewLifecycleOwner.lifecycleScope)
-
-        binding.attachButton.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        }
-
-        binding.removeFile.setOnClickListener {
-            viewModel.removeFile()
-            binding.attachment.isVisible = false
-        }
-
-
-        viewLifecycleOwner.lifecycle.addObserver(
-            object : LifecycleEventObserver {
-                override fun onStateChanged(
-                    source: LifecycleOwner,
-                    event: Lifecycle.Event
-                ) {
-                    when (event) {
-                        Lifecycle.Event.ON_START -> toolbarViewModel.setSaveVisible(true)
-                        Lifecycle.Event.ON_STOP -> toolbarViewModel.setSaveVisible(false)
-                        Lifecycle.Event.ON_DESTROY -> source.lifecycle.removeObserver(this)
-                        else -> Unit
-                    }
-                }
-            }
-        )
-
-        return binding.root
     }
 
     private val viewModel by viewModels<NewEventViewModel> {

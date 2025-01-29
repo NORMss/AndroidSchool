@@ -23,7 +23,6 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
-import coil.load
 import com.eltex.androidschool.App
 import com.eltex.androidschool.R
 import com.eltex.androidschool.data.repository.RemotePostRepository
@@ -49,21 +48,10 @@ class NewPostFragment : Fragment() {
     ): View {
         val binding = FragmentNewPostBinding.inflate(inflater, container, false)
 
-        val navController = findNavController()
-
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    binding.contentImage.load(uri) {
-                        listener(
-                            onStart = { binding.attachment.isVisible = true },
-                            onSuccess = { _, _ ->
-                                binding.attachment.isVisible = true
-                                viewModel.setFile(FileModel(uri, AttachmentType.IMAGE))
-                            },
-                            onError = { _, _ -> binding.attachment.isVisible = false }
-                        )
-                    }
+                    viewModel.setFile(FileModel(uri, AttachmentType.IMAGE))
                 } else {
                     requireContext().applicationContext.toast(R.string.no_media_selected)
                 }
@@ -76,6 +64,8 @@ class NewPostFragment : Fragment() {
                     photoUri?.let {
                         viewModel.setFile(FileModel(it, AttachmentType.IMAGE))
                     }
+                } else {
+                    requireContext().applicationContext.toast(R.string.no_media_selected)
                 }
             }
 
@@ -109,29 +99,7 @@ class NewPostFragment : Fragment() {
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.state
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
-            .onEach {
-                it.status.throwableOtNull?.getErrorText(requireContext())?.let { errorText ->
-                    if (it.isRefreshError) {
-                        Toast.makeText(
-                            requireContext(),
-                            errorText,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        viewModel.consumerError()
-                    }
-                }
-                it.result?.let {
-                    requireContext().applicationContext.toast(R.string.post_created, false)
-                    requireActivity().supportFragmentManager.setFragmentResult(
-                        POST_SAVED,
-                        bundleOf()
-                    )
-                    navController.navigateUp()
-                }
-
-            }.launchIn(viewLifecycleOwner.lifecycleScope)
+        observeViewModelState(binding)
 
         binding.attachButton.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -142,8 +110,16 @@ class NewPostFragment : Fragment() {
             takePhoto.launch(photoUri)
         }
 
+        binding.setPlace.setOnClickListener {
+            context?.applicationContext?.toast(R.string.not_implemented)
+        }
+
+        binding.participate.setOnClickListener {
+            context?.applicationContext?.toast(R.string.not_implemented)
+        }
+
+
         binding.removeFile.setOnClickListener {
-            binding.attachment.isVisible = false
             viewModel.removeFile()
         }
 
@@ -180,23 +156,40 @@ class NewPostFragment : Fragment() {
         }
     }
 
-    private fun createImageUri(): Uri? {
-        val contentValues = ContentValues().apply {
-            put(
-                MediaStore.Images.Media.DISPLAY_NAME,
-                "new_image_${System.currentTimeMillis()}.jpg"
-            )
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(
-                MediaStore.Images.Media.RELATIVE_PATH,
-                "Pictures/${context?.applicationContext?.getString(R.string.app_name)}"
-            )
-        }
+    private fun observeViewModelState(binding: FragmentNewPostBinding) {
+        viewModel.state
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                it.status.throwableOtNull?.getErrorText(requireContext())?.let { errorText ->
+                    if (it.isRefreshError) {
+                        Toast.makeText(
+                            requireContext(),
+                            errorText,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        viewModel.consumerError()
+                    }
+                }
+                it.result?.let {
+                    requireContext().applicationContext.toast(R.string.post_created, false)
+                    requireActivity().supportFragmentManager.setFragmentResult(
+                        POST_SAVED,
+                        bundleOf()
+                    )
+                    findNavController().navigateUp()
+                }
+                when (it.file?.type) {
+                    AttachmentType.IMAGE -> {
+                        binding.attachment.isVisible = true
+                        binding.contentImage.setImageURI(it.file.uri)
+                    }
 
-        return requireContext().contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        )
+                    AttachmentType.VIDEO,
+                    AttachmentType.AUDIO,
+                    null -> binding.attachment.isVisible = false
+                }
+
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun getPhotoUri(): Uri {
@@ -214,5 +207,24 @@ class NewPostFragment : Fragment() {
 
     companion object {
         const val POST_SAVED = "post_saved"
+    }
+
+    private fun createImageUri(): Uri? {
+        val contentValues = ContentValues().apply {
+            put(
+                MediaStore.Images.Media.DISPLAY_NAME,
+                "new_image_${System.currentTimeMillis()}.jpg"
+            )
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(
+                MediaStore.Images.Media.RELATIVE_PATH,
+                "Pictures/${context?.applicationContext?.getString(R.string.app_name)}"
+            )
+        }
+
+        return requireContext().contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
     }
 }

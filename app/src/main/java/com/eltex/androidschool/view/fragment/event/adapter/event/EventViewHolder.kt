@@ -1,6 +1,7 @@
 package com.eltex.androidschool.view.fragment.event.adapter.event
 
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.eltex.androidschool.R
@@ -14,38 +15,39 @@ import java.util.Locale
 class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.root) {
     fun bind(event: EventUi) {
         val header = binding.header
-
-        binding.contentImage.visibility = View.VISIBLE
-        header.monogramText.visibility = View.VISIBLE
+        header.monogramText.isVisible = true
         header.username.text = event.author
 
         header.monogram.load(event.authorAvatar) {
-            listener(onSuccess = { _, _ -> header.monogramText.visibility = View.GONE })
+            listener(onSuccess = { _, _ -> header.monogramText.isVisible = false })
         }
 
         when (event.attachment?.type) {
-            AttachmentType.IMAGE -> binding.contentImage.load(event.attachment.url) {
-                crossfade(true)
-                placeholder(R.drawable.image_loading)
-                error(R.drawable.image_error)
+            AttachmentType.IMAGE -> {
+                binding.contentImage.isVisible = true
+                binding.contentImage.load(event.attachment.url) {
+                    crossfade(true)
+                    placeholder(R.drawable.image_loading)
+                    error(R.drawable.image_error)
+                }
             }
 
             AttachmentType.AUDIO -> {
-                binding.contentImage.visibility = View.GONE
-                binding.contentVideo.visibility = View.GONE
-                binding.play.visibility = View.VISIBLE
+                binding.contentImage.isVisible = false
+                binding.contentVideo.isVisible = false
+                binding.play.isVisible = true
             }
 
             AttachmentType.VIDEO -> {
-                binding.contentImage.visibility = View.GONE
-                binding.contentVideo.visibility = View.VISIBLE
-                binding.play.visibility = View.GONE
+                binding.contentImage.isVisible = false
+                binding.contentVideo.isVisible = true
+                binding.play.isVisible = false
             }
 
             null -> {
-                binding.contentImage.visibility = View.GONE
-                binding.contentVideo.visibility = View.GONE
-                binding.play.visibility = View.GONE
+                binding.contentImage.isVisible = false
+                binding.contentVideo.isVisible = false
+                binding.play.isVisible = false
 
             }
         }

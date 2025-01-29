@@ -1,6 +1,6 @@
 package com.eltex.androidschool.view.fragment.post.adapter.post
 
-import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.eltex.androidschool.R
@@ -16,34 +16,34 @@ class PostViewHolder(private val binding: PostBinding) : ViewHolder(binding.root
         val header = binding.header
 
         header.username.text = post.author
-
+        header.monogramText.isVisible = true
         header.monogram.load(post.authorAvatar) {
-            listener(onSuccess = { _, _ -> header.monogramText.visibility = View.GONE })
+            listener(onSuccess = { _, _ -> header.monogramText.isVisible = false })
         }
 
         when (post.attachment?.type) {
             AttachmentType.IMAGE -> {
+                binding.contentImage.isVisible = true
                 binding.contentImage.load(post.attachment.url) {
                     crossfade(true)
                     placeholder(R.drawable.image_loading)
                     error(R.drawable.image_error)
                 }
-                binding.contentVideo.visibility = View.GONE
             }
 
             AttachmentType.VIDEO -> {
-                binding.contentVideo.visibility = View.VISIBLE
-//                binding.contentImage.visibility = View.GONE
+                binding.contentVideo.isVisible = true
+                binding.contentImage.isVisible = false
             }
 
             AttachmentType.AUDIO -> {
-//                binding.contentImage.visibility = View.GONE
-                binding.contentVideo.visibility = View.GONE
+                binding.contentImage.isVisible = false
+                binding.contentVideo.isVisible = false
             }
 
             null -> {
-                binding.contentImage.visibility = View.GONE
-                binding.contentVideo.visibility = View.GONE
+                binding.contentImage.isVisible = false
+                binding.contentVideo.isVisible = false
             }
         }
 
