@@ -1,6 +1,5 @@
 package com.eltex.androidschool.view.fragment.event.adapter.event
 
-import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
@@ -59,9 +58,11 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
             itemView.context.getString(if (event.type == EventType.ONLINE) R.string.online else R.string.offline)
         binding.datetime.text = event.datetime
 
-        binding.link.apply {
-            text = event.link
-            visibility = if (event.link != null) View.VISIBLE else View.GONE
+        if (event.link != null && event.link.isNotBlank()) {
+            binding.link.apply {
+                text = event.link
+                isVisible = true
+            }
         }
 
         updateLikedByMe(event.likedByMe)
