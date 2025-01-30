@@ -9,10 +9,11 @@ import com.eltex.androidschool.view.model.EventUi
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
+import javax.inject.Inject
 import kotlin.collections.component1
 import kotlin.collections.component2
 
-class EventPagingMapper : Mapper<EventState, List<EventPagingModel>> {
+class EventPagingMapper @Inject constructor(): Mapper<EventState, List<EventPagingModel>> {
     override fun map(from: EventState): List<EventPagingModel> {
         val groupedEvent = groupEventsByDate(from.events)
 

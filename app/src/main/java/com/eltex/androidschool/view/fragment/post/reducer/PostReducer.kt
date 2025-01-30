@@ -10,8 +10,8 @@ import com.eltex.androidschool.view.fragment.post.PostEffect
 import com.eltex.androidschool.view.fragment.post.PostMessage
 import com.eltex.androidschool.view.fragment.post.PostState
 import com.eltex.androidschool.view.fragment.post.PostStatus
-import com.eltex.androidschool.view.model.EventUi
 import com.eltex.androidschool.view.model.PostUi
+import javax.inject.Inject
 
 /**
  * `PostReducer` is a crucial component in managing the state of events within the application.
@@ -33,7 +33,7 @@ import com.eltex.androidschool.view.model.PostUi
  * @property mapper A [Mapper] instance used to transform [Post] objects to [PostUi] objects.
  *   This is essential for adapting data from the domain layer to the presentation layer.
  */
-class PostReducer(
+class PostReducer @Inject constructor(
     private val mapper: Mapper<Post, PostUi>,
 ) : Reducer<PostState, PostMessage, PostEffect> {
     override fun reduce(

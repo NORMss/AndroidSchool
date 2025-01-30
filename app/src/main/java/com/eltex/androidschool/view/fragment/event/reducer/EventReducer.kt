@@ -11,6 +11,7 @@ import com.eltex.androidschool.view.fragment.event.EventState
 import com.eltex.androidschool.view.fragment.event.EventStatus
 import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
 import com.eltex.androidschool.view.model.EventUi
+import javax.inject.Inject
 
 /**
  * `EventReducer` is a crucial component in managing the state of events within the application.
@@ -32,7 +33,7 @@ import com.eltex.androidschool.view.model.EventUi
  * @property mapper A [Mapper] instance used to transform [Event] objects to [EventUi] objects.
  *   This is essential for adapting data from the domain layer to the presentation layer.
  */
-class EventReducer(
+class EventReducer @Inject constructor(
     private val mapper: Mapper<Event, EventUi>,
 ) : Reducer<EventState, EventMessage, EventEffect> {
     override fun reduce(

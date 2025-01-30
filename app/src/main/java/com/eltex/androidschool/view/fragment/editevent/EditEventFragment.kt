@@ -13,20 +13,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
-import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentEditEventBinding
 import com.eltex.androidschool.utils.remote.getErrorText
-import com.eltex.androidschool.view.util.toast.toast
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
+import com.eltex.androidschool.view.util.toast.toast
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlin.getValue
 
+@AndroidEntryPoint
 class EditEventFragment : Fragment() {
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
 
@@ -38,20 +38,13 @@ class EditEventFragment : Fragment() {
         val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
         arguments?.getLong(EVENT_ID)?.let { eventId ->
-            val viewModel by viewModels<EditEventViewModel> {
-                viewModelFactory {
-                    addInitializer(EditEventViewModel::class) {
-                        EditEventViewModel(
-                            eventRepository = RemoteEventRepository(
-                                contentResolver = requireContext().contentResolver,
-                                eventApi = (requireContext().applicationContext as App).eventApi,
-                                mediaApi = (requireContext().applicationContext as App).mediaApi,
-                            ),
-                            eventId = eventId,
-                        )
+            val viewModel by viewModels<EditEventViewModel>(
+                extrasProducer = {
+                    defaultViewModelCreationExtras.withCreationCallback<EditEventViewModel.ViewModelFactory> { factory ->
+                        factory.create(eventId)
                     }
                 }
-            }
+            )
 
             viewModel.state.onEach { state ->
                 binding.editText.setText(state.event.content)

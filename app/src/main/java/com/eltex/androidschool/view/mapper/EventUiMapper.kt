@@ -4,8 +4,9 @@ import com.eltex.androidschool.domain.mapper.Mapper
 import com.eltex.androidschool.domain.model.Event
 import com.eltex.androidschool.view.model.EventUi
 import com.eltex.androidschool.view.util.datetime.DateTimeStringFormater
+import javax.inject.Inject
 
-class EventUiMapper : Mapper<Event, EventUi> {
+class EventUiMapper @Inject constructor() : Mapper<Event, EventUi> {
     override fun map(from: Event) = with(from) {
         EventUi(
             id = id,

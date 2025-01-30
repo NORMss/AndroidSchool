@@ -17,13 +17,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import javax.inject.Singleton
 
 @InstallIn(ViewModelComponent::class)
 @Module
 object StoreModule {
     @Provides
-    @Singleton
     fun providePostStoreModule(
         reducer: PostReducer,
         effectHandler: PostEffectHandler,
@@ -37,7 +35,6 @@ object StoreModule {
     }
 
     @Provides
-    @Singleton
     fun provideEventStoreModule(
         reducer: EventReducer,
         effectHandler: EventEffectHandler,

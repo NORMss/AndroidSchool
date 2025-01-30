@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import javax.inject.Inject
 
 /**
  * [RemotePostRepository] is an implementation of [PostRepository] that fetches post data from a remote source
@@ -23,7 +24,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
  *
  * @property postApi The API service used to make network requests related to posts.
  */
-class RemotePostRepository(
+class RemotePostRepository @Inject constructor(
     private val contentResolver: ContentResolver,
     private val postApi: PostApi,
     private val mediaApi: MediaApi,

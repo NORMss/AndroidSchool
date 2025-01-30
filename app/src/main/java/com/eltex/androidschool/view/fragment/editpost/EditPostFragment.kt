@@ -13,20 +13,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
-import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentEditPostBinding
 import com.eltex.androidschool.utils.remote.getErrorText
-import com.eltex.androidschool.view.util.toast.toast
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
+import com.eltex.androidschool.view.util.toast.toast
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlin.getValue
 
+@AndroidEntryPoint
 class EditPostFragment : Fragment() {
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
 
@@ -38,20 +38,13 @@ class EditPostFragment : Fragment() {
         val binding = FragmentEditPostBinding.inflate(layoutInflater, container, false)
 
         arguments?.getLong(POST_ID)?.let { postId ->
-            val viewModel by viewModels<EditPostViewModel> {
-                viewModelFactory {
-                    addInitializer(EditPostViewModel::class) {
-                        EditPostViewModel(
-                            postRepository = RemotePostRepository(
-                                contentResolver = requireContext().contentResolver,
-                                postApi = (requireContext().applicationContext as App).postApi,
-                                mediaApi = (requireContext().applicationContext as App).mediaApi,
-                            ),
-                            postId = postId,
-                        )
+            val viewModel by viewModels<EditPostViewModel>(
+                extrasProducer = {
+                    defaultViewModelCreationExtras.withCreationCallback<EditPostViewModel.EditPostViewModelFactory> { factory ->
+                        factory.create(postId)
                     }
                 }
-            }
+            )
 
             viewModel.state.onEach { state ->
                 binding.editText.setText(state.post.content)
