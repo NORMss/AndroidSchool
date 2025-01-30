@@ -63,7 +63,7 @@ class EventViewHolder(private val binding: EventBinding) : ViewHolder(binding.ro
                 text = event.link
                 isVisible = true
             }
-        }
+        } else binding.link.isVisible = false
 
         updateLikedByMe(event.likedByMe)
 
