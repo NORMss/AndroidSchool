@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.hilt)
 }
 
 room {
@@ -65,6 +66,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.android.hilt)
+    ksp(libs.android.hilt.compiler)
+
     dokkaPlugin(libs.android.documentation.plugin)
 
     implementation(libs.shimmer)
