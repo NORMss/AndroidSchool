@@ -8,6 +8,7 @@ data class PostUi(
     val content: String = "",
     val author: String = "",
     val authorAvatar: String? = null,
+    val formattedPublished: String = "",
     val published: Instant = Instant.fromEpochSeconds(0),
     val likedByMe: Boolean = false,
     val likes: Int = 0,

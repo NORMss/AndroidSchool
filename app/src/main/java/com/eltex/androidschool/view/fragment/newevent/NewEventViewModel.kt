@@ -8,14 +8,17 @@ import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.model.FileModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import javax.inject.Inject
 
-class NewEventViewModel(
+@HiltViewModel
+class NewEventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
 ) : ViewModel() {
     val state: StateFlow<NewEventState>

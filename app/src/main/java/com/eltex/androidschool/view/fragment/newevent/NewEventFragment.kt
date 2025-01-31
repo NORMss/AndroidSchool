@@ -22,11 +22,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
-import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentNewEventBinding
 import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.utils.remote.getErrorText
@@ -34,6 +31,7 @@ import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.fragment.toolbar.ToolbarViewModel
 import com.eltex.androidschool.view.model.FileModel
 import com.eltex.androidschool.view.util.toast.toast
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.io.File
@@ -43,6 +41,7 @@ import java.util.Locale
 import java.util.TimeZone
 import kotlin.getValue
 
+@AndroidEntryPoint
 class NewEventFragment : Fragment() {
 
     private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
@@ -205,19 +204,7 @@ class NewEventFragment : Fragment() {
             }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    private val viewModel by viewModels<NewEventViewModel> {
-        viewModelFactory {
-            addInitializer(NewEventViewModel::class) {
-                NewEventViewModel(
-                    eventRepository = RemoteEventRepository(
-                        contentResolver = requireContext().contentResolver,
-                        eventApi = (requireContext().applicationContext as App).eventApi,
-                        mediaApi = (requireContext().applicationContext as App).mediaApi,
-                    ),
-                )
-            }
-        }
-    }
+    private val viewModel by viewModels<NewEventViewModel>()
 
     private fun showDateTimePicker(binding: FragmentNewEventBinding) {
         val calendar = Calendar.getInstance()

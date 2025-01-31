@@ -17,24 +17,19 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 interface MapperModule {
     @Binds
-    @Singleton
     fun bindEventUiMapper(impl: EventUiMapper): Mapper<Event, EventUi>
 
     @Binds
-    @Singleton
     fun bindPostUiMapper(impl: PostUiMapper): Mapper<Post, PostUi>
 
     @Binds
-    @Singleton
     fun bindEventPagingUiMapper(impl: EventPagingMapper): Mapper<EventState, List<EventPagingModel>>
 
     @Binds
-    @Singleton
     fun bindPostPagingUiMapper(impl: PostPagingMapper): Mapper<PostState, List<PostPagingModel>>
 }

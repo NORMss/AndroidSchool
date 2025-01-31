@@ -13,29 +13,25 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RemoteEventRepository
 import com.eltex.androidschool.databinding.FragmentEventBinding
 import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
 import com.eltex.androidschool.view.fragment.editevent.EditEventFragment
 import com.eltex.androidschool.view.fragment.event.adapter.event.EventAdapter
 import com.eltex.androidschool.view.fragment.event.adapter.paging.EventPagingAdapter
-import com.eltex.androidschool.view.fragment.event.effecthendler.EventEffectHandler
-import com.eltex.androidschool.view.fragment.event.reducer.EventReducer
 import com.eltex.androidschool.view.fragment.event.reducer.EventReducer.Companion.PAGE_SIZE
 import com.eltex.androidschool.view.fragment.newevent.NewEventFragment
 import com.eltex.androidschool.view.mapper.EventPagingMapper
-import com.eltex.androidschool.view.mapper.EventUiMapper
 import com.eltex.androidschool.view.model.EventUi
 import com.eltex.androidschool.view.util.toast.toast
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@AndroidEntryPoint
 class EventFragment : Fragment() {
     private var adapter = EventPagingAdapter(
         object : EventAdapter.EventListener {
@@ -66,30 +62,7 @@ class EventFragment : Fragment() {
 
     private val mapper = EventPagingMapper()
 
-    private val viewModel by viewModels<EventViewModel> {
-        viewModelFactory {
-            addInitializer(EventViewModel::class) {
-                EventViewModel(
-                    store = EventStore(
-                        reducer = EventReducer(
-                            mapper = EventUiMapper(),
-                        ),
-                        effectHandler = EventEffectHandler(
-                            repository = RemoteEventRepository(
-                                contentResolver = requireContext().contentResolver,
-                                eventApi = (context?.applicationContext as App).eventApi,
-                                mediaApi = (context?.applicationContext as App).mediaApi,
-                            ),
-                        ),
-                        initMessages = setOf(
-                            EventMessage.Refresh
-                        ),
-                        initState = EventState(),
-                    )
-                )
-            }
-        }
-    }
+    private val viewModel by viewModels<EventViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -8,14 +8,19 @@ import com.eltex.androidschool.domain.model.AttachmentType
 import com.eltex.androidschool.domain.repository.EventRepository
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.model.FileModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class EditEventViewModel(
+@HiltViewModel(assistedFactory = EditEventViewModel.ViewModelFactory::class)
+class EditEventViewModel @AssistedInject constructor(
     private val eventRepository: EventRepository,
-    eventId: Long,
+    @Assisted private val eventId: Long,
 ) : ViewModel() {
     val state: StateFlow<EditEventState>
         field = MutableStateFlow(EditEventState())
@@ -61,7 +66,7 @@ class EditEventViewModel(
         viewModelScope.launch {
             try {
                 val event = eventRepository.saveEvent(
-                    id = 0,
+                    id = state.value.event.id,
                     content = state.value.event.content,
                     link = state.value.event.link,
                     date = state.value.event.datetime,
@@ -74,6 +79,7 @@ class EditEventViewModel(
                 )
                 state.update {
                     it.copy(
+                        result = event,
                         event = event,
                         status = Status.Idle,
                     )
@@ -106,5 +112,10 @@ class EditEventViewModel(
                 }
             }
         }
+    }
+
+    @AssistedFactory
+    interface ViewModelFactory {
+        fun create(id: Long): EditEventViewModel
     }
 }

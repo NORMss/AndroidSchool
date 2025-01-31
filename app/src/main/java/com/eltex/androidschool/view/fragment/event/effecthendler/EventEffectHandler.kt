@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
+import javax.inject.Inject
 
-class EventEffectHandler(
+class EventEffectHandler @Inject constructor(
     private val repository: EventRepository,
 ) : EffectHandler<EventEffect, EventMessage> {
     override fun connect(effects: Flow<EventEffect>): Flow<EventMessage> {

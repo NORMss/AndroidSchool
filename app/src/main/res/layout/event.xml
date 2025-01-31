@@ -173,7 +173,6 @@
             android:fontFamily="@font/roboto_medium"
             android:stateListAnimator="@drawable/scale"
             android:textSize="14sp"
-            android:visibility="visible"
             app:icon="@drawable/people_selector"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/likeButton"

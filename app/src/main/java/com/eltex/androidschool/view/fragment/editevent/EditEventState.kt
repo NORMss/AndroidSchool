@@ -6,6 +6,7 @@ import com.eltex.androidschool.view.common.Status
 import kotlinx.datetime.Instant
 
 data class EditEventState(
+    val result: Event? = null,
     val event: Event = Event(
         id = 0L,
         authorId = 0L,

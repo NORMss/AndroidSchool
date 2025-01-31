@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import javax.inject.Inject
 
 /**
  * [RemoteEventRepository] is a concrete implementation of [EventRepository] that fetches event data from a remote source.
@@ -22,7 +23,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
  *
  * @property eventApi The [EventApi] instance used to communicate with the remote event data source.
  */
-class RemoteEventRepository(
+class RemoteEventRepository @Inject constructor(
     private val contentResolver: ContentResolver,
     private val eventApi: EventApi,
     private val mediaApi: MediaApi,
@@ -180,7 +181,7 @@ class RemoteEventRepository(
         fileModel: FileModel?
     ): Event {
         val attachment = fileModel?.let {
-            val media = upload(it)
+            val media = if (id == 0L) upload(it) else Media(it.uri.toString())//Remove if adding the ability to change photos in editing
             Attachment(media.url, it.type)
         }
 

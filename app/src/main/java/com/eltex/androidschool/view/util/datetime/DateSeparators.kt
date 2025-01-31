@@ -7,33 +7,10 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 
 object DateSeparators {
-
-    interface Publishable {
-        val published: Instant
-    }
-
-    data class GroupByDate<T>(
-        val date: Instant,
-        val items: List<T>
-    )
-
-    fun <T : Publishable> groupByDate(
-        items: List<T>
-    ): List<GroupByDate<T>> {
-        val groupedItems = items.groupBy { item ->
-            item.published.toLocalDateTime(TimeZone.currentSystemDefault()).date
-        }
-
-        return groupedItems.map { (date, groupedItems) ->
-            val instant = date.atStartOfDayIn(TimeZone.currentSystemDefault())
-            GroupByDate(instant, groupedItems.sortedByDescending { it.published })
-        }
-    }
 
     fun formatInstantToString(
         instant: Instant,

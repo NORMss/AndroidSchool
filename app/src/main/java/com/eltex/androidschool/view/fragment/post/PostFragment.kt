@@ -13,12 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.eltex.androidschool.App
 import com.eltex.androidschool.R
-import com.eltex.androidschool.data.repository.RemotePostRepository
 import com.eltex.androidschool.databinding.FragmentPostBinding
 import com.eltex.androidschool.utils.remote.getErrorText
 import com.eltex.androidschool.view.common.OffsetDecoration
@@ -26,17 +23,16 @@ import com.eltex.androidschool.view.fragment.editpost.EditPostFragment
 import com.eltex.androidschool.view.fragment.newpost.NewPostFragment
 import com.eltex.androidschool.view.fragment.post.adapter.paging.PostPagingAdapter
 import com.eltex.androidschool.view.fragment.post.adapter.post.PostAdapter
-import com.eltex.androidschool.view.fragment.post.effecthendler.PostEffectHandler
-import com.eltex.androidschool.view.fragment.post.reducer.PostReducer
 import com.eltex.androidschool.view.fragment.post.reducer.PostReducer.Companion.PAGE_SIZE
 import com.eltex.androidschool.view.mapper.PostPagingMapper
-import com.eltex.androidschool.view.mapper.PostUiMapper
 import com.eltex.androidschool.view.model.PostUi
 import com.eltex.androidschool.view.util.toast.toast
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlin.getValue
 
+@AndroidEntryPoint
 class PostFragment : Fragment() {
     private val adapter = PostPagingAdapter(
         postListener = object : PostAdapter.PostListener {
@@ -61,32 +57,7 @@ class PostFragment : Fragment() {
 
     private val mapper = PostPagingMapper()
 
-    private val viewModel by viewModels<PostViewModel> {
-        viewModelFactory {
-            addInitializer(PostViewModel::class) {
-                PostViewModel(
-                    store = PostStore(
-                        reducer = PostReducer(
-                            mapper = PostUiMapper(),
-                        ),
-                        effectHandler = PostEffectHandler(
-                            repository = RemotePostRepository(
-                                contentResolver = requireContext().contentResolver,
-                                postApi = (context?.applicationContext as App).postApi,
-                                mediaApi = (context?.applicationContext as App).mediaApi,
-                            ),
-                        ),
-                        initMessages = setOf(
-                            PostMessage.Refresh
-                        ),
-                        initState = PostState(
-                            status = PostStatus.EmptyLoading
-                        )
-                    )
-                )
-            }
-        }
-    }
+    private val viewModel by viewModels<PostViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

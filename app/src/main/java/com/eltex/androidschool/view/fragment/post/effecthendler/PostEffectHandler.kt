@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
+import javax.inject.Inject
 
-class PostEffectHandler(
+class PostEffectHandler @Inject constructor(
     private val repository: PostRepository,
 ) : EffectHandler<PostEffect, PostMessage> {
     override fun connect(effects: Flow<PostEffect>): Flow<PostMessage> {

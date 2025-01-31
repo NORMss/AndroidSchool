@@ -6,15 +6,20 @@ import androidx.lifecycle.viewModelScope
 import com.eltex.androidschool.domain.repository.PostRepository
 import com.eltex.androidschool.view.common.Status
 import com.eltex.androidschool.view.model.FileModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class EditPostViewModel(
+@HiltViewModel(assistedFactory = EditPostViewModel.EditPostViewModelFactory::class)
+class EditPostViewModel @AssistedInject constructor(
     private val postRepository: PostRepository,
-    postId: Long,
+    @Assisted private val postId: Long,
 ) : ViewModel() {
     val state: StateFlow<EditPostState>
         field = MutableStateFlow(EditPostState())
@@ -48,6 +53,7 @@ class EditPostViewModel(
                 )
                 state.update {
                     it.copy(
+                        result = updatedPost,
                         post = updatedPost,
                         status = Status.Idle,
                     )
@@ -83,4 +89,8 @@ class EditPostViewModel(
         }
     }
 
+    @AssistedFactory
+    interface EditPostViewModelFactory {
+        fun create(id: Long): EditPostViewModel
+    }
 }

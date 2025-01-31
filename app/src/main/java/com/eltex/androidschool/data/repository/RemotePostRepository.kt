@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import javax.inject.Inject
 
 /**
  * [RemotePostRepository] is an implementation of [PostRepository] that fetches post data from a remote source
@@ -23,7 +24,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
  *
  * @property postApi The API service used to make network requests related to posts.
  */
-class RemotePostRepository(
+class RemotePostRepository @Inject constructor(
     private val contentResolver: ContentResolver,
     private val postApi: PostApi,
     private val mediaApi: MediaApi,
@@ -142,13 +143,14 @@ class RemotePostRepository(
         fileModel: FileModel?
     ): Post {
         val attachment = fileModel?.let {
-            val media = upload(it)
+            val media =
+                if (id == 0L) upload(it) else Media(it.uri.toString())//Remove if adding the ability to change photos in editing
             Attachment(media.url, it.type)
         }
 
         val post = Post(
             id = id,
-            authorId = 0,
+            authorId = 0L,
             author = "",
             authorJob = "",
             authorAvatar = "",

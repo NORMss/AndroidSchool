@@ -5,6 +5,7 @@ import com.eltex.androidschool.view.common.Status
 import kotlinx.datetime.Instant
 
 data class EditPostState(
+    val result: Post? = null,
     val post: Post = Post(
         id = 0L,
         authorId = 0L,

@@ -9,8 +9,9 @@ import com.eltex.androidschool.view.model.PostUi
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
+import javax.inject.Inject
 
-class PostPagingMapper : Mapper<PostState, List<PostPagingModel>> {
+class PostPagingMapper @Inject constructor() : Mapper<PostState, List<PostPagingModel>> {
     override fun map(from: PostState): List<PostPagingModel> {
         val groupedPosts = groupPostsByDate(from.posts)
 
@@ -19,6 +20,7 @@ class PostPagingMapper : Mapper<PostState, List<PostPagingModel>> {
             is PostStatus.NextPageError -> groupedPosts + PostPagingModel.Error(statusValue.reason)
             is PostStatus.EmptyError,
             is PostStatus.Idle -> groupedPosts
+
             PostStatus.EmptyLoading -> List(PAGE_SIZE) { PostPagingModel.Loading }
             PostStatus.Refreshing -> groupedPosts
         }

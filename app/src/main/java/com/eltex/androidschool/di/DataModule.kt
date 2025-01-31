@@ -9,7 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
+import javax.inject.Singleton
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -21,9 +21,10 @@ import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 
-@InstallIn(SingletonComponent::class)
 @Module
+@InstallIn(SingletonComponent::class)
 object DataModule {
+    @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder().apply {
@@ -55,13 +56,12 @@ object DataModule {
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .build()
 
-    @Singleton
     @Provides
     fun provideMediaApi(retrofit: Retrofit): MediaApi = retrofit.create()
-    @Singleton
+
     @Provides
     fun providePostApi(retrofit: Retrofit): PostApi = retrofit.create()
-    @Singleton
+
     @Provides
     fun provideEventApi(retrofit: Retrofit): EventApi = retrofit.create()
 
