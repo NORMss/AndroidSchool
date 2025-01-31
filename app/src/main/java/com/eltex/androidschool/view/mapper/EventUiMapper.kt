@@ -15,6 +15,7 @@ class EventUiMapper @Inject constructor(
             content = content,
             author = author,
             published = published,
+            formattedPublished = dateTimeStringFormatter.format(published),
             datetime = dateTimeStringFormatter.format(datetime),
             likedByMe = likedByMe,
             participatedByMe = participatedByMe,

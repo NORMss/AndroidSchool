@@ -14,6 +14,7 @@ class PostUiMapper @Inject constructor(
             id = id,
             content = content,
             author = author,
+            formattedPublished = dateTimeStringFormatter.format(published),
             published = published,
             likedByMe = likedByMe,
             likes = likeOwnerIds.size,

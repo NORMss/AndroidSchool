@@ -10,6 +10,7 @@ data class EventUi(
     val author: String = "",
     val authorAvatar: String? = null,
     val published: Instant = Instant.fromEpochSeconds(0),
+    val formattedPublished: String = "",
     val datetime: String = "",
     val likedByMe: Boolean = false,
     val participatedByMe: Boolean = false,
