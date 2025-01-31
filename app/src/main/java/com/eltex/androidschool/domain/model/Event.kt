@@ -22,7 +22,7 @@ data class Event(
     @SerialName("datetime")
     val datetime: Instant,
     @SerialName("published")
-    override val published: Instant,
+    val published: Instant,
     @SerialName("coords")
     val coords: Coordinates?,
     @SerialName("type")
@@ -43,4 +43,4 @@ data class Event(
     val link: String?,
     @SerialName("users")
     val users: Map<String, UserPreview>,
-) : DateSeparators.Publishable
+)

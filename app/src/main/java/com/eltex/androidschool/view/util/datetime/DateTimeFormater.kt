@@ -8,16 +8,19 @@ import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toLocalDateTime
 
-object DateTimeStringFormater {
+class DateTimeStringFormatter(private val timeZone: TimeZone) {
     @OptIn(FormatStringsInDatetimeFormats::class)
-    fun dateTimeToString(dateTime: Instant): String {
+    fun format(dateTime: Instant): String {
         return try {
             dateTime
-                .toLocalDateTime(TimeZone.currentSystemDefault()).let {
-                    it.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yy HH:mm") })
-                }
+                .toLocalDateTime(timeZone)
+                .format(LocalDateTime.Format { byUnicodePattern("dd.MM.yy HH:mm") })
         } catch (e: Exception) {
             "Unknown"
         }
+    }
+
+    companion object {
+        fun default() = DateTimeStringFormatter(TimeZone.currentSystemDefault())
     }
 }
