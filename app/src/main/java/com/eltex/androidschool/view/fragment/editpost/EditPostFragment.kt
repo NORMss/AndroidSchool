@@ -48,6 +48,17 @@ class EditPostFragment : Fragment() {
 
             viewModel.state.onEach { state ->
                 binding.editText.setText(state.post.content)
+                state.result?.let {
+                    requireContext().applicationContext.toast(
+                        R.string.post_edited,
+                        false
+                    )
+                    requireActivity().supportFragmentManager.setFragmentResult(
+                        POST_EDITED,
+                        bundleOf()
+                    )
+                    findNavController().navigateUp()
+                }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
 
 
@@ -70,18 +81,6 @@ class EditPostFragment : Fragment() {
                                             ).show()
                                         }
                                 }
-                            }
-
-                            Status.Idle -> {
-                                requireContext().applicationContext.toast(
-                                    R.string.post_edited,
-                                    false
-                                )
-                                requireActivity().supportFragmentManager.setFragmentResult(
-                                    POST_EDITED,
-                                    bundleOf()
-                                )
-                                findNavController().navigateUp()
                             }
 
                             else -> {

@@ -48,6 +48,17 @@ class EditEventFragment : Fragment() {
 
             viewModel.state.onEach { state ->
                 binding.editText.setText(state.event.content)
+                state.result?.let {
+                    requireContext().applicationContext.toast(
+                        R.string.event_edited,
+                        false
+                    )
+                    requireActivity().supportFragmentManager.setFragmentResult(
+                        EVENT_EDITED,
+                        bundleOf()
+                    )
+                    findNavController().navigateUp()
+                }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
 
 
@@ -70,18 +81,6 @@ class EditEventFragment : Fragment() {
                                             ).show()
                                         }
                                 }
-                            }
-
-                            Status.Idle -> {
-                                requireContext().applicationContext.toast(
-                                    R.string.event_created,
-                                    false
-                                )
-                                requireActivity().supportFragmentManager.setFragmentResult(
-                                    EVENT_EDITED,
-                                    bundleOf()
-                                )
-                                findNavController().navigateUp()
                             }
 
                             else -> {

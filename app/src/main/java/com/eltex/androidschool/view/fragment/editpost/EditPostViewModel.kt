@@ -53,6 +53,7 @@ class EditPostViewModel @AssistedInject constructor(
                 )
                 state.update {
                     it.copy(
+                        result = updatedPost,
                         post = updatedPost,
                         status = Status.Idle,
                     )

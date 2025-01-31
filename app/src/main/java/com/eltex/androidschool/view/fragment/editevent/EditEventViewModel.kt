@@ -66,7 +66,7 @@ class EditEventViewModel @AssistedInject constructor(
         viewModelScope.launch {
             try {
                 val event = eventRepository.saveEvent(
-                    id = 0,
+                    id = state.value.event.id,
                     content = state.value.event.content,
                     link = state.value.event.link,
                     date = state.value.event.datetime,
@@ -79,6 +79,7 @@ class EditEventViewModel @AssistedInject constructor(
                 )
                 state.update {
                     it.copy(
+                        result = event,
                         event = event,
                         status = Status.Idle,
                     )

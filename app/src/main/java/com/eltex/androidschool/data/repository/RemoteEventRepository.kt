@@ -181,7 +181,7 @@ class RemoteEventRepository @Inject constructor(
         fileModel: FileModel?
     ): Event {
         val attachment = fileModel?.let {
-            val media = upload(it)
+            val media = if (id == 0L) upload(it) else Media(it.uri.toString())//Remove if adding the ability to change photos in editing
             Attachment(media.url, it.type)
         }
 
